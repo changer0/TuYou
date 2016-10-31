@@ -22,7 +22,7 @@
         android:name=".MainApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".MainApplication">
+        >
         <activity android:name=".Activity.MainActivity">
 
         </activity>
