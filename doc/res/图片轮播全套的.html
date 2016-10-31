@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>无标题文档</title>
+		<style type="text/css">
+			*{padding: 0; margin: 0;}
+			#banner {
+				margin: auto;
+				width: 600px; height: 200px;
+				position: relative;
+				overflow: hidden;
+			}
+			.banner-ul{
+				list-style: none;
+				width: 3600px; height: 200px;
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+			.banner-ul-li {
+				float: left;
+				width: 600px; height: 200px;
+				font-size: 80px;
+				font-weight: bold;
+				text-align: center;
+				line-height: 200px;
+			}
+			#nav{position: absolute;right: 20px;bottom: 10px;}
+			#nav li{height:10px;width: 10px;border-radius: 50%;border:1px solid #fff;list-style: none;float: left;margin-left: 10px;}
+			#left{height:50px;width: 50px;border-radius: 50%;background: skyblue;position: absolute;left: 20px;top:50%;margin-top: -25px;font-size: 30px;text-align: center;line-height: 50px;opacity: 0.6;}
+			#right{height:50px;width: 50px;border-radius: 50%;background: skyblue;position: absolute;right: 20px;top:50%;margin-top: -25px;font-size: 30px;text-align: center;line-height: 50px;opacity: 0.6;}
+		</style>
+		
+		<script type="text/javascript">
+			onload = function(){
+				var banner = document.getElementById("banner").children[0];
+				var box = document.getElementById("banner");
+				var nav = document.getElementById("nav").children;
+				var _left = document.getElementById("left");
+				var _right = document.getElementById("right");
+				var index = 0;
+				var timer = setInterval(imgTab,2000);
+				navColor();
+				box.onmouseenter = function(){
+					clearInterval(timer);
+				}
+				box.onmouseleave = function(){
+					timer = setInterval(imgTab,2000);
+				}
+				function imgTab(){
+						if(++index == 6){
+							banner.style.left = 0;
+							index=1;
+						}
+						navColor();
+						moveSin(banner,{left:-index*600});
+				}
+				for(var i in nav){
+					nav[i]._index = i;
+					nav[i].onclick = function(){
+						index = this._index - 1;
+						imgTab();
+					}
+				}
+				function navColor(){
+					var navindex = index;
+					//console.log(navindex);
+					for (var i = 0; i < nav.length; i++) {
+						nav[i].style.backgroundColor = "";
+					}
+					nav[navindex>4?navindex=0:navindex].style.backgroundColor = "slategray";
+				}
+				_left.onclick = function toleft(){
+					index-=2;
+					if(index<-1){
+						console.log(index);
+						index = 3;
+						banner.style.left = (-index-2)*600 + "px";
+					}
+					imgTab();
+				}
+				_right.onclick = function toright(){
+					imgTab();
+				}
+			}
+			
+			function moveSin(obj, json, callback) {
+			var deg = 0;
+			clearInterval(obj.t);
+			obj.t = setInterval(function(){
+				if(deg > 90) {
+					clearInterval(obj.t);
+					callback ? callback() : "";
+					return;
+				}
+				for(var attr in json) {
+					var speed = (json[attr] - parseInt(getStyle(obj,attr)))*Math.sin(deg*Math.PI/180); 
+					obj.style[attr] =  parseInt(getStyle(obj,attr)) + speed + "px";
+				}
+				deg++;
+			},20);
+			
+		}
+			function getStyle(obj, attr) {
+		if(obj.currentStyle) {
+			getStyle = function(obj, attr){
+				return Number(parseFloat(obj.currentStyle[attr]).toFixed(5));
+			}
+			return Number(parseFloat(obj.currentStyle[attr]).toFixed(5));
+		} else {
+			getStyle = function(obj, attr){
+				return Number(parseFloat(getComputedStyle(obj,null)[attr]).toFixed(5));
+			}
+			return Number(parseFloat(getComputedStyle(obj,null)[attr]).toFixed(5));
+		}
+	}
+		</script>
+
+	</head>
+
+	<body>
+		<div id="banner" class="box">
+			<ul class="banner-ul">
+				<li class="banner-ul-li" style="background-color: red;">A</li>
+				<li class="banner-ul-li" style="background-color: blue;">B</li>
+				<li class="banner-ul-li" style="background-color: yellow;">C</li>
+				<li class="banner-ul-li" style="background-color: green;">D</li>
+				<li class="banner-ul-li" style="background-color: fuchsia;">E</li>
+				<li class="banner-ul-li" style="background-color: red;">A</li>
+			</ul>
+			<ul id="nav">
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<span id="left"><</span>
+			<span id="right">></span>
+		</div>
+	</body>
+
+</html>
