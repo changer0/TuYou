@@ -1,9 +1,10 @@
-package com.myxfd.tuyou;
+package com.myxfd.tuyou.Activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.view.MainView;
 
 public class MainActivity extends AppCompatActivity implements MainView{
