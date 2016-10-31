@@ -9,7 +9,7 @@ import cn.bmob.v3.BmobObject;
 public class TuYouTrack extends BmobObject {
     public final static Integer TYPE_IMAGE = 1;
     public final static Integer TYPE_VIDEO = 2;
-    private TuYouUser userId;//用户id
+    private TuYouUser user;//用户id
     private String text;//内容
     private String image;//图片
     private String Video;//视频
@@ -23,12 +23,12 @@ public class TuYouTrack extends BmobObject {
         return TYPE_VIDEO;
     }
 
-    public TuYouUser getUserId() {
-        return userId;
+    public TuYouUser getUser() {
+        return user;
     }
 
-    public void setUserId(TuYouUser userId) {
-        this.userId = userId;
+    public void setUser(TuYouUser user) {
+        this.user = user;
     }
 
     public String getText() {
