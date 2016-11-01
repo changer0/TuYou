@@ -12,11 +12,16 @@ import com.myxfd.tuyou.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MessageFragment extends Fragment {
+public class MessageFragment extends BaseFragment {
 
 
     public MessageFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public String getFragmentTitle() {
+        return "消息";
     }
 
 

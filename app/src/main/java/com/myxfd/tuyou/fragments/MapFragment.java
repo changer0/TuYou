@@ -12,11 +12,16 @@ import com.myxfd.tuyou.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends BaseFragment {
 
 
     public MapFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public String getFragmentTitle() {
+        return "地图";
     }
 
 

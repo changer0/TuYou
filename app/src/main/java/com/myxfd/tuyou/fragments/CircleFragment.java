@@ -12,11 +12,16 @@ import com.myxfd.tuyou.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CircleFragment extends Fragment {
+public class CircleFragment extends BaseFragment {
 
 
     public CircleFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public String getFragmentTitle() {
+        return "圈子";
     }
 
 
