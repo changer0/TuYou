@@ -67,6 +67,7 @@ public class OtherLogin extends AppCompatActivity implements View.OnClickListene
                 break;
         }
         if (platform != null) {
+            platform.SSOSetting(false);
             platform.setPlatformActionListener(this);
             platform.showUser(null);
         }
