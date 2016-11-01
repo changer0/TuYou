@@ -7,6 +7,7 @@ import org.greenrobot.eventbus.EventBusBuilder;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobSMS;
+import cn.sharesdk.framework.ShareSDK;
 
 /**
  * Created by liangyue on 16/10/31.
@@ -31,5 +32,8 @@ public class MainApplication extends Application {
         //.setFileExpiration(2500)
         //.build();
         //Bmob.initialize(config);
+
+        //ShareSDK的初始化
+        ShareSDK.initSDK(this);
     }
 }

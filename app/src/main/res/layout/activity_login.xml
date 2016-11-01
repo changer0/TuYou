@@ -18,13 +18,32 @@
         android:id="@+id/login_tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/login_viewPager"
         android:layout_width="match_parent"
-        android:layout_height="300dp"/>
+        android:layout_height="250dp"/>
 
+    <Button
+        android:id="@+id/other_login_btn_qq"
+        android:text="qq登陆"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/other_login_btn_sina"
+        android:text="新浪登陆"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/other_login_btn_wei_chat"
+        android:text="微信登陆"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
-
-
+    <Button
+        android:id="@+id/other_login_btn_cancel"
+        android:text="取消授权"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
