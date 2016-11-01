@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
         // Example of a call to a native method
     TextView tv = (TextView) findViewById(R.id.sample_text);
-    tv.setText(stringFromJNI());
+//    tv.setText(stringFromJNI());
     }
 
     /**
