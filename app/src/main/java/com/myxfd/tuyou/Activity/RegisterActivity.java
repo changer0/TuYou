@@ -48,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (e == null) {
                     Log.d(TAG, "done: 注册成功");
                 }else {
-                    Log.d(TAG, "done: "+e);
+                    Log.d(TAG, "done: "+e.getMessage());
                 }
             }
         });

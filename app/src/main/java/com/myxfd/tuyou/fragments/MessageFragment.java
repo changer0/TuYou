@@ -5,13 +5,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.adapters.MessageAdapter;
@@ -23,10 +27,11 @@ import java.util.Locale;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MessageFragment extends BaseFragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class MessageFragment extends BaseFragment {
     private List<String> list;
     private MessageAdapter adapter;
     private ListView listView;
+    private static final String TAG = "MessageFragment";
 
 
     public MessageFragment() {
@@ -54,19 +59,32 @@ public class MessageFragment extends BaseFragment implements AdapterView.OnItemC
         }
         adapter = new MessageAdapter(getContext(), list);
         listView.setAdapter(adapter);
-        listView.setOnItemLongClickListener(this);
+        this.registerForContextMenu(listView);
         return ret;
     }
 
+
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        PopupMenu popupMenu = new PopupMenu(getContext(), view);
-//        popupMenu.getMenuInflater().inflate(R.menu.item_message_menu);
-        return true;
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Message");
+        menu.setHeaderIcon(R.mipmap.icon);
+        menu.add(1, 1, 1, "del");
+        menu.add(1, 2, 1, "setTop");
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 1:
+                //删除
+                Log.d(TAG, "onContextItemSelected: " + "删除了一条记录");
+                break;
+            case 2:
+                //置顶
+                Log.d(TAG, "onContextItemSelected: " + "记录已置顶");
+                break;
+        }
+        return super.onContextItemSelected(item);
     }
 }
