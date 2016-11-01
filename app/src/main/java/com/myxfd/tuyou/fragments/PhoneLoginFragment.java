@@ -1,4 +1,4 @@
-package com.myxfd.tuyou.fragment;
+package com.myxfd.tuyou.fragments;
 
 
 import android.content.Context;
@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.MainActivity;
 
-import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
@@ -29,7 +28,7 @@ import cn.bmob.v3.listener.UpdateListener;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PhoneLoginFragment extends LoginBaseFragment implements View.OnClickListener {
+public class PhoneLoginFragment extends BaseFragment implements View.OnClickListener {
 
 
     private EditText mPhoneNumber;

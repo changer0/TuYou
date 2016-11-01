@@ -1,4 +1,4 @@
-package com.myxfd.tuyou.fragment;
+package com.myxfd.tuyou.fragments;
 
 
 import android.content.Context;
@@ -20,15 +20,13 @@ import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.MainActivity;
 import com.myxfd.tuyou.model.TuYouUser;
 
-import org.greenrobot.eventbus.EventBus;
-
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AcountLoginFragment extends LoginBaseFragment implements View.OnClickListener {
+public class AcountLoginFragment extends BaseFragment implements View.OnClickListener {
 
 
     private EditText mName;
