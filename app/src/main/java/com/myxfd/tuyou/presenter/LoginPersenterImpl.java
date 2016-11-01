@@ -9,12 +9,11 @@ import com.myxfd.tuyou.view.MainView;
  * Created by liangyue on 16/10/31.
  */
 
-
-public class LoginPersenterImpl implements LoginPresenter , OnLoginListener{
+class LoginPresenterImpl implements LoginPresenter , OnLoginListener{
     private TuYouUserBiz userBiz;
     private MainView mainView;
 
-    public LoginPersenterImpl(MainView mainView) {
+    public LoginPresenterImpl(MainView mainView) {
         this.mainView = mainView;
     }
 
