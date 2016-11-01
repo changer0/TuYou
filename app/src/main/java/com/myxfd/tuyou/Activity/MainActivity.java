@@ -1,4 +1,4 @@
-package com.myxfd.tuyou.Activity;
+package com.myxfd.tuyou.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity implements MainView{
 
     // Example of a call to a native method
     TextView tv = (TextView) findViewById(R.id.sample_text);
-    tv.setText(stringFromJNI());
+//    tv.setText(stringFromJNI());
     }
 
     /**
