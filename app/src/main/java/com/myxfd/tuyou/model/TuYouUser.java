@@ -17,6 +17,33 @@ public class TuYouUser extends BmobUser{
     private String birthday;//生日
     private Integer level;//等级
     private Double money;//余额
+    private String qqId;//qq号
+    private String sinaId;//新浪
+    private String weiChatId;//微信
+
+    public String getQqId() {
+        return qqId;
+    }
+
+    public void setQqId(String qqId) {
+        this.qqId = qqId;
+    }
+
+    public String getSinaId() {
+        return sinaId;
+    }
+
+    public void setSinaId(String sinaId) {
+        this.sinaId = sinaId;
+    }
+
+    public String getWeiChatId() {
+        return weiChatId;
+    }
+
+    public void setWeiChatId(String weiChatId) {
+        this.weiChatId = weiChatId;
+    }
 
     public Double getLat() {
         return lat;
