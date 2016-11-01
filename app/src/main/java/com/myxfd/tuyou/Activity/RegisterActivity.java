@@ -1,4 +1,4 @@
-package com.myxfd.tuyou.Activity;
+package com.myxfd.tuyou.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

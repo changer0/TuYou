@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.myxfd.tuyou.Activity.RegisterActivity">
+    tools:context="com.myxfd.tuyou.activity.RegisterActivity">
 
     <EditText
         android:id="@+id/reg_et_username"

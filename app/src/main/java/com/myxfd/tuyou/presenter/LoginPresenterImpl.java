@@ -6,10 +6,10 @@ import com.myxfd.tuyou.model.TuYouUser;
 import com.myxfd.tuyou.view.MainView;
 
 /**
- * Created by liangyue on 16/10/31.
+ * Created by Lulu on 2016/11/1.
  */
 
-class LoginPresenterImpl implements LoginPresenter , OnLoginListener{
+public class LoginPresenterImpl implements LoginPresenter , OnLoginListener {
     private TuYouUserBiz userBiz;
     private MainView mainView;
 
