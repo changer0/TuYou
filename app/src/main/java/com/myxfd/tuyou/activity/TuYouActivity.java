@@ -33,7 +33,6 @@ public class TuYouActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tu_you);
         pager = (ViewPager) findViewById(R.id.main_container);
         tabLayout = (TabLayout) findViewById(R.id.main_ty);
-
         //添加ViewPager
         manager = getSupportFragmentManager();
         List<BaseFragment> fragments = new ArrayList<>();
@@ -42,7 +41,6 @@ public class TuYouActivity extends AppCompatActivity {
         fragments.add(new CircleFragment());
         fragments.add(new MineFragment());
         //设置tabLayout
-
         adapter = new CommonFragmentPagerAdapter(manager, fragments);
         pager.setAdapter(adapter);
         //让tabLayout与ViewPager联动
