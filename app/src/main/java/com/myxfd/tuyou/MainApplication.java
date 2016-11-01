@@ -1,6 +1,9 @@
 package com.myxfd.tuyou;
 
 import android.app.Application;
+import android.os.RemoteException;
+
+import com.amap.api.maps2d.MapsInitializer;
 
 import cn.bmob.v3.Bmob;
 import cn.sharesdk.framework.ShareSDK;
@@ -30,5 +33,11 @@ public class MainApplication extends Application {
 
         //ShareSDK的初始化
         ShareSDK.initSDK(this);
+        //高德地图初始化
+        try {
+            MapsInitializer.initialize(getApplicationContext());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }
