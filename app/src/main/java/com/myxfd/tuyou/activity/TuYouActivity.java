@@ -1,6 +1,7 @@
 package com.myxfd.tuyou.activity;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import com.myxfd.tuyou.fragments.CircleFragment;
 import com.myxfd.tuyou.fragments.MapFragment;
 import com.myxfd.tuyou.fragments.MessageFragment;
 import com.myxfd.tuyou.fragments.MineFragment;
+import com.myxfd.tuyou.services.UploadNearbyInfoService;
 import com.myxfd.tuyou.widgets.ViewPagerCompat;
 
 
@@ -39,6 +41,8 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         setContentView(R.layout.activity_tu_you);
         pager = (ViewPagerCompat) findViewById(R.id.main_container);
 
+        // TODO: 2016/11/2 开启位置上传服务!!!! 以后必须修改到闪屏页中
+        startService(new Intent(this, UploadNearbyInfoService.class));
 
         //添加ViewPager
         manager = getSupportFragmentManager();
