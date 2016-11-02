@@ -20,6 +20,15 @@ public class TuYouUser extends BmobUser{
     private String qqId;//qq号
     private String sinaId;//新浪
     private String weiChatId;//微信
+    private String type;//账号类型
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getQqId() {
         return qqId;

@@ -25,7 +25,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         init();
-        
     }
 
     private void init() {
@@ -34,7 +33,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         register = (Button) findViewById(R.id.reg_btn_register);
         register.setOnClickListener(this);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -54,6 +52,5 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
             }
         });
-
     }
 }

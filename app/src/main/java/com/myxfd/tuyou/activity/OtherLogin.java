@@ -89,6 +89,7 @@ public class OtherLogin extends AppCompatActivity implements View.OnClickListene
             Object key = entry.getKey();
             Object value = entry.getValue();
             Log.d(TAG, "onComplete: key=>" + key + " : " + "value : " + value);
+
         }
     }
 

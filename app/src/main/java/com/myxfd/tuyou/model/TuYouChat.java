@@ -7,5 +7,6 @@ import cn.bmob.v3.BmobObject;
  */
 
 public class TuYouChat extends BmobObject {
-    // TODO: 2016/10/31 待定 
+    // TODO: 2016/10/31 待定
+
 }
