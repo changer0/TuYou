@@ -2,7 +2,6 @@ package com.myxfd.tuyou.fragments;
 
 
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,8 +28,13 @@ import com.amap.api.services.nearby.NearbyInfo;
 import com.amap.api.services.nearby.NearbySearch;
 import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
+import com.amap.api.services.nearby.UploadInfo;
+import com.amap.api.services.nearby.UploadInfoCallback;
 import com.myxfd.tuyou.R;
-import com.myxfd.tuyou.utils.MapUtil;
+
+import java.util.List;
+
+import cn.bmob.v3.BmobUser;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
 
@@ -83,6 +87,11 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 CameraUpdate changeLatLng = CameraUpdateFactory.changeLatLng(latLng);
                 aMap.animateCamera(changeLatLng);
 
+                //更新上传自身的位置信息
+                updateCurrentUserLocation(new LatLonPoint(latLng.latitude, latLng.longitude));
+                //在地图上添加其他的用户的点
+                addOtherUser(new LatLonPoint(latLng.latitude, latLng.longitude));
+
                 Toast.makeText(getContext(), "定位成功", Toast.LENGTH_SHORT).show();
             } else {
                 //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
@@ -108,7 +117,6 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View itemView = inflater.inflate(R.layout.fragment_map, container, false);
         //获取地图引用
         mapView = (MapView) itemView.findViewById(R.id.map_view);
@@ -118,10 +126,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         aMap = mapView.getMap();
         //信息窗体, 点击回调
         aMap.setOnInfoWindowClickListener(this);
-
         //开启定位
         startLocation();
-
         return itemView;
     }
 
@@ -158,15 +164,40 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
+    // -----------------------
+    // 更新当前的位置信息
+    private void updateCurrentUserLocation(final LatLonPoint point) {
+        NearbySearch search = NearbySearch.getInstance(getApplicationContext());
+        search.startUploadNearbyInfoAuto(new UploadInfoCallback() {
+            //设置自动上传数据和上传的间隔时间
+            @Override
+            public UploadInfo OnUploadInfoCallback() {
+                UploadInfo ret = new UploadInfo();
+                //得到当前的用户信息, 并上传
+                BmobUser bmobUser = BmobUser.getCurrentUser();
+                if (bmobUser != null) {
+                    ret.setPoint(point);
+                    //上传用户id信息
+                    ret.setUserID(bmobUser.getObjectId());
+                    // TODO: 2016/11/2 更新bmob数据库位置信息
+                    Log.d(TAG, "OnUploadInfoCallback: 上传的信息: userId:  " + ret.getUserID() + "\npoint: " + point.toString());
+                }
+                return ret;
+            }
+        }, 1000);
+
+
+    }
+
 
     // ---------------------------------------------------
     //在地图中添加其他用户的位置
-    private void addOtherUser() {
+    private void addOtherUser(LatLonPoint point) {
         //设置搜索条件
         NearbySearch.NearbyQuery query = new NearbySearch.NearbyQuery();
 
         //设置搜索的中心点
-        query.setCenterPoint(MapUtil.getCurrentUserLatLonPoint());
+        query.setCenterPoint(point);
         //设置搜索的坐标体系
         query.setCoordType(NearbySearch.AMAP);
         //设置搜索半径
@@ -189,19 +220,27 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     @Override
     public void onNearbyInfoSearched(NearbySearchResult nearbySearchResult, int resultCode) {
         //搜索周边附近用户回调处理
-        if(resultCode == 1000){
+        if (resultCode == 1000) {
             if (nearbySearchResult != null
                     && nearbySearchResult.getNearbyInfoList() != null
                     && nearbySearchResult.getNearbyInfoList().size() > 0) {
-                NearbyInfo nearbyInfo = nearbySearchResult.getNearbyInfoList().get(0);
+                List<NearbyInfo> list = nearbySearchResult.getNearbyInfoList();
+                for (NearbyInfo info : list) {
+                    LatLonPoint point = info.getPoint();
+                    MarkerOptions options = new MarkerOptions();
 
-                // TODO: 2016/11/2 待完成!!!
-                
+                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
+                            .position(new LatLng(point.getLatitude(), point.getLongitude()))
+                            .draggable(false)
+                            .title(info.getUserID());
+
+                    aMap.addMarker(options);
+                }
+
             } else {
-                Log.d(TAG, "onNearbyInfoSearched: 周边搜索结果为空");
+                Toast.makeText(getContext(), "附近暂无 图友", Toast.LENGTH_SHORT).show();
             }
-        }
-        else{
+        } else {
             Log.d(TAG, "onNearbyInfoSearched: 周边搜索出现异常，异常码为：" + resultCode);
         }
     }

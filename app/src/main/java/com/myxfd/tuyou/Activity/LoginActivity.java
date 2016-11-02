@@ -38,7 +38,7 @@ import cn.sharesdk.wechat.friends.Wechat;
 
 
 public class LoginActivity extends AppCompatActivity implements PlatformActionListener, View.OnClickListener {
-    
+
     private static final String TAG = "LoginActivity";
     private ArrayList<BaseFragment> mArrayList;
     private String currentPlatName;
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mContext=this;
+        mContext = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
 
@@ -79,18 +79,18 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         String name = platform.getName();
         currentPlatName = name;
         Log.d(TAG, "onComplete: name =>" + name);
-        switch (name){
+        switch (name) {
             case "QQ":
 //                Iterator<Map.Entry<String, Object>> ite = map.entrySet().iterator();
                 final String nickname = (String) map.get("nickname");
                 final String tuYouName = Tools.getRandomTuYouName();
-                final String tuYouPwd="12345678";
+                final String tuYouPwd = "12345678";
                 BmobQuery<TuYouUser> query = new BmobQuery<>();
-                query.addWhereEqualTo("username",currentPlatName);
+                query.addWhereEqualTo("username", currentPlatName);
                 query.findObjects(new FindListener<TuYouUser>() {
                     @Override
                     public void done(List<TuYouUser> list, BmobException e) {
-                        if (list.size() ==0) {
+                        if (list.size() == 0) {
                             //用户不存在
                             TuYouUser user = new TuYouUser();
                             user.setUsername(nickname);
@@ -100,19 +100,19 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                 @Override
                                 public void done(TuYouUser tuYouUser, BmobException e) {
                                     if (e != null) {
-                                        Log.d(TAG, "done1: "+e);
+                                        Log.d(TAG, "done1: " + e);
                                         int errorCode = e.getErrorCode();
-                                        if (errorCode==202){
+                                        if (errorCode == 202) {
                                             Log.d(TAG, "done: 当前QQ已经注册过了");
                                         }
-                                    }else {
-                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                    } else {
+                                        Intent intent = new Intent(mContext, TuYouActivity.class);
                                         startActivity(intent);
                                     }
                                 }
                             });
-                        }else {
-                            Log.d(TAG, "done2: "+e);
+                        } else {
+                            Log.d(TAG, "done2: " + e);
                         }
                     }
                 });
@@ -120,10 +120,10 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                 break;
         }
         //遍历Map
-        Iterator ite =map.entrySet().iterator();
+        Iterator ite = map.entrySet().iterator();
         while (ite.hasNext()) {
             Log.d(TAG, "onComplete:  ");
-            Map.Entry entry = (Map.Entry)ite.next();
+            Map.Entry entry = (Map.Entry) ite.next();
             Object key = entry.getKey();
             Object value = entry.getValue();
             Log.d(TAG, "onComplete: key=>" + key + " : " + "value : " + value);
@@ -139,6 +139,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     public void onCancel(Platform platform, int i) {
 
     }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();

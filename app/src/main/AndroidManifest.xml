@@ -34,15 +34,16 @@
         <activity android:name=".activity.MainActivity">
         </activity>
         <activity android:name=".activity.LoginActivity">
-        </activity>
-        <activity android:name=".activity.RegisterActivity">
-        </activity>
-        <activity android:name=".activity.TuYouActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".activity.RegisterActivity">
+        </activity>
+        <activity android:name=".activity.TuYouActivity">
+
         </activity>
         <activity android:name=".activity.OtherLogin">
 
@@ -89,13 +90,7 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="06d4383a65fab5254403e874922b0138">
-            //开发者申请的key
         </meta-data>
-
-        <service
-            android:name=".services.UploadNearbyInfoService"
-            android:exported="false">
-        </service>
     </application>
 
 </manifest>
