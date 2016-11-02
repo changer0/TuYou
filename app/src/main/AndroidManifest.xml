@@ -32,8 +32,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity">
+
         </activity>
         <activity android:name=".activity.LoginActivity">
+
         </activity>
         <activity android:name=".activity.RegisterActivity">
         </activity>
@@ -44,14 +46,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.OtherLogin">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN"/> -->
+        <activity android:name=".activity.EditCircleMsgActivity">
 
-
-            <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
-            <!-- </intent-filter> -->
         </activity>
 
         <!-- shareSDK -->
@@ -92,10 +89,6 @@
             //开发者申请的key
         </meta-data>
 
-        <service
-            android:name=".services.UploadNearbyInfoService"
-            android:exported="false">
-        </service>
     </application>
 
 </manifest>

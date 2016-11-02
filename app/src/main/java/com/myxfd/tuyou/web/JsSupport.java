@@ -5,6 +5,7 @@ package com.myxfd.tuyou.web;
  */
 
 import android.content.Context;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
@@ -27,12 +28,17 @@ public class JsSupport {
         mContext = context;
     }
 
-    public String getJson() {
-        return mJson;
-    }
+
 
     public void setJson(String json) {
         mJson = json;
+    }
+
+
+    @JavascriptInterface
+    public String getJson() {
+        Log.d("1111111111111111", "getJson: "+mJson);
+        return mJson;
     }
 
     @JavascriptInterface
