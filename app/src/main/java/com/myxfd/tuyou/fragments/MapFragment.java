@@ -31,78 +31,29 @@ import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
 import com.amap.api.services.nearby.UploadInfoCallback;
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.model.TuYouUser;
 
 import java.util.List;
 
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener {
+public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener, AMapLocationListener {
 
     private static final String TAG = "MapFragment";
 
     private MapView mapView;
-
-    private Fragment circleFragment, mineFragment, mapFragment, messageFragment;
-    private FragmentManager manager;
     private AMap aMap;
     //声明AMapLocationClient类对象
     public AMapLocationClient mLocationClient = null;
     //配置信息
     private AMapLocationClientOption mLocationOption;
-
-    //声明定位回调监听器
-    public AMapLocationListener mLocationListener = new AMapLocationListener() {
-        @Override
-        public void onLocationChanged(AMapLocation location) {
-
-            if (location.getErrorCode() == 0) {
-                //定位成功
-                Log.d(TAG, "onLocationChanged: location => " + location.getLongitude() + " : " + location.getLatitude());
-
-                //将定位信息显示到地图上
-                MarkerOptions markerOptions = new MarkerOptions();
-                //得到定位的位置
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                //设置标记物
-                markerOptions.position(latLng)
-                        .title(location.getCity())
-                        .snippet(location.getAddress())
-                        .draggable(false)//是否拖拽
-                        .icon(BitmapDescriptorFactory.fromBitmap(
-                                BitmapFactory.decodeResource(getResources(), R.mipmap.poi_marker_pressed)
-                        ));
-
-                //添加到地图上
-                aMap.addMarker(markerOptions);
-                //放大到最高级别
-                CameraUpdate zoom = CameraUpdateFactory.zoomTo(20);
-                aMap.animateCamera(zoom);
-
-                //始终保持当前位置是屏幕中心
-                CameraUpdate changeLatLng = CameraUpdateFactory.changeLatLng(latLng);
-                aMap.animateCamera(changeLatLng);
-
-                //更新上传自身的位置信息
-                updateCurrentUserLocation(new LatLonPoint(latLng.latitude, latLng.longitude));
-                //在地图上添加其他的用户的点
-                addOtherUser(new LatLonPoint(latLng.latitude, latLng.longitude));
-
-                Toast.makeText(getContext(), "定位成功", Toast.LENGTH_SHORT).show();
-            } else {
-                //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
-                Log.e(TAG, "location Error, ErrCode:"
-                        + location.getErrorCode() + ", errInfo:"
-                        + location.getErrorInfo());
-            }
-
-
-        }
-    };
 
     public MapFragment() {
 
@@ -136,7 +87,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         //初始化定位
         mLocationClient = new AMapLocationClient(getContext());
         //设置定位回调监听
-        mLocationClient.setLocationListener(mLocationListener);
+        mLocationClient.setLocationListener(this);
 
 
         //初始化AMapLocationClientOption对象
@@ -154,6 +105,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
         mLocationClient.startLocation();
+        //定位回调监听
+
     }
 
     // --------------------------------------------------
@@ -177,8 +130,27 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 BmobUser bmobUser = BmobUser.getCurrentUser();
                 if (bmobUser != null) {
                     ret.setPoint(point);
-                    //上传用户id信息
+                    //上传到高德, 用户id信息
                     ret.setUserID(bmobUser.getObjectId());
+
+                    TuYouUser user = new TuYouUser();
+
+                    user.setLat(point.getLatitude());
+                    user.setLgt(point.getLongitude());
+                    //上传位置信息到Bmob服务器
+                    user.update(bmobUser.getObjectId(), new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                Log.d(TAG, "OnUploadInfoCallback: 更新完成");
+                            } else {
+                                Log.e(TAG, "OnUploadInfoCallback: 更新失败");
+                            }
+                        }
+                    });
+
+
+
                     // TODO: 2016/11/2 更新bmob数据库位置信息
                     Log.d(TAG, "OnUploadInfoCallback: 上传的信息: userId:  " + ret.getUserID() + "\npoint: " + point.toString());
                 }
@@ -213,6 +185,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         NearbySearch.getInstance(getApplicationContext()).addNearbyListener(this);
     }
 
+    // ---------------------------------------------------------------------
+    //NearbySearch 附近搜索监听
     @Override
     public void onUserInfoCleared(int i) {
     }
@@ -252,6 +226,50 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
 
     // -------------------------------------------------------
+    //定位回调
+    @Override
+    public void onLocationChanged(AMapLocation location) {
+
+        if (location.getErrorCode() == 0) {
+            //定位成功
+            Log.d(TAG, "onLocationChanged: location => " + location.getLongitude() + " : " + location.getLatitude());
+
+            //将定位信息显示到地图上
+            MarkerOptions markerOptions = new MarkerOptions();
+            //得到定位的位置
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            //设置标记物
+            markerOptions.position(latLng)
+                    .title(location.getCity())
+                    .snippet(location.getAddress())
+                    .draggable(false)//是否拖拽
+                    .icon(BitmapDescriptorFactory.fromBitmap(
+                            BitmapFactory.decodeResource(getResources(), R.mipmap.poi_marker_pressed)
+                    ));
+
+            //添加到地图上
+            aMap.addMarker(markerOptions);
+            //放大到最高级别
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(20);
+            aMap.animateCamera(zoom);
+
+            //始终保持当前位置是屏幕中心
+            CameraUpdate changeLatLng = CameraUpdateFactory.changeLatLng(latLng);
+            aMap.animateCamera(changeLatLng);
+
+            //更新上传自身的位置信息
+            updateCurrentUserLocation(new LatLonPoint(latLng.latitude, latLng.longitude));
+            //在地图上添加其他的用户的点
+            addOtherUser(new LatLonPoint(latLng.latitude, latLng.longitude));
+
+            Toast.makeText(getContext(), "定位成功", Toast.LENGTH_SHORT).show();
+
+        } else {
+            //定位异常
+        }
+    }
+
+    // -------------------------------------------------------
     // 生命周期方法
     @Override
     public void onDestroy() {
@@ -259,6 +277,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         mLocationClient.stopLocation();//停止定位后，本地定位服务并不会被销毁
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mapView.onDestroy();
+        //清楚用户信息
+        NearbySearch.getInstance(getContext()).clearUserInfoAsyn();
         //释放附近资源
         NearbySearch.destroy();
         super.onDestroy();
