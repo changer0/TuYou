@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>图友圈</title>
+
+    <script type="text/javascript" src="jquery.js"></script>
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+            $("#head_background").click(function () {
+                        // $(this).hide();
+                        // window.tuyou.showToast("fushuang");
+                        var json = window.tuyou.getJson();
+                        var items = eval(json);
+                        for (var i = items.length - 1; i >= 0; i--) {
+                            item = items[i];
+                            var userName = item.user;
+                            var text = item.text;
+                            var time = item.updatedAt;
+                            var image="images/background.jpg";
+                            $("#head_background").after("<div><img id='userIcon' src= " + image + " /><div><p id='username'>" + userName + "</p></div><div><p id='content'>" + text+"</p></div></div>");
+                        }
+                    }
+            );
+        });
+
+    </script>
+
+    <style type="text/css">
+
+        img {
+            max-width: 100%;
+        }
+
+        #userIcon {
+            width: 50px;
+            height: 50px;
+            float: left;
+        }
+
+        #username {
+            width: 100%;
+            padding: 10px;
+        }
+
+        #content {
+            background: #eee;
+            margin-left: 50px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<img src="images/background.jpg" id="head_background">
+<div>
+    <img id='userIcon' src="images/background.jpg">
+    <p id='username'>用户名</p>
+    <p id='content'>内容</p>
+</div>
+</body>
+
+</html>
