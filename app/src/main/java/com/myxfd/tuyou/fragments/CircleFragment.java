@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
 
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.EditCircleMsgActivity;
+import com.myxfd.tuyou.web.JsSupport;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,7 +21,7 @@ import com.myxfd.tuyou.activity.EditCircleMsgActivity;
 public class CircleFragment extends BaseFragment implements View.OnClickListener {
 
 
-    private View mWebView;
+
 
     public CircleFragment() {
         // Required empty public constructor
@@ -38,8 +40,16 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.fragment_circle, container, false);
         Button button = (Button) view.findViewById(R.id.circle_sendShuoShuo);
         button.setOnClickListener(this);
-        mWebView = view.findViewById(R.id.circle_webView);
+        WebView mWebView = (WebView) view.findViewById(R.id.circle_webView);
         //开启js支持
+        WebSettings settings = mWebView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setSupportZoom(false);
+        settings.setAllowFileAccess(true);
+        // 设置WebView排版算法, 实现单列显示,不允许横向滚动
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+
+        JsSupport jsSupport = new JsSupport(getContext());
 
         return view;
     }

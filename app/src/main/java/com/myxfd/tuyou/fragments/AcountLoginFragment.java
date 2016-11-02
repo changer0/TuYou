@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.MainActivity;
+import com.myxfd.tuyou.activity.TuYouActivity;
 import com.myxfd.tuyou.model.TuYouUser;
 
 import cn.bmob.v3.exception.BmobException;
@@ -85,7 +86,7 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
             public void done(TuYouUser tuYouUser, BmobException e) {
                 if (e == null) {
                     Log.d(TAG, "done: 登录验证通过");
-                    Intent intent = new Intent(mContext, MainActivity.class);
+                    Intent intent = new Intent(mContext, TuYouActivity.class);
                     startActivity(intent);
                 } else {
                     Toast.makeText(getContext(), "用户名密码错误", Toast.LENGTH_SHORT).show();

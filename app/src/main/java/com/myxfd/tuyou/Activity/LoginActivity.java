@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                 final String tuYouName = Tools.getRandomTuYouName();
                 final String tuYouPwd="12345678";
                 BmobQuery<TuYouUser> query = new BmobQuery<>();
-                query.addWhereEqualTo("username",currentPlatName);
+                query.addWhereEqualTo("username",nickname);
                 query.findObjects(new FindListener<TuYouUser>() {
                     @Override
                     public void done(List<TuYouUser> list, BmobException e) {
@@ -99,19 +99,15 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                             user.signUp(new SaveListener<TuYouUser>() {
                                 @Override
                                 public void done(TuYouUser tuYouUser, BmobException e) {
-                                    if (e != null) {
-                                        Log.d(TAG, "done1: "+e);
-                                        int errorCode = e.getErrorCode();
-                                        if (errorCode==202){
-                                            Log.d(TAG, "done: 当前QQ已经注册过了");
-                                        }
-                                    }else {
-                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                    if (e==null){
+                                        Intent intent = new Intent(mContext, TuYouActivity.class);
                                         startActivity(intent);
                                     }
                                 }
                             });
                         }else {
+                            Intent intent = new Intent(mContext, TuYouActivity.class);
+                            startActivity(intent);
                             Log.d(TAG, "done2: "+e);
                         }
                     }
