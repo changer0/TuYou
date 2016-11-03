@@ -4,7 +4,6 @@ package com.myxfd.tuyou.fragments;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +28,10 @@ import com.amap.api.services.nearby.NearbySearch;
 import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
-import com.amap.api.services.nearby.UploadInfoCallback;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.model.TuYouUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobUser;
@@ -54,6 +53,11 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     public AMapLocationClient mLocationClient = null;
     //配置信息
     private AMapLocationClientOption mLocationOption;
+    //我的位置
+    private Marker myMarker;
+    // 关注的人的位置
+    private List<Marker> otherMarkers;
+    private NearbySearch nearbySearch;
 
     public MapFragment() {
 
@@ -69,10 +73,13 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View itemView = inflater.inflate(R.layout.fragment_map, container, false);
+        otherMarkers = new ArrayList<>();
         //获取地图引用
         mapView = (MapView) itemView.findViewById(R.id.map_view);
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，实现地图生命周期管理
         mapView.onCreate(savedInstanceState);
+        //初始化附近实例
+        nearbySearch = NearbySearch.getInstance(getApplicationContext());
         //给aMap赋值
         aMap = mapView.getMap();
         //信息窗体, 点击回调
@@ -98,14 +105,13 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 //        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
 
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
-        mLocationOption.setInterval(1000);
+        mLocationOption.setInterval(10000);
         //设置是否返回地址信息（默认返回地址信息）
         mLocationOption.setNeedAddress(true);
         //给定位客户端对象设置定位参数
         mLocationClient.setLocationOption(mLocationOption);
         //启动定位
         mLocationClient.startLocation();
-        //定位回调监听
 
     }
 
@@ -120,45 +126,36 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     // -----------------------
     // 更新当前的位置信息
     private void updateCurrentUserLocation(final LatLonPoint point) {
-        NearbySearch search = NearbySearch.getInstance(getApplicationContext());
-        search.startUploadNearbyInfoAuto(new UploadInfoCallback() {
-            //设置自动上传数据和上传的间隔时间
-            @Override
-            public UploadInfo OnUploadInfoCallback() {
-                UploadInfo ret = new UploadInfo();
-                //得到当前的用户信息, 并上传
-                BmobUser bmobUser = BmobUser.getCurrentUser();
-                if (bmobUser != null) {
-                    ret.setPoint(point);
-                    //上传到高德, 用户id信息
-                    ret.setUserID(bmobUser.getObjectId());
-
-                    TuYouUser user = new TuYouUser();
-
-                    user.setLat(point.getLatitude());
-                    user.setLgt(point.getLongitude());
-                    //上传位置信息到Bmob服务器
-                    user.update(bmobUser.getObjectId(), new UpdateListener() {
-                        @Override
-                        public void done(BmobException e) {
-                            if (e == null) {
-                                Log.d(TAG, "OnUploadInfoCallback: 更新完成");
-                            } else {
-                                Log.e(TAG, "OnUploadInfoCallback: 更新失败");
-                            }
-                        }
-                    });
 
 
+        //单次上传
+        UploadInfo uploadInfo = new UploadInfo();
+        uploadInfo.setCoordType(NearbySearch.AMAP);
+        uploadInfo.setPoint(point);
+        //得到当前的用户信息, 并上传
+        BmobUser bmobUser = BmobUser.getCurrentUser();
+        if (bmobUser != null) {
+            uploadInfo.setPoint(point);
+            //上传到高德, 用户id信息
+            uploadInfo.setUserID(bmobUser.getObjectId());
+            nearbySearch.uploadNearbyInfoAsyn(uploadInfo);
 
-                    // TODO: 2016/11/2 更新bmob数据库位置信息
-                    Log.d(TAG, "OnUploadInfoCallback: 上传的信息: userId:  " + ret.getUserID() + "\npoint: " + point.toString());
+            //上传位置信息到Bmob服务器
+            TuYouUser user = new TuYouUser();
+            user.setLat(point.getLatitude());
+            user.setLgt(point.getLongitude());
+            user.update(bmobUser.getObjectId(), new UpdateListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e == null) {
+                        Log.d(TAG, "OnUploadInfoCallback: 更新完成");
+                    } else {
+                        Log.e(TAG, "OnUploadInfoCallback: 更新失败");
+                    }
                 }
-                return ret;
-            }
-        }, 1000);
+            });
 
-
+        }
     }
 
 
@@ -179,10 +176,10 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         //设置查询的方式驾车还是距离
         query.setType(NearbySearchFunctionType.DRIVING_DISTANCE_SEARCH);
         //调用异步查询接口
-        NearbySearch.getInstance(getApplicationContext())
+        nearbySearch
                 .searchNearbyInfoAsyn(query);
         //添加回调监听
-        NearbySearch.getInstance(getApplicationContext()).addNearbyListener(this);
+        nearbySearch.addNearbyListener(this);
     }
 
     // ---------------------------------------------------------------------
@@ -199,6 +196,13 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                     && nearbySearchResult.getNearbyInfoList() != null
                     && nearbySearchResult.getNearbyInfoList().size() > 0) {
                 List<NearbyInfo> list = nearbySearchResult.getNearbyInfoList();
+
+                //清空Marker
+                for (int i = 0; i < otherMarkers.size(); i++) {
+                    otherMarkers.get(i).remove();
+                    otherMarkers.remove(i);
+                }
+
                 for (NearbyInfo info : list) {
                     LatLonPoint point = info.getPoint();
                     MarkerOptions options = new MarkerOptions();
@@ -208,7 +212,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                             .draggable(false)
                             .title(info.getUserID());
 
-                    aMap.addMarker(options);
+                    Marker marker = aMap.addMarker(options);
+                    otherMarkers.add(marker);
                 }
 
             } else {
@@ -248,7 +253,11 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                     ));
 
             //添加到地图上
-            aMap.addMarker(markerOptions);
+            if (myMarker != null) {
+                myMarker.remove();//先清掉
+            }
+            myMarker = aMap.addMarker(markerOptions);
+
             //放大到最高级别
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(20);
             aMap.animateCamera(zoom);
@@ -278,7 +287,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mapView.onDestroy();
         //清楚用户信息
-        NearbySearch.getInstance(getContext()).clearUserInfoAsyn();
+        nearbySearch.clearUserInfoAsyn();
         //释放附近资源
         NearbySearch.destroy();
         super.onDestroy();
