@@ -1,5 +1,9 @@
 package com.myxfd.tuyou.model;
 
+import android.icu.text.SimpleDateFormat;
+import android.os.SystemClock;
+
+import java.util.Calendar;
 import java.util.Date;
 
 import cn.bmob.v3.BmobUser;
@@ -14,13 +18,48 @@ public class TuYouUser extends BmobUser{
     private Double lgt;//经度
     private String icon;//用户头像
     private String sex;//性别
-    private String birthday;//生日
+    private Long birthday;//生日
     private Integer level;//等级
     private Double money;//余额
     private String qqId;//qq号
     private String sinaId;//新浪
     private String weiChatId;//微信
     private String type;//账号类型
+
+    //注意此项不用与上传Bmob, 仅作为RecycleView中使用
+    private int distance;// 与当前用户的距离
+
+    //用于获取年龄
+    public int getAge() {
+        Calendar calendar = Calendar.getInstance();
+        Date b = new Date(birthday);
+        Date t = new Date(System.currentTimeMillis());
+        calendar.setTime(b);
+        int by = calendar.get(Calendar.YEAR);
+        calendar.clear();
+        calendar.setTime(t);
+        int ty = calendar.get(Calendar.YEAR);
+        return ty - by;
+    }
+    //设置
+    public void setAge(int age) {
+        Calendar calendar = Calendar.getInstance();
+        Date t = new Date(System.currentTimeMillis());
+        calendar.setTime(t);
+        int ty = calendar.get(Calendar.YEAR);
+        calendar.clear();
+        int by = ty - age;
+        calendar.setTime(new Date(by));
+        birthday = calendar.getTimeInMillis();
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
 
     public String getType() {
         return type;
@@ -86,11 +125,11 @@ public class TuYouUser extends BmobUser{
         this.sex = sex;
     }
 
-    public String getBirthday() {
+    public Long getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(Long birthday) {
         this.birthday = birthday;
     }
 

@@ -4,8 +4,11 @@ package com.myxfd.tuyou.fragments;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -18,6 +21,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdate;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.UiSettings;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
@@ -29,13 +33,17 @@ import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.adapters.MapFriendsAdapter;
 import com.myxfd.tuyou.model.TuYouUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
@@ -43,50 +51,60 @@ import static cn.bmob.v3.Bmob.getApplicationContext;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener, AMapLocationListener {
+public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener, AMapLocationListener, View.OnTouchListener {
 
     private static final String TAG = "MapFragment";
-
     private MapView mapView;
     private AMap aMap;
-    //声明AMapLocationClient类对象
-    public AMapLocationClient mLocationClient = null;
-    //配置信息
-    private AMapLocationClientOption mLocationOption;
-    //我的位置
-    private Marker myMarker;
-    // 关注的人的位置
-    private List<Marker> otherMarkers;
+    public AMapLocationClient mLocationClient ; //声明AMapLocationClient类对象
+    private AMapLocationClientOption mLocationOption;//配置信息
     private NearbySearch nearbySearch;
+    private Marker myMarker;   //我的地图标志
+    private List<Marker> otherMarkers;// 关注的人的地图标志
+    private List<TuYouUser> otherUsers;
+    private boolean isDrag;//是否是拖拽状态
+    private RecyclerView recyclerView; //显示附近人的列表
+    private MapFriendsAdapter mAdapter;
 
     public MapFragment() {
-
     }
-
     @Override
     public String getFragmentTitle() {
         return "地图";
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View itemView = inflater.inflate(R.layout.fragment_map, container, false);
         otherMarkers = new ArrayList<>();
-        //获取地图引用
-        mapView = (MapView) itemView.findViewById(R.id.map_view);
+        otherUsers = new Vector<>();
+
+        mapView = (MapView) itemView.findViewById(R.id.map_view);//获取地图引用
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，实现地图生命周期管理
         mapView.onCreate(savedInstanceState);
-        //初始化附近实例
-        nearbySearch = NearbySearch.getInstance(getApplicationContext());
-        //给aMap赋值
-        aMap = mapView.getMap();
-        //信息窗体, 点击回调
-        aMap.setOnInfoWindowClickListener(this);
-        //开启定位
-        startLocation();
+        mapView.setOnTouchListener(this); //设置触摸监听
+        nearbySearch = NearbySearch.getInstance(getApplicationContext());  //初始化附近实例
+        aMap = mapView.getMap(); //给aMap赋值
+        aMap.setOnInfoWindowClickListener(this);//信息窗体, 点击回调
+        startLocation(); //开启定位
+        UiSettings settings = aMap.getUiSettings(); //得到高德UI设置项
+        settings.setCompassEnabled(true);//指南针
+        settings.setMyLocationButtonEnabled(true);//定位控件
+
+        initRecycle(itemView);//初始化RecycleView
         return itemView;
+    }
+    // ------------------------------------------------
+    //初始化RecycleView
+    private void initRecycle(View itemView) {
+        RecyclerView recyclerView = (RecyclerView) itemView.findViewById(R.id.map_recycle);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        // TODO: 2016/11/3 添加实体类
+        if (otherUsers != null) {
+            mAdapter = new MapFriendsAdapter(getContext(), otherUsers);
+            recyclerView.setAdapter(mAdapter);
+        }
+
     }
 
     //定位方法
@@ -95,13 +113,11 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         mLocationClient = new AMapLocationClient(getContext());
         //设置定位回调监听
         mLocationClient.setLocationListener(this);
-
-
         //初始化AMapLocationClientOption对象
         mLocationOption = new AMapLocationClientOption();
 //        设置定位模式为AMapLocationMode.Hight_Accuracy，高精度模式。
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-//        //设置定位模式为AMapLocationMode.Battery_Saving，低功耗模式。
+        //设置定位模式为AMapLocationMode.Battery_Saving，低功耗模式。
 //        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
 
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
@@ -116,7 +132,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     }
 
     // --------------------------------------------------
-    // 信息窗体回调监听
+    // 高德地图信息窗体回调监听
     @Override
     public void onInfoWindowClick(Marker marker) {
         marker.hideInfoWindow();//隐藏信息窗体
@@ -124,10 +140,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     }
 
     // -----------------------
-    // 更新当前的位置信息
+    // 更新当前用户的位置信息
     private void updateCurrentUserLocation(final LatLonPoint point) {
-
-
         //单次上传
         UploadInfo uploadInfo = new UploadInfo();
         uploadInfo.setCoordType(NearbySearch.AMAP);
@@ -139,6 +153,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
             //上传到高德, 用户id信息
             uploadInfo.setUserID(bmobUser.getObjectId());
             nearbySearch.uploadNearbyInfoAsyn(uploadInfo);
+            Log.d(TAG, "updateCurrentUserLocation: 上传高德用户信息");
 
             //上传位置信息到Bmob服务器
             TuYouUser user = new TuYouUser();
@@ -157,7 +172,6 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
         }
     }
-
 
     // ---------------------------------------------------
     //在地图中添加其他用户的位置
@@ -183,7 +197,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     }
 
     // ---------------------------------------------------------------------
-    //NearbySearch 附近搜索监听
+    //NearbySearch 附近搜索回调接口
     @Override
     public void onUserInfoCleared(int i) {
     }
@@ -202,15 +216,15 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                     otherMarkers.get(i).remove();
                     otherMarkers.remove(i);
                 }
-
                 for (NearbyInfo info : list) {
+
+                    final int distance = info.getDistance();
 
                     //如果得到的附近的人是本人, 忽略
                     String userId = info.getUserID();
                     if (userId.equals(BmobUser.getCurrentUser().getObjectId())) {
                         continue;
                     }
-
                     LatLonPoint point = info.getPoint();
                     MarkerOptions options = new MarkerOptions();
                     options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
@@ -220,6 +234,26 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
                     Marker marker = aMap.addMarker(options);
                     otherMarkers.add(marker);
+
+                    BmobQuery<TuYouUser> query = new BmobQuery<>();
+                    query.getObject(userId, new QueryListener<TuYouUser>() {
+                        @Override
+                        public void done(TuYouUser user, BmobException e) {
+                            if (e == null) {
+                                if (user != null) {
+                                    user.setDistance(distance);
+                                    otherUsers.add(user);
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            } else {
+                                Log.d(TAG, "done: e ==> " + e.getMessage());
+                            }
+
+                        }
+                    });
+
+
+
                 }
 
             } else {
@@ -240,7 +274,6 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     //定位回调
     @Override
     public void onLocationChanged(AMapLocation location) {
-
         if (location.getErrorCode() == 0) {
             //定位成功
             Log.d(TAG, "onLocationChanged: location => " + location.getLongitude() + " : " + location.getLatitude());
@@ -263,14 +296,15 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 myMarker.remove();//先清掉
             }
             myMarker = aMap.addMarker(markerOptions);
-
             //放大到最高级别
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(20);
             aMap.animateCamera(zoom);
 
-            //始终保持当前位置是屏幕中心
-            CameraUpdate changeLatLng = CameraUpdateFactory.changeLatLng(latLng);
-            aMap.animateCamera(changeLatLng);
+            //如果此时不是拖拽状态应该始终保持当前位置是屏幕中心
+            if (!isDrag) {
+                CameraUpdate changeLatLng = CameraUpdateFactory.changeLatLng(latLng);
+                aMap.animateCamera(changeLatLng);
+            }
 
             //更新上传自身的位置信息
             updateCurrentUserLocation(new LatLonPoint(latLng.latitude, latLng.longitude));
@@ -282,6 +316,31 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         } else {
             //定位异常
         }
+    }
+
+    // --------------------------------------------------------------
+    // 用于处理MapView的触摸事件
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        boolean ret = false;
+        int action = event.getAction();
+        switch (v.getId()) {
+            case R.id.map_view:
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        isDrag = true;
+                        ret = true;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        isDrag = false;
+                        ret = true;
+                        break;
+                }
+
+                break;
+        }
+
+        return ret;
     }
 
     // -------------------------------------------------------
@@ -319,6 +378,4 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，实现地图生命周期管理
         mapView.onSaveInstanceState(outState);
     }
-
-
 }
