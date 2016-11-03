@@ -1,67 +1,156 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>图友圈</title>
 
     <script type="text/javascript" src="jquery.js"></script>
 
     <script type="text/javascript">
+			$(document).ready(function() {
 
+				$("#head_background").click(function() {
+					// $(this).hide();
+					// window.tuyou.showToast("fushuang");
+					var json = window.tuyou.getJson();
+					var items = eval(json);
+				});
 
-        $(document).ready(function () {
+				var json = window.tuyou.getJson();
+				var items = eval(json);
+				for(var i = items.length - 1; i >= 0; i--) {
+					item = items[i];
+					var userName = item.user;
+					var text = item.text;
+					var time = item.updatedAt;
+					var srcHeart = "images/heart.png";
+					var srcPinglun = "images/pinglun.png";
+					var image = "images/background.jpg";
+					$("#my_icon").after(
+						"<div id='item'>" +
+						"<img id = 'userIcon' src = " + image + " />" +
+						"<p id = 'username' > " + userName + "</p>" +
+						"<p id = 'content' > " + text + "</p> " +
+						"<div>" +
+						"<p id = 'time' > " + time + "</p> " +
+						"<img src = " + srcHeart + " id ='dianzan' />" +
+						"<img src = " + srcPinglun + " id ='pinglun' />" +
+						"</div>" +
+						"</div>");
 
-            $("#head_background").click(function () {
-                        // $(this).hide();
-                        // window.tuyou.showToast("fushuang");
-                        var json = window.tuyou.getJson();
-                        var items = eval(json);
-                        for (var i = items.length - 1; i >= 0; i--) {
-                            item = items[i];
-                            var userName = item.user;
-                            var text = item.text;
-                            var time = item.updatedAt;
-                            var image="images/background.jpg";
-                            $("#head_background").after("<div><img id='userIcon' src= " + image + " /><div><p id='username'>" + userName + "</p></div><div><p id='content'>" + text+"</p></div></div>");
-                        }
-                    }
-            );
-        });
+					$("#dianzan").click(function() {
+						window.tuyou.showToast("点赞")
+					});
+					$("#pinglun").click(function() {
+						window.tuyou.showToast("评论");
+					});
+				}
 
-    </script>
+			});
+		</script>
 
     <style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				max-width: 100%;
+			}
 
-        img {
-            max-width: 100%;
-        }
+			#head_background {
+				max-width: 100%;
+			}
 
-        #userIcon {
-            width: 50px;
-            height: 50px;
-            float: left;
-        }
+			#item {
+				margin: 15px 0px;
+			}
 
-        #username {
-            width: 100%;
-            padding: 10px;
-        }
+			#time {
+				font-size: 15px;
+				color: gray;
+			}
 
-        #content {
-            background: #eee;
-            margin-left: 50px;
-        }
+			#userIcon {
+				width: 50px;
+				height: 50px;
+				float: left;
+			}
 
-    </style>
+			#username {
+				width: 100%;
+				padding: 10px;
+				font-size: 23px;
+				font-weight: bold;
+			}
+
+			#content {
+				background: #eee;
+				margin-left: 50px;
+			}
+
+			#dianzan {
+				display: inline;
+				width: 20px;
+				height: 20px;
+				margin: 0px 15px 0px 75%;
+				position: relative;
+				right: 0;
+			}
+
+			#pinglun {
+				display: inline;
+				width: 20px;
+				height: 20px;
+
+			}
+
+			#foot {
+				display: block;
+				clear: both;
+			}
+			#my_icon{
+				width: 70px;
+				height: 70px;
+				right: -75%;
+				top: -40px;
+				position: relative;
+			}
+		</style>
 
 </head>
 
 <body>
 <img src="images/background.jpg" id="head_background">
-<div>
-    <img id='userIcon' src="images/background.jpg">
+<img src="images/icon.jpg" id="my_icon" />
+<div id='item'>
+    <img id='userIcon' src="+image+" />
     <p id='username'>用户名</p>
-    <p id='content'>内容</p>
+    <p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
+    <div id="foot">
+        <p id='time'>2016 03 03</p>
+        <img src="images/heart.png" id='dianzan' />
+        <img src="images/pinglun.png" id='pinglun' />
+    </div>
+</div>
+<div id='item'>
+    <img id='userIcon' src="+image+" />
+    <p id='username'>用户名</p>
+    <p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
+    <div id="foot">
+        <p id='time'>2016 03 03</p>
+        <img src="images/heart.png" id='dianzan' />
+        <img src="images/pinglun.png" id='pinglun' />
+    </div>
+</div>
+<div id='item'>
+    <img id='userIcon' src="+image+" />
+    <p id='username'>用户名</p>
+    <p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
+    <div id="foot">
+        <p id='time'>2016 03 03</p>
+        <img src="images/heart.png" id='dianzan' />
+        <img src="images/pinglun.png" id='pinglun' />
+    </div>
 </div>
 </body>
 
