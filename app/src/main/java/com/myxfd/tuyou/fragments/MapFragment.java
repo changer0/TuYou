@@ -186,9 +186,9 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         //设置搜索半径
         query.setRadius(1000);
         //设置查询的时间
-        query.setTimeRange(10000);
+        query.setTimeRange(5000);
         //设置查询的方式驾车还是距离
-        query.setType(NearbySearchFunctionType.DRIVING_DISTANCE_SEARCH);
+        query.setType(NearbySearchFunctionType.DISTANCE_SEARCH);
         //调用异步查询接口
         nearbySearch
                 .searchNearbyInfoAsyn(query);
@@ -216,9 +216,14 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                     otherMarkers.get(i).remove();
                     otherMarkers.remove(i);
                 }
+
+                //清空RecycleView中的数据
+                otherUsers.clear();
+                Log.d(TAG, "onNearbyInfoSearched: 附近用户的的个数" + list.size());
                 for (NearbyInfo info : list) {
 
                     final int distance = info.getDistance();
+                    Log.d(TAG, "done: 用户的距离: " + distance);
 
                     //如果得到的附近的人是本人, 忽略
                     String userId = info.getUserID();
@@ -232,6 +237,10 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                             .draggable(false)
                             .title(userId);
 
+                    Log.d(TAG, "onNearbyInfoSearched: 查询到的位置" + info.getPoint());
+                    Log.d(TAG, "onNearbyInfoSearched: 查询的的用户ID: " + info.getUserID());
+
+
                     Marker marker = aMap.addMarker(options);
                     otherMarkers.add(marker);
 
@@ -242,6 +251,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                             if (e == null) {
                                 if (user != null) {
                                     user.setDistance(distance);
+
                                     otherUsers.add(user);
                                     mAdapter.notifyDataSetChanged();
                                 }

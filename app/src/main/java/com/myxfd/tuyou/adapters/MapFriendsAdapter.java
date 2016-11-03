@@ -2,7 +2,6 @@ package com.myxfd.tuyou.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v4.util.SparseArrayCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +61,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
 
         private Button mBtnAdd;
         private TextView mTvAge;
-        private TextView mTvDuration;
+        private TextView mTvDistance;
         private ImageView mImgIcon;
         private TextView mName;
         private ImageView mSex;
@@ -71,7 +70,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
             super(itemView);
             mBtnAdd = ((Button) itemView.findViewById(R.id.item_map_friends_add));
             mTvAge = ((TextView) itemView.findViewById(R.id.item_map_friends_age));
-            mTvDuration = ((TextView) itemView.findViewById(R.id.item_map_friends_duration));
+            mTvDistance = ((TextView) itemView.findViewById(R.id.item_map_friends_duration));
             mImgIcon = ((ImageView) itemView.findViewById(R.id.item_map_friends_icon));
             mName = ((TextView) itemView.findViewById(R.id.item_map_friends_name));
             mSex = ((ImageView) itemView.findViewById(R.id.item_map_friends_sex));
@@ -80,7 +79,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
         public void bindView(int position, TuYouUser user, MapFriendsAdapter adapter) {
             mAdapter = adapter;
             mTvAge.setText(String.valueOf(user.getAge()));
-            mTvDuration.setText(String.valueOf(user.getDistance()));
+            mTvDistance.setText(String.valueOf(user.getDistance()));
             mName.setText(user.getUsername());
             Picasso.with(mImgIcon.getContext()).load(user.getIcon()).config(Bitmap.Config.ARGB_4444).into(mImgIcon);
             String sex = user.getSex();
@@ -99,7 +98,9 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             if (mAdapter != null) {
-                mAdapter.mOnItemClick.onItemClick(v);
+                if (mAdapter.mOnItemClick != null){
+                    mAdapter.mOnItemClick.onItemClick(v);
+                }
             }
         }
     }

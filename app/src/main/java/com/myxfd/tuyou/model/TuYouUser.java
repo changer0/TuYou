@@ -12,7 +12,7 @@ import cn.bmob.v3.BmobUser;
  * Created by Lulu on 2016/10/31.
  */
 
-public class TuYouUser extends BmobUser{
+public class TuYouUser extends BmobUser {
 
     private Double lat;//维度
     private Double lgt;//经度
@@ -31,16 +31,22 @@ public class TuYouUser extends BmobUser{
 
     //用于获取年龄
     public int getAge() {
-        Calendar calendar = Calendar.getInstance();
-        Date b = new Date(birthday);
-        Date t = new Date(System.currentTimeMillis());
-        calendar.setTime(b);
-        int by = calendar.get(Calendar.YEAR);
-        calendar.clear();
-        calendar.setTime(t);
-        int ty = calendar.get(Calendar.YEAR);
-        return ty - by;
+        int ret = 0;
+        if (birthday != null) {
+            Calendar calendar = Calendar.getInstance();
+            Date b = new Date(birthday);
+            Date t = new Date(System.currentTimeMillis());
+            calendar.setTime(b);
+            int by = calendar.get(Calendar.YEAR);
+            calendar.clear();
+            calendar.setTime(t);
+            int ty = calendar.get(Calendar.YEAR);
+            ret = ty - by;
+        }
+        return ret;
+
     }
+
     //设置
     public void setAge(int age) {
         Calendar calendar = Calendar.getInstance();
