@@ -204,13 +204,19 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 }
 
                 for (NearbyInfo info : list) {
+
+                    //如果得到的附近的人是本人, 忽略
+                    String userId = info.getUserID();
+                    if (userId.equals(BmobUser.getCurrentUser().getObjectId())) {
+                        continue;
+                    }
+
                     LatLonPoint point = info.getPoint();
                     MarkerOptions options = new MarkerOptions();
-
                     options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
                             .position(new LatLng(point.getLatitude(), point.getLongitude()))
                             .draggable(false)
-                            .title(info.getUserID());
+                            .title(userId);
 
                     Marker marker = aMap.addMarker(options);
                     otherMarkers.add(marker);
