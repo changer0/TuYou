@@ -2,9 +2,8 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>图友圈</title>
-
     <script type="text/javascript" src="jquery.js"></script>
 
     <script type="text/javascript">
@@ -19,8 +18,9 @@
 
 				var json = window.tuyou.getJson();
 				var items = eval(json);
-				for(var i = items.length - 1; i >= 0; i--) {
+				for(var i = 0; i < items.length - 1; i++) {
 					item = items[i];
+					var itemid=item.objectId;
 					var userName = item.user;
 					var text = item.text;
 					var time = item.updatedAt;
@@ -29,6 +29,7 @@
 					var image = "images/background.jpg";
 					$("#my_icon").after(
 						"<div id='item'>" +
+						"<p id='itemid'>"+itemid+"</p>"+
 						"<img id = 'userIcon' src = " + image + " />" +
 						"<p id = 'username' > " + userName + "</p>" +
 						"<p id = 'content' > " + text + "</p> " +
@@ -40,7 +41,8 @@
 						"</div>");
 
 					$("#dianzan").click(function() {
-						window.tuyou.showToast("点赞")
+						var strid=$(this).parent().siblings("#itemid").text();
+					    window.tuyou.onClickZan(strid);
 					});
 					$("#pinglun").click(function() {
 						window.tuyou.showToast("评论");
@@ -48,7 +50,8 @@
 				}
 
 			});
-		</script>
+
+    </script>
 
     <style type="text/css">
 			* {
@@ -68,6 +71,7 @@
 			#time {
 				font-size: 15px;
 				color: gray;
+				margin-left: 65%;
 			}
 
 			#userIcon {
@@ -78,7 +82,6 @@
 
 			#username {
 				width: 100%;
-				padding: 10px;
 				font-size: 23px;
 				font-weight: bold;
 			}
@@ -115,43 +118,29 @@
 				top: -40px;
 				position: relative;
 			}
-		</style>
+			#itemid{
+				visibility: hidden;
+			}
+
+    </style>
 
 </head>
 
 <body>
 <img src="images/background.jpg" id="head_background">
-<img src="images/icon.jpg" id="my_icon" />
-<div id='item'>
-    <img id='userIcon' src="+image+" />
-    <p id='username'>用户名</p>
-    <p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
-    <div id="foot">
-        <p id='time'>2016 03 03</p>
-        <img src="images/heart.png" id='dianzan' />
-        <img src="images/pinglun.png" id='pinglun' />
-    </div>
-</div>
-<div id='item'>
-    <img id='userIcon' src="+image+" />
-    <p id='username'>用户名</p>
-    <p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
-    <div id="foot">
-        <p id='time'>2016 03 03</p>
-        <img src="images/heart.png" id='dianzan' />
-        <img src="images/pinglun.png" id='pinglun' />
-    </div>
-</div>
-<div id='item'>
-    <img id='userIcon' src="+image+" />
-    <p id='username'>用户名</p>
-    <p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
-    <div id="foot">
-        <p id='time'>2016 03 03</p>
-        <img src="images/heart.png" id='dianzan' />
-        <img src="images/pinglun.png" id='pinglun' />
-    </div>
-</div>
+<img src="images/icon.jpg" id="my_icon"/>
+<!--<div id='item'>-->
+    <!--<p id='itemid'></p>-->
+    <!--<img id='userIcon' src="+image+"/>-->
+    <!--<p id='username'>用户名</p>-->
+    <!--<p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>-->
+    <!--<div id="foot">-->
+        <!--<p id='time'>2016 03 03</p>-->
+        <!--<img src="images/heart.png" id='dianzan'/>-->
+        <!--<img src="images/pinglun.png" id='pinglun'/>-->
+    <!--</div>-->
+<!--</div>-->
+
 </body>
 
 </html>

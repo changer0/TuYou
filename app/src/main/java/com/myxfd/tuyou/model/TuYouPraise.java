@@ -8,22 +8,22 @@ import cn.bmob.v3.BmobObject;
  */
 public class TuYouPraise extends BmobObject {
 
-    private TuYouTrack track;//说说
-    private TuYouUser user;//用户
+    private String mTrackId;
+    private String mFromUserId;
 
-    public TuYouTrack getTrack() {
-        return track;
+    public String getTrackId() {
+        return mTrackId;
     }
 
-    public void setTrack(TuYouTrack track) {
-        this.track = track;
+    public void setTrackId(String trackId) {
+        mTrackId = trackId;
     }
 
-    public TuYouUser getUser() {
-        return user;
+    public String getFromUserId() {
+        return mFromUserId;
     }
 
-    public void setUser(TuYouUser user) {
-        this.user = user;
+    public void setFromUserId(String fromUserId) {
+        mFromUserId = fromUserId;
     }
 }
