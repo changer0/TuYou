@@ -11,22 +11,22 @@ import cn.bmob.v3.BmobUser;
  */
 
 public class MapUtil {
-    public static LatLonPoint getCurrentUserLatLonPoint() {
-        LatLonPoint ret = null;
-        //得到当前的用户信息, 并上传
-        BmobUser bmobUser = BmobUser.getCurrentUser();
-        if (bmobUser != null) {
-            if (bmobUser instanceof TuYouUser) {
-                TuYouUser user = (TuYouUser) bmobUser;
-                //位置信息
-                Double lat = user.getLat();
-                Double lgt = user.getLgt();
-                if (lat != null && lgt != null) {
-                    ret = new LatLonPoint(lat, lgt);
-                }
-            }
-        }
-        return ret;
-    }
+//    public static LatLonPoint getCurrentUserLatLonPoint() {
+//        LatLonPoint ret = null;
+//        //得到当前的用户信息, 并上传
+//        BmobUser bmobUser = BmobUser.getCurrentUser();
+//        if (bmobUser != null) {
+//            if (bmobUser instanceof TuYouUser) {
+//                TuYouUser user = (TuYouUser) bmobUser;
+//                //位置信息
+//                Double lat = user.getLat();
+//                Double lgt = user.getLgt();
+//                if (lat != null && lgt != null) {
+//                    ret = new LatLonPoint(lat, lgt);
+//                }
+//            }
+//        }
+//        return ret;
+//    }
 
 }

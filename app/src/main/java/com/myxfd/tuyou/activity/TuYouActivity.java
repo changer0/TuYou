@@ -3,7 +3,6 @@ package com.myxfd.tuyou.activity;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
-
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,7 +36,6 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         setContentView(R.layout.activity_tu_you);
         pager = (ViewPagerCompat) findViewById(R.id.main_container);
 
-
         //添加ViewPager
         manager = getSupportFragmentManager();
         List<BaseFragment> fragments = new ArrayList<>();
@@ -49,8 +47,7 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         adapter = new CommonFragmentPagerAdapter(manager, fragments);
         pager.setAdapter(adapter);
         pager.addOnPageChangeListener(this);
-
-
+//        pager.setOffscreenPageLimit(3);
         mRadioGroup = (RadioGroup) findViewById(R.id.main_rg);
 
         mRadioGroup.setOnCheckedChangeListener(this);

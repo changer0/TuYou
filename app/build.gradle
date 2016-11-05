@@ -1,13 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        tuyoukey {
+            keyAlias 'tuyoukey'
+            keyPassword '123456'
+            storeFile file('../TuYouKey.jks')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 24
     buildToolsVersion "24.0.0"
-
-
     useLibrary 'org.apache.http.legacy'
-
-
     defaultConfig {
         applicationId "com.myxfd.tuyou"
         minSdkVersion 21
@@ -25,6 +29,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.tuyoukey
+        }
+        debug {
+            signingConfig signingConfigs.tuyoukey
         }
     }
     externalNativeBuild {
@@ -43,5 +51,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:24.2.1'
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:recyclerview-v7:24.2.1'
 }

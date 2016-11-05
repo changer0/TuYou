@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.RemoteException;
 
 import com.amap.api.maps2d.MapsInitializer;
+import com.amap.api.services.nearby.NearbySearch;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.EventBusBuilder;
@@ -41,6 +42,7 @@ public class MainApplication extends Application {
         //高德地图初始化
         try {
             MapsInitializer.initialize(getApplicationContext());
+            NearbySearch.getInstance(getApplicationContext());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
