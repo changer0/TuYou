@@ -4,10 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.myxfd.tuyou.R;
-import com.myxfd.tuyou.tools.Tools;
+import com.myxfd.tuyou.utils.Tools;
 import com.myxfd.tuyou.view.MainView;
 
 public class MainActivity extends AppCompatActivity implements MainView{

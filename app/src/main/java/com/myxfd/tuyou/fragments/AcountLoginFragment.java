@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.activity.LoginActivity;
 import com.myxfd.tuyou.activity.MainActivity;
 import com.myxfd.tuyou.activity.TuYouActivity;
 import com.myxfd.tuyou.model.TuYouUser;
@@ -63,7 +65,7 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
         View view = inflater.inflate(R.layout.fragment_acount_login, container, false);
         mName = (EditText) view.findViewById(R.id.fragment_Account_name);
         mPassword = (EditText) view.findViewById(R.id.fragment_Account_password);
-        mLogin = (Button) view.findViewById(R.id.fragment_Account_login);
+        mLogin = (Button) view.findViewById(R.id.fragment_account_login);
         mLogin.setOnClickListener(this);
         mContext = getContext();
         return view;
@@ -78,6 +80,7 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
     public void onClick(View v) {
         String name = mName.getText().toString();
         String pwd = mPassword.getText().toString();
+        final View tempView = v;
         TuYouUser user = new TuYouUser();
         user.setUsername(name);
         user.setPassword(pwd);
@@ -88,8 +91,28 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
                     Log.d(TAG, "done: 登录验证通过");
                     Intent intent = new Intent(mContext, TuYouActivity.class);
                     startActivity(intent);
+                    if (mContext instanceof LoginActivity) {
+                        ((LoginActivity) mContext).finish();
+                    }
                 } else {
-                    Toast.makeText(getContext(), "用户名密码错误", Toast.LENGTH_SHORT).show();
+//
+                    // 9016: 没有联网
+                    // 101: 密码错误
+                    // 9018: 用户名为空
+                    if (e.getErrorCode() == 9016) {
+                        Snackbar.make(tempView, "亲, 请检查网络 ヾ(≧O≦)〃嗷~", Snackbar.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "亲, 请检查网络 ヾ(≧O≦)〃嗷~", Toast.LENGTH_SHORT).show();
+                    } else if (e.getErrorCode() == 101) {
+                        Snackbar.make(tempView, "亲, 用户名密码错误!", Snackbar.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "亲, 用户名密码错误!", Toast.LENGTH_SHORT).show();
+                    } else if (e.getErrorCode() == 9018) {
+                        Snackbar.make(tempView, "亲, 请输入用户名", Snackbar.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "亲, 请输入用户名", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(tempView, "未知错误", Snackbar.LENGTH_SHORT).show();
+//                        Toast.makeText(mContext, "未知错误", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "done: 登录错误信息: " + e.getMessage() + " 错误码: " + e.getErrorCode());
+                    }
                 }
             }
         });
