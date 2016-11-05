@@ -1,7 +1,8 @@
 package com.myxfd.tuyou.activity;
 
-import android.support.v4.app.FragmentManager;
 
+import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         pager.addOnPageChangeListener(this);
 //        pager.setOffscreenPageLimit(3);
         mRadioGroup = (RadioGroup) findViewById(R.id.main_rg);
+
         mRadioGroup.setOnCheckedChangeListener(this);
         ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
 
