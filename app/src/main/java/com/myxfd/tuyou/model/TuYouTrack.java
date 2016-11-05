@@ -9,6 +9,7 @@ import cn.bmob.v3.BmobObject;
 public class TuYouTrack extends BmobObject {
     public final static Integer TYPE_IMAGE = 1;
     public final static Integer TYPE_VIDEO = 2;
+    public final static Integer TYPE_TEXT = 3;
     private String user;//用户id
     private String text;//内容
     private String image;//图片

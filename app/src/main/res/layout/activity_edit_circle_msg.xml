@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.myxfd.tuyou.activity.EditCircleMsgActivity">
+    tools:context="com.myxfd.tuyou.activity.EditCircleMsgActivity"
+    android:background="#d8dfdf">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -15,13 +16,34 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/edit_circle_msg_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            />
     </android.support.design.widget.AppBarLayout>
 
     <EditText
+        android:hint="这一刻的想法.."
         android:id="@+id/edit_circle_msg_content"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="所在位置"
+       android:drawableLeft="@mipmap/location"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@mipmap/location"
+        android:text="谁可以看"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@mipmap/location"
+        android:text="提醒谁看"/>
+
+
+
 
 
 </LinearLayout>

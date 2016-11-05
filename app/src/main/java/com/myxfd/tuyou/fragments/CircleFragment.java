@@ -1,11 +1,13 @@
 package com.myxfd.tuyou.fragments;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +16,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.amap.api.col.bu;
 import com.google.gson.Gson;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.EditCircleMsgActivity;
@@ -41,6 +47,8 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
     private WebView mWebView;
     private SwipeRefreshLayout mRefreshLayout;
     private ProgressBar mProgressBar;
+    private EditText mPingLunEdit;
+    private LinearLayout mLinearLayout;
 
     public CircleFragment() {
         // Required empty public constructor
@@ -60,6 +68,11 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         Button button = (Button) view.findViewById(R.id.circle_sendShuoShuo);
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.circle_swipeRefreshLayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.circle_progressBar);
+        mLinearLayout = (LinearLayout) view.findViewById(R.id.circle_pinglun_layout);
+        Button pinglun = (Button) view.findViewById(R.id.circle_pinglun_layout_btn);
+        pinglun.setOnClickListener(this);
+        mPingLunEdit = (EditText) view.findViewById(R.id.circle_pinglun_layout_edit);
+
 
         mRefreshLayout.setOnRefreshListener(this);
         button.setOnClickListener(this);
@@ -97,8 +110,37 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(getContext(), EditCircleMsgActivity.class);
-        startActivity(intent);
+        switch (v.getId()) {
+            case R.id.circle_sendShuoShuo:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("选择说说类型");
+                builder.setItems(new String[]{"文本说说", "图片说说", "视频说说"}, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                Intent intent = new Intent(getContext(), EditCircleMsgActivity.class);
+                                startActivity(intent);
+                                break;
+                            case 1:
+                                Toast.makeText(getContext(), "图片说说", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2:
+                                Toast.makeText(getContext(), "视频说说", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                break;
+
+            case R.id.circle_pinglun_layout_btn:
+                mLinearLayout.setVisibility(View.INVISIBLE);
+                break;
+
+        }
+
     }
 
     @Override
