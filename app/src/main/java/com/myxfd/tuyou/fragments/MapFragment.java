@@ -181,6 +181,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
     // ---------------------------------------------------
     //在地图中添加其他用户的位置
+    private boolean addListenter = false;
     private void addOtherUser(LatLonPoint point) {
         //设置搜索条件
         NearbySearch.NearbyQuery query = new NearbySearch.NearbyQuery();
@@ -199,7 +200,11 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         nearbySearch
                 .searchNearbyInfoAsyn(query);
         //添加回调监听
-        nearbySearch.addNearbyListener(this);
+        if (!addListenter) {
+            //避免重复设置监听
+            nearbySearch.addNearbyListener(this);
+            addListenter = true;
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -226,8 +231,11 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 //清空RecycleView中的数据
                 otherUsers.clear();
                 Log.d(TAG, "onNearbyInfoSearched: 附近用户的的个数" + list.size());
-                for (NearbyInfo info : list) {
 
+                int count = 0;
+
+                for (NearbyInfo info : list) {
+                    count++;
                     final int distance = info.getDistance();
                     Log.d(TAG, "done: 用户的距离: " + distance);
 
@@ -275,7 +283,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
 
                 }
-
+                Log.d(TAG, "onNearbyInfoSearched: Count => " + count);
             } else {
                 Toast.makeText(getContext(), "附近暂无 图友", Toast.LENGTH_SHORT).show();
             }
