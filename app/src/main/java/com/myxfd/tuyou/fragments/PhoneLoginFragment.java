@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -83,6 +84,14 @@ public class PhoneLoginFragment extends BaseFragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        //此时隐藏输入法
+        InputMethodManager manager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (manager != null) {
+            if (manager.isActive()) {
+                LoginActivity activity = (LoginActivity) mContext;
+                manager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }
         final View tempView = v;
         switch (v.getId()) {
             case R.id.fragment_Phone_sendSms:

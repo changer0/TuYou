@@ -2,7 +2,11 @@ package com.myxfd.tuyou.activity;
 
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -89,23 +93,24 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
     // RadioGroup的回调监听
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
+        int currentPosition = 0;
+
         switch (checkedId) {
             case R.id.main_rb_msg:
-                pager.setCurrentItem(0);
+                currentPosition = 0;
                 break;
             case R.id.main_rb_map:
-                pager.setCurrentItem(1);
+                currentPosition = 1;
                 break;
-
             case R.id.main_rb_circle:
-
-                pager.setCurrentItem(2);
+                currentPosition = 2;
                 break;
             case R.id.main_rb_mine:
-                pager.setCurrentItem(3);
+                currentPosition = 3;
                 break;
-
-
         }
+        pager.setCurrentItem(currentPosition);
+
+
     }
 }

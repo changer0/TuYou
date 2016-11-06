@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
@@ -80,8 +81,8 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         currentPlatName = name;
         Log.d(TAG, "onComplete: name =>" + name);
         switch (name) {
-            case "QQ" :
-                TuYouUser user = new TuYouUser();
+            case "QQ":
+                final TuYouUser user = new TuYouUser();
                 String tuYouPwd = "mustChange";
                 String username = "TuYou" + platform.getDb().getToken();
 
@@ -102,18 +103,42 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                             Log.d(TAG, "done1: " + e);
                             int errorCode = e.getErrorCode();
                             if (errorCode == 202) {
-                                Log.d(TAG, "done: 当前QQ已经注册过了");
-                                Intent intent = new Intent(mContext, TuYouActivity.class);
-                                startActivity(intent);
-                                finish();
+                                //直接登陆
+                                user.login(new SaveListener<TuYouUser>() {
+                                    @Override
+                                    public void done(TuYouUser user, BmobException e) {
+                                        if (e != null) {
+                                            Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                        } else {
+                                            Log.d(TAG, "done: 当前QQ已经注册过了");
+                                            Intent intent = new Intent(mContext, TuYouActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    }
+                                });
+
+
                             } else {
                                 // TODO: 2016/11/6 处理未知异常
 
                             }
                         } else {
-                            Intent intent = new Intent(mContext, TuYouActivity.class);
-                            startActivity(intent);
-                            finish();
+                            //直接登陆
+                            user.login(new SaveListener<TuYouUser>() {
+                                @Override
+                                public void done(TuYouUser user, BmobException e) {
+                                    if (e != null) {
+                                        Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                    } else {
+                                        Intent intent = new Intent(mContext, TuYouActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+                            });
+
+
                         }
                     }
                 });
