@@ -1,4 +1,4 @@
-package com.myxfd.tuyou.tools;
+package com.myxfd.tuyou.utils;
 
 import java.util.Random;
 

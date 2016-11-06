@@ -4,8 +4,10 @@ package com.myxfd.tuyou.activity;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -34,6 +36,12 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tu_you);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tu_you_tool_bar);
+        setSupportActionBar(toolbar);
+
+
         pager = (ViewPagerCompat) findViewById(R.id.main_container);
 
         //添加ViewPager

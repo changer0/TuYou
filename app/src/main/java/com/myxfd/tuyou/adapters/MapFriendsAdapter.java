@@ -83,9 +83,9 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
             mName.setText(user.getUsername());
             Picasso.with(mImgIcon.getContext()).load(user.getIcon()).config(Bitmap.Config.ARGB_4444).into(mImgIcon);
             String sex = user.getSex();
-            if (sex.equals("男")) {
+            if ("男".equals(sex)) {
                 mSex.setImageResource(R.mipmap.sex_boy);
-            } else if (sex.equals("女")) {
+            } else if ("女".equals(sex)) {
                 mSex.setImageResource(R.mipmap.sex_girl);
             } else {
                 //不知道
@@ -98,7 +98,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
         @Override
         public void onClick(View v) {
             if (mAdapter != null) {
-                if (mAdapter.mOnItemClick != null){
+                if (mAdapter.mOnItemClick != null) {
                     mAdapter.mOnItemClick.onItemClick(v);
                 }
             }
