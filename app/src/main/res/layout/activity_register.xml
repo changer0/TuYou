@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,137 +7,145 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E8FFC1"
-    android:orientation="vertical"
     android:padding="6dp"
     tools:context="com.myxfd.tuyou.activity.RegisterActivity">
 
-    <ImageView
-        android:src="@mipmap/ic_launcher"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
-        android:layout_width="200dp"
-        android:layout_height="200dp"/>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/reg_cv_username"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="15dp"
-        app:cardElevation="3dp"
-        app:cardMaxElevation="5dp"
-        app:cardPreventCornerOverlap="true"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="5dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:src="@mipmap/ic_launcher"/>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/reg_cv_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="3dp"
+            app:cardMaxElevation="5dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="5dp">
 
-            <TextView
-                android:id="@+id/reg_tv_username"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="5dp"
-                android:text="用户名: "/>
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/reg_et_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@null"
-                android:hint="请输入您的用户名"/>
+                <TextView
+                    android:id="@+id/reg_tv_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="5dp"
+                    android:text="用户名: "/>
 
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/reg_et_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:hint="请输入您的用户名"/>
 
-    </android.support.v7.widget.CardView>
+            </LinearLayout>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/reg_cv_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="15dp"
-        app:cardElevation="3dp"
-        app:cardMaxElevation="5dp"
-        app:cardPreventCornerOverlap="true"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="5dp">
+        </android.support.v7.widget.CardView>
 
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:id="@+id/reg_cv_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="3dp"
+            app:cardMaxElevation="5dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="5dp">
 
-            <TextView
-                android:id="@+id/reg_tv_password"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="5dp"
-                android:text="密码  : "/>
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/reg_et_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@null"
-                android:hint="请输入您的密码"/>
+                <TextView
+                    android:id="@+id/reg_tv_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="5dp"
+                    android:text="密码  : "/>
+
+                <EditText
+                    android:id="@+id/reg_et_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:hint="请输入您的密码"
+                    android:inputType="textPassword"/>
 
 
-        </LinearLayout>
+            </LinearLayout>
 
 
-    </android.support.v7.widget.CardView>
+        </android.support.v7.widget.CardView>
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/reg_cv_password2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:cardCornerRadius="15dp"
-        app:cardElevation="3dp"
-        app:cardMaxElevation="5dp"
-        app:cardPreventCornerOverlap="true"
-        app:cardUseCompatPadding="true"
-        app:contentPadding="5dp">
-
-        <LinearLayout
+        <android.support.v7.widget.CardView
+            android:id="@+id/reg_cv_password2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="3dp"
+            app:cardMaxElevation="5dp"
+            app:cardPreventCornerOverlap="true"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="5dp">
 
-            <TextView
-                android:id="@+id/reg_tv_password2"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="5dp"
-                android:text="重复密码: "/>
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/reg_et_password2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="@null"
-                android:hint="请再次输入密码"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/reg_tv_password2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:padding="5dp"
+                    android:text="重复密码: "/>
 
-    <Button
-        android:id="@+id/reg_btn_register"
-        android:text="注    册"
-        android:background="@color/colorApp3"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+                <EditText
+                    android:id="@+id/reg_et_password2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:hint="请再次输入密码"
+                    android:inputType="textPassword"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <Button
+            android:id="@+id/reg_btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorApp3"
+            android:text="注    册"/>
+
+    </LinearLayout>
 
 
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>
