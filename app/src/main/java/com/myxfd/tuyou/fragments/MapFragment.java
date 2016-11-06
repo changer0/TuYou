@@ -4,6 +4,7 @@ package com.myxfd.tuyou.fragments;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -33,10 +34,12 @@ import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.adapters.DividerItemDecoration;
 import com.myxfd.tuyou.adapters.MapFriendsAdapter;
 import com.myxfd.tuyou.model.TuYouUser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -102,7 +105,10 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     //初始化RecycleView
     private void initRecycle(View itemView) {
         RecyclerView recyclerView = (RecyclerView) itemView.findViewById(R.id.map_recycle);
+        //设置布局管理器
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());//设置添加动画
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
         // TODO: 2016/11/3 添加实体类
         if (otherUsers != null) {
             mAdapter = new MapFriendsAdapter(getContext(), otherUsers);
@@ -182,6 +188,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     // ---------------------------------------------------
     //在地图中添加其他用户的位置
     private boolean addListenter = false;
+
     private void addOtherUser(LatLonPoint point) {
         //设置搜索条件
         NearbySearch.NearbyQuery query = new NearbySearch.NearbyQuery();
@@ -201,7 +208,6 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 .searchNearbyInfoAsyn(query);
         //添加回调监听
         if (!addListenter) {
-            //避免重复设置监听
             nearbySearch.addNearbyListener(this);
             addListenter = true;
         }
@@ -232,10 +238,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 otherUsers.clear();
                 Log.d(TAG, "onNearbyInfoSearched: 附近用户的的个数" + list.size());
 
-                int count = 0;
 
                 for (NearbyInfo info : list) {
-                    count++;
                     final int distance = info.getDistance();
                     Log.d(TAG, "done: 用户的距离: " + distance);
 
@@ -270,8 +274,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                             if (e == null) {
                                 if (user != null) {
                                     user.setDistance(distance);
-
                                     otherUsers.add(user);
+                                    Collections.sort(otherUsers);
                                     mAdapter.notifyDataSetChanged();
                                 }
                             } else {
@@ -280,10 +284,9 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
                         }
                     });
-
-
                 }
-                Log.d(TAG, "onNearbyInfoSearched: Count => " + count);
+
+
             } else {
                 Toast.makeText(getContext(), "附近暂无 图友", Toast.LENGTH_SHORT).show();
             }

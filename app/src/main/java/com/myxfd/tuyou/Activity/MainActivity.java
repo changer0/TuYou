@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.myxfd.tuyou.R;
-import com.myxfd.tuyou.utils.Tools;
 import com.myxfd.tuyou.view.MainView;
 
 public class MainActivity extends AppCompatActivity implements MainView{
@@ -34,8 +33,6 @@ public class MainActivity extends AppCompatActivity implements MainView{
     }
 
     public void ceshi(View view) {
-        String s = Tools.getRandomTuYouName();
-        Log.d("11111111", "ceshi: "+s);
     }
 
 }

@@ -18,7 +18,6 @@ import com.myxfd.tuyou.fragments.AcountLoginFragment;
 import com.myxfd.tuyou.fragments.BaseFragment;
 import com.myxfd.tuyou.fragments.PhoneLoginFragment;
 import com.myxfd.tuyou.model.TuYouUser;
-import com.myxfd.tuyou.utils.Tools;
 
 import java.util.ArrayList;
 import java.util.HashMap;

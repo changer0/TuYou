@@ -15,10 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/main_rg"
-        android:background="@color/colorApp4"/>
+        android:background="#fff"
+        />
 
 
     <RadioGroup
+        android:background="#ddd"
         android:id="@+id/main_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -59,7 +58,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
 
         private MapFriendsAdapter mAdapter;
 
-        private Button mBtnAdd;
+        private ImageView mAdd;
         private TextView mTvAge;
         private TextView mTvDistance;
         private ImageView mImgIcon;
@@ -68,7 +67,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
 
         public MapViewHolder(View itemView) {
             super(itemView);
-            mBtnAdd = ((Button) itemView.findViewById(R.id.item_map_friends_add));
+            mAdd = ((ImageView) itemView.findViewById(R.id.item_map_friends_add));
             mTvAge = ((TextView) itemView.findViewById(R.id.item_map_friends_age));
             mTvDistance = ((TextView) itemView.findViewById(R.id.item_map_friends_duration));
             mImgIcon = ((ImageView) itemView.findViewById(R.id.item_map_friends_icon));
@@ -79,9 +78,9 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
         public void bindView(int position, TuYouUser user, MapFriendsAdapter adapter) {
             mAdapter = adapter;
             mTvAge.setText(String.valueOf(user.getAge()));
-            mTvDistance.setText(String.valueOf(user.getDistance()));
+            mTvDistance.setText(String.valueOf(user.getDistance()) + " 米");
             mName.setText(user.getUsername());
-            Picasso.with(mImgIcon.getContext()).load(user.getIcon()).config(Bitmap.Config.ARGB_4444).into(mImgIcon);
+            Picasso.with(mImgIcon.getContext()).load(user.getIcon()).config(Bitmap.Config.ARGB_8888).transform(new CircleTransform()).into(mImgIcon);
             String sex = user.getSex();
             if ("男".equals(sex)) {
                 mSex.setImageResource(R.mipmap.sex_boy);
@@ -90,9 +89,9 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
             } else {
                 //不知道
             }
-            mBtnAdd.setOnClickListener(this);
-            //用于点击后传递
-            mBtnAdd.setTag(user);
+            mAdd.setOnClickListener(this);
+            //用于点击后传递当前的User
+            mAdd.setTag(user);
         }
 
         @Override
