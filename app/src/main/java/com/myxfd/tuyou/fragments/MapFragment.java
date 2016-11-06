@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -56,7 +57,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     private static final String TAG = "MapFragment";
     private MapView mapView;
     private AMap aMap;
-    public AMapLocationClient mLocationClient ; //声明AMapLocationClient类对象
+    public AMapLocationClient mLocationClient; //声明AMapLocationClient类对象
     private AMapLocationClientOption mLocationOption;//配置信息
     private NearbySearch nearbySearch;
     private Marker myMarker;   //我的地图标志
@@ -68,10 +69,12 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
     public MapFragment() {
     }
+
     @Override
     public String getFragmentTitle() {
         return "地图";
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,6 +97,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         initRecycle(itemView);//初始化RecycleView
         return itemView;
     }
+
     // ------------------------------------------------
     //初始化RecycleView
     private void initRecycle(View itemView) {
@@ -142,6 +146,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     // -----------------------
     // 更新当前用户的位置信息
     private void updateCurrentUserLocation(final LatLonPoint point) {
+        //清除 用户信息
+//        nearbySearch.clearUserInfoAsyn();
         //单次上传
         UploadInfo uploadInfo = new UploadInfo();
         uploadInfo.setCoordType(NearbySearch.AMAP);
@@ -227,9 +233,14 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
                     //如果得到的附近的人是本人, 忽略
                     String userId = info.getUserID();
-                    if (userId.equals(BmobUser.getCurrentUser().getObjectId())) {
-                        continue;
+                    Log.d(TAG, "onNearbyInfoSearched: 当前用户ID: " + info.getUserID());
+                    BmobUser bmobUser = BmobUser.getCurrentUser();
+                    if (bmobUser != null) {
+                        if (userId.equals(bmobUser.getObjectId())) {
+                            continue;
+                        }
                     }
+
                     LatLonPoint point = info.getPoint();
                     MarkerOptions options = new MarkerOptions();
                     options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
@@ -261,7 +272,6 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
                         }
                     });
-
 
 
                 }
