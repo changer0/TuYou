@@ -1,26 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_tu_you"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.myxfd.tuyou.activity.TuYouActivity">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/main_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/main_ty"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/main_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#fcd5d5"
-        android:orientation="horizontal">
+        app:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    </android.support.design.widget.TabLayout>
-</LinearLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tu_you_tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"/>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/activity_tu_you"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize">
+
+        <com.myxfd.tuyou.widgets.ViewPagerCompat
+            android:id="@+id/main_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/main_rg"
+            android:background="@color/colorApp4"/>
+
+
+        <RadioGroup
+            android:id="@+id/main_rg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/main_rb_msg"
+                style="@style/RadioGroupStyle"
+                android:drawableTop="@mipmap/ic_msg"
+                android:text="消息"
+                />
+
+            <RadioButton
+                android:id="@+id/main_rb_map"
+                style="@style/RadioGroupStyle"
+                android:drawableTop="@mipmap/ic_map"
+                android:text="地图"/>
+
+            <RadioButton
+                android:id="@+id/main_rb_circle"
+                style="@style/RadioGroupStyle"
+                android:drawableTop="@mipmap/ic_map"
+                android:text="图友圈"/>
+
+            <RadioButton
+                android:id="@+id/main_rb_mine"
+                style="@style/RadioGroupStyle"
+                android:drawableTop="@mipmap/ic_mine"
+                android:text="我"/>
+
+        </RadioGroup>
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>
+

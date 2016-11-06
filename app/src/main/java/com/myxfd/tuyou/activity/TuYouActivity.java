@@ -1,13 +1,20 @@
 package com.myxfd.tuyou.activity;
 
 
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentManager;
-
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.adapters.CommonFragmentPagerAdapter;
@@ -16,23 +23,31 @@ import com.myxfd.tuyou.fragments.CircleFragment;
 import com.myxfd.tuyou.fragments.MapFragment;
 import com.myxfd.tuyou.fragments.MessageFragment;
 import com.myxfd.tuyou.fragments.MineFragment;
+import com.myxfd.tuyou.widgets.ViewPagerCompat;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TuYouActivity extends AppCompatActivity {
-    private Fragment circleFragment, mineFragment, mapFragment, messageFragment;
+public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, RadioGroup.OnCheckedChangeListener {
+
     private FragmentManager manager;
-    private ViewPager pager;
+    private ViewPagerCompat pager;
     private CommonFragmentPagerAdapter adapter;
-    private TabLayout tabLayout;
+    private RadioGroup mRadioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tu_you);
-        pager = (ViewPager) findViewById(R.id.main_container);
-        tabLayout = (TabLayout) findViewById(R.id.main_ty);
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tu_you_tool_bar);
+        setSupportActionBar(toolbar);
+
+
+        pager = (ViewPagerCompat) findViewById(R.id.main_container);
+
         //添加ViewPager
         manager = getSupportFragmentManager();
         List<BaseFragment> fragments = new ArrayList<>();
@@ -40,11 +55,62 @@ public class TuYouActivity extends AppCompatActivity {
         fragments.add(new MapFragment());
         fragments.add(new CircleFragment());
         fragments.add(new MineFragment());
-        //设置tabLayout
+
         adapter = new CommonFragmentPagerAdapter(manager, fragments);
         pager.setAdapter(adapter);
-        //让tabLayout与ViewPager联动
-        tabLayout.setupWithViewPager(pager);
+        pager.addOnPageChangeListener(this);
+//        pager.setOffscreenPageLimit(3);
+        mRadioGroup = (RadioGroup) findViewById(R.id.main_rg);
+
+        mRadioGroup.setOnCheckedChangeListener(this);
+        ((RadioButton) mRadioGroup.getChildAt(0)).setChecked(true);
+
     }
 
+
+    // -------------------------------------
+    // Viewpager的监听回调
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        View childAt = mRadioGroup.getChildAt(position);
+        if (childAt instanceof RadioButton) {
+            RadioButton radioButton = (RadioButton) childAt;
+            radioButton.setChecked(true);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    // ------------------------------------------
+    // RadioGroup的回调监听
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        int currentPosition = 0;
+
+        switch (checkedId) {
+            case R.id.main_rb_msg:
+                currentPosition = 0;
+                break;
+            case R.id.main_rb_map:
+                currentPosition = 1;
+                break;
+            case R.id.main_rb_circle:
+                currentPosition = 2;
+                break;
+            case R.id.main_rb_mine:
+                currentPosition = 3;
+                break;
+        }
+        pager.setCurrentItem(currentPosition);
+
+
+    }
 }

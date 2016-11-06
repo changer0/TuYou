@@ -1,13 +1,43 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.myxfd.tuyou.fragments.CircleFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="com.myxfd.tuyou.fragments.CircleFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="圈子"/>
+        android:layout_height="wrap_content"
+        android:background="#1d1e1e">
+        <Button
+            android:id="@+id/circle_sendShuoShuo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="发说说"/>
+    </FrameLayout>
 
-</FrameLayout>
+    <ProgressBar
+        android:id="@+id/circle_progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/circle_swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <WebView
+            android:id="@+id/circle_webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>

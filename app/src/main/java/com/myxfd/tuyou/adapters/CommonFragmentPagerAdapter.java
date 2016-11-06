@@ -18,7 +18,6 @@ public class CommonFragmentPagerAdapter extends FragmentPagerAdapter {
     public CommonFragmentPagerAdapter(FragmentManager fm, List<BaseFragment> fragmentList) {
         super(fm);
         fragments = fragmentList;
-
     }
 
 
