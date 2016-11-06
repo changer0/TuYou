@@ -42,10 +42,6 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         setContentView(R.layout.activity_tu_you);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tu_you_tool_bar);
-        setSupportActionBar(toolbar);
-
-
         pager = (ViewPagerCompat) findViewById(R.id.main_container);
 
         //添加ViewPager
