@@ -2,6 +2,8 @@ package com.myxfd.tuyou.model;
 
 import android.icu.text.SimpleDateFormat;
 import android.os.SystemClock;
+import android.util.Log;
+import android.widget.CompoundButton;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -12,8 +14,8 @@ import cn.bmob.v3.BmobUser;
  * Created by Lulu on 2016/10/31.
  */
 
-public class TuYouUser extends BmobUser {
-
+public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
+    private static final String TAG = "TuYouUser";
     private Double lat;//维度
     private Double lgt;//经度
     private String icon;//用户头像
@@ -51,13 +53,18 @@ public class TuYouUser extends BmobUser {
     public void setAge(int age) {
         Calendar calendar = Calendar.getInstance();
         Date t = new Date(System.currentTimeMillis());
+
+
         calendar.setTime(t);
         int ty = calendar.get(Calendar.YEAR);
+        System.out.println("年" + ty);
         calendar.clear();
-        int by = ty - age;
-        calendar.setTime(new Date(by));
+        int by = ty - age; //出生年份
+        System.out.println("by=>" + by);
+        calendar.set(by, 1, 1);
         birthday = calendar.getTimeInMillis();
     }
+
 
     public int getDistance() {
         return distance;
@@ -154,4 +161,12 @@ public class TuYouUser extends BmobUser {
     public void setMoney(Double money) {
         this.money = money;
     }
+
+    @Override
+    public int compareTo(TuYouUser o) {
+
+        return distance - o.distance;
+    }
+
+
 }
