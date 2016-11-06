@@ -6,22 +6,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="6dp"
+    android:background="#E8FFC1"
     tools:context="com.myxfd.tuyou.activity.RegisterActivity">
 
-    <EditText
-        android:id="@+id/reg_et_username"
+    <RelativeLayout
+        android:id="@+id/reg_rl_username"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/reg_et_password"
+        <TextView
+            android:id="@+id/reg_tv_username"
+            android:text="用户名: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:hint="请输入您的用户名"
+            android:id="@+id/reg_et_username"
+            android:layout_below="@+id/reg_tv_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/reg_rl_password"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/reg_btn_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="注册"/>
+        <TextView
+            android:id="@+id/reg_tv_password"
+            android:text="密码: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:hint="请输入您的密码"
+            android:id="@+id/reg_et_password"
+            android:layout_below="@+id/reg_tv_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/reg_rl_passwordagain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/reg_tv_passwordagain"
+            android:text="重复密码: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <EditText
+            android:hint="请再次输入密码"
+            android:id="@+id/reg_et_passwordagain"
+            android:layout_below="@+id/reg_tv_passwordagain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+
+
+
+
+
+
 
 </LinearLayout>

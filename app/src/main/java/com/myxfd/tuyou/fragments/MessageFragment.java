@@ -77,11 +77,11 @@ public class MessageFragment extends BaseFragment {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                //删除
+                //TODO:删除一条记录
                 Log.d(TAG, "onContextItemSelected: " + "删除了一条记录");
                 break;
             case 2:
-                //置顶
+                //TODO:将某一条记录置顶
                 Log.d(TAG, "onContextItemSelected: " + "记录已置顶");
                 break;
         }
