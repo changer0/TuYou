@@ -1,10 +1,12 @@
 package com.myxfd.tuyou.fragments;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -25,17 +28,24 @@ import com.amap.api.col.bu;
 import com.google.gson.Gson;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.EditCircleMsgActivity;
+import com.myxfd.tuyou.model.TuYouComment;
 import com.myxfd.tuyou.model.TuYouTrack;
 import com.myxfd.tuyou.web.BrowserInterface;
 import com.myxfd.tuyou.web.JsSupport;
 import com.myxfd.tuyou.web.MyWebChromeClient;
 import com.myxfd.tuyou.web.MyWebViewClient;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +59,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
     private ProgressBar mProgressBar;
     private EditText mPingLunEdit;
     private LinearLayout mLinearLayout;
+    private TuYouComment mTuYouComment;
 
     public CircleFragment() {
         // Required empty public constructor
@@ -59,6 +70,27 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         return "圈子";
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().register(this);
+        super.onDestroy();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReceiveCommentId(String id){
+        mTuYouComment = new TuYouComment();
+        mTuYouComment.setTrackId(id);
+        mLinearLayout.setVisibility(View.VISIBLE);
+
+        InputMethodManager imm = (InputMethodManager) mPingLunEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,10 +100,10 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         Button button = (Button) view.findViewById(R.id.circle_sendShuoShuo);
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.circle_swipeRefreshLayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.circle_progressBar);
-        mLinearLayout = (LinearLayout) view.findViewById(R.id.circle_pinglun_layout);
-        Button pinglun = (Button) view.findViewById(R.id.circle_pinglun_layout_btn);
+        mLinearLayout = (LinearLayout) view.findViewById(R.id.circle_comment_linearLayout);
+        Button pinglun = (Button) view.findViewById(R.id.circle_comment_layout_btn);
         pinglun.setOnClickListener(this);
-        mPingLunEdit = (EditText) view.findViewById(R.id.circle_pinglun_layout_edit);
+        mPingLunEdit = (EditText) view.findViewById(R.id.circle_comment_layout_edit);
 
 
         mRefreshLayout.setOnRefreshListener(this);
@@ -97,11 +129,22 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 Gson gson = new Gson();
                 String json = gson.toJson(list);
                 Log.d(TAG, "done: " + json);
-
                 jsSupport.setJson(json);
-                mWebView.addJavascriptInterface(jsSupport, "tuyou");
-                String path = "file:///android_asset/web/index.html";
-                mWebView.loadUrl(path);
+
+                BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
+                bmobQuery.findObjects(new FindListener<TuYouComment>() {
+                    @Override
+                    public void done(List<TuYouComment> list, BmobException e) {
+                        Gson gson = new Gson();
+                        String commmentjson = gson.toJson(list);
+                        Log.d(TAG, "done: "+commmentjson);
+                        jsSupport.setMcommentJson(commmentjson);
+                        mWebView.addJavascriptInterface(jsSupport, "tuyou");
+                        String path = "file:///android_asset/web/index.html";
+                        mWebView.loadUrl(path);
+                    }
+                });
+
             }
         });
 
@@ -135,12 +178,23 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 alertDialog.show();
                 break;
 
-            case R.id.circle_pinglun_layout_btn:
-                mLinearLayout.setVisibility(View.INVISIBLE);
+            case R.id.circle_comment_layout_btn:
+                String s = mPingLunEdit.getText().toString().trim();
+                mTuYouComment.setText(s);
+                String id = BmobUser.getCurrentUser().getObjectId();
+                mTuYouComment.setFromUserId(id);
+                mTuYouComment.save(new SaveListener<String>() {
+                    @Override
+                    public void done(String s, BmobException e) {
+                        if (e==null) {
+                            Toast.makeText(getContext(), "评论成功", Toast.LENGTH_SHORT).show();
+                            mLinearLayout.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                });
+
                 break;
-
         }
-
     }
 
     @Override

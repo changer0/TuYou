@@ -86,7 +86,6 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                 String tuYouPwd = "mustChange";
                 String username = "TuYou" + platform.getDb().getToken();
 
-
                 String sex = (String) map.get("gender");
                 String icon = (String) map.get("figureurl_qq_1");
                 user.setUsername(username);
@@ -118,10 +117,8 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                     }
                                 });
 
-
                             } else {
                                 // TODO: 2016/11/6 处理未知异常
-
                             }
                         } else {
                             //直接登陆
@@ -137,12 +134,9 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                     }
                                 }
                             });
-
-
                         }
                     }
                 });
-
 
                 break;
 
