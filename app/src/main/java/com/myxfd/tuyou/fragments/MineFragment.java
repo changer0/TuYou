@@ -38,14 +38,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         View ret = inflater.inflate(R.layout.fragment_mine, container, false);
         CardView cardView1 = (CardView) ret.findViewById(R.id.mine_cv_1);
         CardView cardView2 = (CardView) ret.findViewById(R.id.mine_cv_2);
-        CardView cardView3 = (CardView) ret.findViewById(R.id.mine_cv_3);
         CardView cardView4 = (CardView) ret.findViewById(R.id.mine_cv_4);
         CardView cardView5 = (CardView) ret.findViewById(R.id.mine_cv_5);
 
 
         cardView1.setOnClickListener(this);
         cardView2.setOnClickListener(this);
-        cardView3.setOnClickListener(this);
         cardView4.setOnClickListener(this);
         cardView5.setOnClickListener(this);
 
@@ -65,11 +63,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             case R.id.mine_cv_2:
                 //关注的人列表
                 intent = new Intent(getContext(), MineAttentionActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.mine_cv_3:
-                //充值
-                intent = new Intent(getContext(), MineSettingActivity.class);
                 startActivity(intent);
                 break;
             case R.id.mine_cv_4:
