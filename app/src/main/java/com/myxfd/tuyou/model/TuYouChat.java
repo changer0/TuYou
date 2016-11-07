@@ -15,7 +15,7 @@ public class TuYouChat extends BmobObject {
         return ChatContent;
     }
 
-    public void setChatContent(String chatContent) {
+    public void setChatContent(String chatContent){
         ChatContent = chatContent;
     }
 

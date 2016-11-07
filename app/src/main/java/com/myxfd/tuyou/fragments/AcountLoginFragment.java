@@ -112,6 +112,7 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
         final TuYouUser user = new TuYouUser();
         user.setUsername(name);
         user.setPassword(pwd);
+        EMClient.getInstance().logout(true);
         EMClient.getInstance().login(name, pwd, new EMCallBack() {
             @Override
             public void onSuccess() {
