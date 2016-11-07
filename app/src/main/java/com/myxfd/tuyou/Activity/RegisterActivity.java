@@ -56,7 +56,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         public void done(TuYouUser tuYouUser, BmobException e) {
                             if (e == null) {
                                 //立即登录, 登录成功后跳转
-
                                 tempUser.login(new SaveListener<TuYouUser>() { //登录
                                     @Override
                                     public void done(TuYouUser tuYouUser, BmobException e) {
