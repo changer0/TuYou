@@ -240,12 +240,12 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 Log.d(TAG, "onNearbyInfoSearched: 附近用户的的个数" + list.size());
 
 
-                for (NearbyInfo info : list) {
+                for (final NearbyInfo info : list) {
                     final int distance = info.getDistance();
                     Log.d(TAG, "done: 用户的距离: " + distance);
 
                     //如果得到的附近的人是本人, 忽略
-                    String userId = info.getUserID();
+                    final String userId = info.getUserID();
                     Log.d(TAG, "onNearbyInfoSearched: 当前用户ID: " + info.getUserID());
                     BmobUser bmobUser = BmobUser.getCurrentUser();
                     if (bmobUser != null) {
@@ -254,19 +254,10 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                         }
                     }
 
-                    LatLonPoint point = info.getPoint();
-                    MarkerOptions options = new MarkerOptions();
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
-                            .position(new LatLng(point.getLatitude(), point.getLongitude()))
-                            .draggable(false)
-                            .title(userId);
 
                     Log.d(TAG, "onNearbyInfoSearched: 查询到的位置" + info.getPoint());
                     Log.d(TAG, "onNearbyInfoSearched: 查询的的用户ID: " + info.getUserID());
 
-
-                    Marker marker = aMap.addMarker(options);
-                    otherMarkers.add(marker);
 
                     BmobQuery<TuYouUser> query = new BmobQuery<>();
                     query.getObject(userId, new QueryListener<TuYouUser>() {
@@ -274,6 +265,17 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                         public void done(TuYouUser user, BmobException e) {
                             if (e == null) {
                                 if (user != null) {
+
+                                    LatLonPoint point = info.getPoint();
+                                    MarkerOptions options = new MarkerOptions();
+                                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
+                                            .position(new LatLng(point.getLatitude(), point.getLongitude()))
+                                            .draggable(false)
+                                            .title(user.getUsername());
+                                    Marker marker = aMap.addMarker(options);
+                                    otherMarkers.add(marker);
+
+
                                     user.setDistance(distance);
                                     otherUsers.add(user);
                                     Collections.sort(otherUsers);
