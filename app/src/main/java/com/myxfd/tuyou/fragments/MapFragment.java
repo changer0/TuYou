@@ -285,11 +285,15 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                                     otherMarkers.add(marker);
                                     //添加用户
                                     user.setDistance(distance);
-                                    //不能重复添加相同用户
-                                    if (!otherUsers.contains(user)) {
-                                        otherUsers.add(user);
-                                        Collections.sort(otherUsers);
+
+                                    synchronized (this) {
+                                        //不能重复添加相同用户
+                                        if (!otherUsers.contains(user)) {
+                                            otherUsers.add(user);
+                                            Collections.sort(otherUsers);
+                                        }
                                     }
+
                                     mAdapter.notifyDataSetChanged();
                                 }
                             } else {
@@ -454,7 +458,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                                             }
                                         }
                                     });
-                                }else{
+                                } else {
                                     Snackbar.make(view, "不能重复关注", Snackbar.LENGTH_LONG).show();
                                 }
                             }

@@ -44,7 +44,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         mSetSex = (TextView) findViewById(R.id.user_tv_setSex);
         mSetAge = (TextView) findViewById(R.id.user_tv_setAge);
-        mSetCity = (TextView) findViewById(R.id.user_cv_city);
+        mSetCity = (TextView) findViewById(R.id.user_tv_city);
 
 
         mCurrentUser = BmobUser.getCurrentUser();
