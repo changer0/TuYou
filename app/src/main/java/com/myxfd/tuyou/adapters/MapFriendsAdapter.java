@@ -89,6 +89,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
             } else {
                 //不知道
             }
+            mAdd.setTag(user);
             mAdd.setOnClickListener(this);
             //用于点击后传递当前的User
             mAdd.setTag(user);

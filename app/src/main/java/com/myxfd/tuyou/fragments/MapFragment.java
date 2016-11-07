@@ -55,7 +55,7 @@ import static cn.bmob.v3.Bmob.getApplicationContext;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener, AMapLocationListener, View.OnTouchListener {
+public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener, AMapLocationListener, View.OnTouchListener, MapFriendsAdapter.OnItemClick {
 
     private static final String TAG = "MapFragment";
     private MapView mapView;
@@ -112,6 +112,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         // TODO: 2016/11/3 添加实体类
         if (otherUsers != null) {
             mAdapter = new MapFriendsAdapter(getContext(), otherUsers);
+            mAdapter.setOnItemClick(this);
             recyclerView.setAdapter(mAdapter);
         }
 
@@ -408,5 +409,15 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         super.onSaveInstanceState(outState);
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，实现地图生命周期管理
         mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onItemClick(View view) {
+        Object tag = view.getTag();
+        if (tag instanceof TuYouUser) {
+            TuYouUser tuYouUser = (TuYouUser) tag;
+            BmobUser currentUser = BmobUser.getCurrentUser();
+
+        }
     }
 }
