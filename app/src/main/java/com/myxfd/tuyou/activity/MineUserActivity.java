@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private TextView mSetSex;
     private BmobUser mCurrentUser;
     private TextView mSetAge;
+    private TuYouUser mTuYouUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +51,14 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void done(TuYouUser tuYouUser, BmobException e) {
                 if (e == null) {
+                    mTuYouUser = tuYouUser;
                     mSetSex.setText(tuYouUser.getSex());
-                    mSetAge.setText(tuYouUser.getAge());
+                    mSetAge.setText(String.valueOf(tuYouUser.getAge()));
                 } else {
                     Log.d(TAG, "done: e:" + e.getMessage());
                 }
             }
         });
-
 
 
         CardView cardViewIcon = (CardView) findViewById(R.id.user_cv_icon);
@@ -82,11 +84,9 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 dialog.dismiss();
                 switch (which) {
                     case 0:
-                        mSetSex.setText(items[0]);
                         updateSex(items[0]);
                         break;
                     case 1:
-                        mSetSex.setText(items[1]);
                         updateSex(items[1]);
                         break;
                 }
@@ -96,13 +96,14 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     }
 
     // 用于更新性别
-    private void updateSex(String sex) {
+    private void updateSex(final String sex) {
         TuYouUser tuYouUser = new TuYouUser();
         tuYouUser.setSex(sex);
         tuYouUser.update(mCurrentUser.getObjectId(), new UpdateListener() {
             @Override
             public void done(BmobException e) {
                 if (e == null) {
+                    mSetSex.setText(sex);
                     Snackbar.make(getWindow().getDecorView(), "修改成功", Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
@@ -114,18 +115,45 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private void dialogAge() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("修改年龄");
-        EditText age = new EditText(this);
-        builder.setView(age);
+        final EditText newAge = new EditText(this);
+
+        if (mTuYouUser != null) {
+            int age = mTuYouUser.getAge();
+            newAge.setText(String.valueOf(age));
+        }
+        builder.setView(newAge);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                TuYouUser tuyouUser = new TuYouUser();
-//                age.getText()
-
-
+                if (newAge != null) {
+                    final String ageStr = newAge.getText().toString().trim();
+                    int age = Integer.valueOf(ageStr);
+                    if (age > 0 && age < 150) {
+                        TuYouUser tuYouUser = new TuYouUser();
+                        tuYouUser.setAge(age);
+                        tuYouUser.update(mCurrentUser.getObjectId(), new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if (e == null) {
+                                    mSetAge.setText(ageStr);
+                                    Snackbar.make(getWindow().getDecorView(), "修改成功", Snackbar.LENGTH_SHORT).show();
+                                } else {
+                                    Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Snackbar.make(getWindow().getDecorView(), "我靠!! 你年龄超了!", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
             }
         });
-        builder.setNegativeButton("取消", null);
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
         builder.create().show();
 
     }
@@ -136,6 +164,10 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         switch (id) {
             case R.id.user_cv_sex:
                 dialogSex();
+                break;
+            case R.id.user_cv_age:
+                dialogAge();
+
                 break;
 
         }

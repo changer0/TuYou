@@ -188,7 +188,7 @@
 
             <TextView
                 android:id="@+id/user_tv_sign"
-                android:text="个性签名"
+                android:text="所在地区"
                 android:padding="10dp"
                 android:textSize="20dp"
                 android:layout_toRightOf="@+id/mine_iv_icon"
