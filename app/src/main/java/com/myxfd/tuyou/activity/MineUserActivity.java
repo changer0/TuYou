@@ -30,6 +30,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private BmobUser mCurrentUser;
     private TextView mSetAge;
     private TuYouUser mTuYouUser;
+    private TextView mSetCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         mSetSex = (TextView) findViewById(R.id.user_tv_setSex);
         mSetAge = (TextView) findViewById(R.id.user_tv_setAge);
+        mSetCity = (TextView) findViewById(R.id.user_cv_city);
 
 
         mCurrentUser = BmobUser.getCurrentUser();
@@ -54,6 +56,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                     mTuYouUser = tuYouUser;
                     mSetSex.setText(tuYouUser.getSex());
                     mSetAge.setText(String.valueOf(tuYouUser.getAge()));
+                    mSetCity.setText(tuYouUser.getCity());
                 } else {
                     Log.d(TAG, "done: e:" + e.getMessage());
                 }
@@ -65,7 +68,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         CardView cardViewUsername = (CardView) findViewById(R.id.user_cv_username);
         CardView cardViewSex = (CardView) findViewById(R.id.user_cv_sex);
         CardView cardViewAge = (CardView) findViewById(R.id.user_cv_age);
-        CardView cardViewSign = (CardView) findViewById(R.id.user_cv_sign);
+        CardView cardViewSign = (CardView) findViewById(R.id.user_cv_city);
 
         cardViewIcon.setOnClickListener(this);
         cardViewUsername.setOnClickListener(this);
@@ -155,6 +158,10 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
             }
         });
         builder.create().show();
+    }
+
+    private void upDateCity(){
+
 
     }
 
@@ -167,7 +174,8 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.user_cv_age:
                 dialogAge();
-
+                break;
+            case R.id.user_cv_city:
                 break;
 
         }
