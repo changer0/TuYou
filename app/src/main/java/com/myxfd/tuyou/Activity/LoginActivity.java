@@ -12,6 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.adapters.CommonFragmentPagerAdapter;
 import com.myxfd.tuyou.fragments.AcountLoginFragment;
@@ -107,6 +110,24 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                         if (e != null) {
                                             Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                                         } else {
+                                            EMClient.getInstance().logout(true);
+                                            EMClient.getInstance().login(user.getUsername(), user.getPassword(), new EMCallBack() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    EMClient.getInstance().chatManager().loadAllConversations();
+                                                    EMClient.getInstance().groupManager().loadAllGroups();
+                                                }
+
+                                                @Override
+                                                public void onError(int i, String s) {
+
+                                                }
+
+                                                @Override
+                                                public void onProgress(int i, String s) {
+
+                                                }
+                                            });
                                             Intent intent = new Intent(mContext, TuYouActivity.class);
                                             startActivity(intent);
                                             finish();
@@ -145,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     // qq登陆中用于新用户绑定登陆
     private void newUserBindQQ(String token, HashMap<String, Object> map, final TuYouUser user) {
         //新用户登陆, 绑定
-        String tuYouPwd = "mustChange";
+        final String tuYouPwd = "mustChange";
         String username = "TuYou" + token;//登陆用户名默认为TuYou+token
         String sex = (String) map.get("gender");
         String icon = (String) map.get("figureurl_qq_1");
@@ -157,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         //注册
         user.signUp(new SaveListener<TuYouUser>() {
             @Override
-            public void done(TuYouUser tuYouUser, BmobException e) {
+            public void done(final TuYouUser tuYouUser, BmobException e) {
                 if (e != null) {
                     // 网络异常: 9016
                     if (e.getErrorCode() == 9016) {
@@ -172,6 +193,34 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                     Log.d(TAG, "done: message: " + e.getMessage() + " code:" + e.getErrorCode());
                 } else {
                     //直接登陆
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            try {
+                                EMClient.getInstance().logout(true);
+                                EMClient.getInstance().createAccount(tuYouUser.getUsername(), tuYouUser.getPassword());
+                                EMClient.getInstance().login(tuYouUser.getUsername(), tuYouUser.getPassword(), new EMCallBack() {
+                                    @Override
+                                    public void onSuccess() {
+                                        EMClient.getInstance().chatManager().loadAllConversations();
+                                        EMClient.getInstance().groupManager().loadAllGroups();
+                                    }
+
+                                    @Override
+                                    public void onError(int i, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onProgress(int i, String s) {
+
+                                    }
+                                });
+                            } catch (HyphenateException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }.start();
                     user.login(new SaveListener<TuYouUser>() {
                         @Override
                         public void done(TuYouUser user, BmobException e) {

@@ -1,8 +1,10 @@
 package com.myxfd.tuyou.fragments;
 
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,9 +35,13 @@ import com.amap.api.services.nearby.NearbySearch;
 import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.activity.ChatActivity;
 import com.myxfd.tuyou.adapters.DividerItemDecoration;
 import com.myxfd.tuyou.adapters.MapFriendsAdapter;
+import com.myxfd.tuyou.model.TuYouRelation;
 import com.myxfd.tuyou.model.TuYouUser;
 
 import java.util.ArrayList;
@@ -47,8 +53,11 @@ import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import easeui.EaseConstant;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
 
@@ -109,7 +118,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置添加动画
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL_LIST));
-
+        // TODO: 2016/11/3 添加实体类
         if (otherUsers != null) {
             mAdapter = new MapFriendsAdapter(getContext(), otherUsers);
             mAdapter.setOnItemClick(this);
@@ -413,14 +422,57 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         mapView.onSaveInstanceState(outState);
     }
 
-    // -------------------------
-    // RecycleView 加关注事件
     @Override
-    public void onItemClick(View view) {
+    public void onItemClick(final View view) {
         Object tag = view.getTag();
         if (tag instanceof TuYouUser) {
-            TuYouUser user = (TuYouUser) tag;
-            Toast.makeText(getContext(), user.getUsername(), Toast.LENGTH_SHORT).show();
+            final TuYouUser tuYouUser = (TuYouUser) tag;
+            final BmobUser currentUser = BmobUser.getCurrentUser();
+            BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
+            tuYouUserBmobQuery.getObject(currentUser.getObjectId(), new QueryListener<TuYouUser>() {
+                @Override
+                public void done(final TuYouUser user, BmobException e) {
+                    if (e == null) {
+                        BmobQuery<TuYouRelation> tuYouRelationBmobQuery = new BmobQuery<>();
+                        tuYouRelationBmobQuery.addWhereEqualTo("fromUser", user.getObjectId());
+                        tuYouRelationBmobQuery.addWhereEqualTo("toUser", tuYouUser.getObjectId());
+                        tuYouRelationBmobQuery.findObjects(new FindListener<TuYouRelation>() {
+                            @Override
+                            public void done(List<TuYouRelation> list, BmobException e) {
+                                if (list == null || list.size() == 0) {
+                                    TuYouRelation tuYouRelation = new TuYouRelation();
+                                    tuYouRelation.setFromUser(user);
+                                    tuYouRelation.setToUser(tuYouUser);
+                                    tuYouRelation.save(new SaveListener<String>() {
+                                        @Override
+                                        public void done(String s, BmobException e) {
+                                            if (e == null) {
+                                                Snackbar.make(view, "关注成功", Snackbar.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                                }else{
+                                    Snackbar.make(view, "不能重复关注", Snackbar.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onItemMsgClick(View view) {
+        Object tag = view.getTag();
+        if (tag instanceof TuYouUser) {
+            TuYouUser tuYouUser = (TuYouUser) tag;
+            EMMessage txtSendMessage = EMMessage.createTxtSendMessage("hi", tuYouUser.getUsername());
+            EMClient.getInstance().chatManager().sendMessage(txtSendMessage);
+            Intent intent = new Intent(getContext(), ChatActivity.class);
+            intent.putExtra(EaseConstant.EXTRA_USER_ID, tuYouUser.getUsername());
+            startActivity(intent);
+
         }
     }
 }

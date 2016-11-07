@@ -53,6 +53,15 @@
         android:src="@mipmap/ic_add"
         />
 
+    <ImageView
+        android:id="@+id/item_map_friends_hi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/item_map_friends_add"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/ic_msg"
+        />
     <TextView
         android:id="@+id/item_map_friends_duration"
         android:layout_width="wrap_content"

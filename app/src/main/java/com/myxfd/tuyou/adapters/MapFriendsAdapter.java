@@ -56,6 +56,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
 
     private static class MapViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private final ImageView mHi;
         private MapFriendsAdapter mAdapter;
 
         private ImageView mAdd;
@@ -73,6 +74,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
             mImgIcon = ((ImageView) itemView.findViewById(R.id.item_map_friends_icon));
             mName = ((TextView) itemView.findViewById(R.id.item_map_friends_name));
             mSex = ((ImageView) itemView.findViewById(R.id.item_map_friends_sex));
+            mHi = ((ImageView) itemView.findViewById(R.id.item_map_friends_hi));
         }
 
         public void bindView(int position, TuYouUser user, MapFriendsAdapter adapter) {
@@ -89,22 +91,37 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
             } else {
                 //不知道
             }
+            mAdd.setTag(user);
             mAdd.setOnClickListener(this);
+            mHi.setTag(user);
+            mHi.setOnClickListener(this);
             //用于点击后传递当前的User
             mAdd.setTag(user);
         }
 
         @Override
         public void onClick(View v) {
-            if (mAdapter != null) {
-                if (mAdapter.mOnItemClick != null) {
-                    mAdapter.mOnItemClick.onItemClick(v);
-                }
+            switch (v.getId()) {
+                case R.id.item_map_friends_add:
+                    if (mAdapter != null) {
+                        if (mAdapter.mOnItemClick != null) {
+                            mAdapter.mOnItemClick.onItemClick(v);
+                        }
+                    }
+                    break;
+                case R.id.item_map_friends_hi:
+                    if (mAdapter != null) {
+                        if (mAdapter.mOnItemClick != null) {
+                            mAdapter.mOnItemClick.onItemMsgClick(v);
+                        }
+                    }
+                    break;
             }
         }
     }
 
     public interface OnItemClick {
         void onItemClick(View view);
+        void onItemMsgClick(View view);
     }
 }
