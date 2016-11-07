@@ -20,7 +20,7 @@
 
 
     <RadioGroup
-        android:background="#ddd"
+        android:background="@color/colorApp4"
         android:id="@+id/main_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
