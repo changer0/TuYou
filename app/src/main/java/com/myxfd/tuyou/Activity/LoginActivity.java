@@ -18,25 +18,29 @@ import com.myxfd.tuyou.fragments.AcountLoginFragment;
 import com.myxfd.tuyou.fragments.BaseFragment;
 import com.myxfd.tuyou.fragments.PhoneLoginFragment;
 import com.myxfd.tuyou.model.TuYouUser;
+import com.myxfd.tuyou.ndk.NativeHelper;
 
+import org.json.JSONObject;
+
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
-import cn.sharesdk.framework.PlatformDb;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.tencent.qq.QQ;
-import cn.sharesdk.wechat.friends.Wechat;
 
 
 public class LoginActivity extends AppCompatActivity implements PlatformActionListener, View.OnClickListener {
@@ -84,10 +88,9 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                 final TuYouUser user = new TuYouUser();
                 final String token = platform.getDb().getToken();
                 user.setQqToken(token);
-
                 //注册之前, 需要检查token是否在bmob中存在
                 BmobQuery<TuYouUser> query = new BmobQuery<>();
-                query.addWhereContains("qqToken", token);
+                query.addWhereEqualTo("qqToken", token);
                 query.findObjects(new FindListener<TuYouUser>() {
                     @Override
                     public void done(List<TuYouUser> list, BmobException e) {
@@ -95,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                             if (list.size() > 0) {
                                 //已经绑定过QQ, 直接登陆
                                 TuYouUser tuyouUser = list.get(0);
+                                // TODO: 2016/11/7 未完成qq的登陆问题
+                                tuyouUser.setPassword(tuyouUser.getPassword());
                                 //直接登陆
                                 tuyouUser.login(new SaveListener<TuYouUser>() {
                                     @Override
@@ -110,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                 });
                             } else {
                                 //新用戶注册并登录
-                                newUser(token, map, user);
+                                newUserBindQQ(token, map, user);
                             }
                         } else {
                             Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
@@ -137,7 +142,8 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         }
     }
 
-    private void newUser(String token, HashMap<String, Object> map, final TuYouUser user) {
+    // qq登陆中用于新用户绑定登陆
+    private void newUserBindQQ(String token, HashMap<String, Object> map, final TuYouUser user) {
         //新用户登陆, 绑定
         String tuYouPwd = "mustChange";
         String username = "TuYou" + token;//登陆用户名默认为TuYou+token
