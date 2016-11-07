@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     }
 
     @Override
-    public void onComplete(Platform platform, int i, HashMap<String, Object> map) {
+    public void onComplete(Platform platform, int i, final HashMap<String, Object> map) {
         String name = platform.getName();
 
         currentPlatName = name;
@@ -82,63 +82,40 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         switch (name) {
             case "QQ":
                 final TuYouUser user = new TuYouUser();
-                String tuYouPwd = "mustChange";
-                String username = "TuYou" + platform.getDb().getToken();
+                final String token = platform.getDb().getToken();
+                user.setQqToken(token);
 
-
-                String sex = (String) map.get("gender");
-                String icon = (String) map.get("figureurl_qq_1");
-                user.setUsername(username);
-                user.setPassword(tuYouPwd);
-                user.setSex(sex);
-                user.setIcon(icon);
-
-                user.setType(currentPlatName);
-
-                user.signUp(new SaveListener<TuYouUser>() {
+                //注册之前, 需要检查token是否在bmob中存在
+                BmobQuery<TuYouUser> query = new BmobQuery<>();
+                query.addWhereContains("qqToken", token);
+                query.findObjects(new FindListener<TuYouUser>() {
                     @Override
-                    public void done(TuYouUser tuYouUser, BmobException e) {
-                        if (e != null) {
-                            Log.d(TAG, "done1: " + e);
-                            int errorCode = e.getErrorCode();
-                            if (errorCode == 202) {
+                    public void done(List<TuYouUser> list, BmobException e) {
+                        if (e == null) {
+                            if (list.size() > 0) {
+                                //已经绑定过QQ, 直接登陆
+                                TuYouUser tuyouUser = list.get(0);
                                 //直接登陆
-                                user.login(new SaveListener<TuYouUser>() {
+                                tuyouUser.login(new SaveListener<TuYouUser>() {
                                     @Override
                                     public void done(TuYouUser user, BmobException e) {
                                         if (e != null) {
                                             Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                                         } else {
-                                            Log.d(TAG, "done: 当前QQ已经注册过了");
                                             Intent intent = new Intent(mContext, TuYouActivity.class);
                                             startActivity(intent);
                                             finish();
                                         }
                                     }
                                 });
-
-
                             } else {
-                                // TODO: 2016/11/6 处理未知异常
-
+                                //新用戶注册并登录
+                                newUser(token, map, user);
                             }
                         } else {
-                            //直接登陆
-                            user.login(new SaveListener<TuYouUser>() {
-                                @Override
-                                public void done(TuYouUser user, BmobException e) {
-                                    if (e != null) {
-                                        Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                                    } else {
-                                        Intent intent = new Intent(mContext, TuYouActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-                            });
-
-
+                            Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
                         }
+
                     }
                 });
 
@@ -158,6 +135,52 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
             Object value = entry.getValue();
             Log.d(TAG, "onComplete: key=>" + key + " : " + "value : " + value);
         }
+    }
+
+    private void newUser(String token, HashMap<String, Object> map, final TuYouUser user) {
+        //新用户登陆, 绑定
+        String tuYouPwd = "mustChange";
+        String username = "TuYou" + token;//登陆用户名默认为TuYou+token
+        String sex = (String) map.get("gender");
+        String icon = (String) map.get("figureurl_qq_1");
+        user.setUsername(username);
+        user.setPassword(tuYouPwd);
+        user.setSex(sex);
+        user.setIcon(icon);
+        user.setType(currentPlatName);
+        //注册
+        user.signUp(new SaveListener<TuYouUser>() {
+            @Override
+            public void done(TuYouUser tuYouUser, BmobException e) {
+                if (e != null) {
+                    // 网络异常: 9016
+                    if (e.getErrorCode() == 9016) {
+                        Snackbar.make(getWindow().getDecorView(), "亲, 请连接网络 ヾ(≧O≦)〃嗷~", Snackbar.LENGTH_SHORT).show();
+                    } else if (e.getErrorCode() == 304) {
+                        Snackbar.make(getWindow().getDecorView(), "亲, 用户名密码不能为空....", Snackbar.LENGTH_SHORT).show();
+                    } else if (e.getErrorCode() == 202) {
+                        Snackbar.make(getWindow().getDecorView(), "该用户名已经注册, 请重试..", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(getWindow().getDecorView(), "未知错误", Snackbar.LENGTH_SHORT).show();
+                    }
+                    Log.d(TAG, "done: message: " + e.getMessage() + " code:" + e.getErrorCode());
+                } else {
+                    //直接登陆
+                    user.login(new SaveListener<TuYouUser>() {
+                        @Override
+                        public void done(TuYouUser user, BmobException e) {
+                            if (e != null) {
+                                Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent = new Intent(mContext, TuYouActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override

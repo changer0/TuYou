@@ -27,7 +27,7 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     private String sinaId;//新浪
     private String weiChatId;//微信
     private String type;//账号类型
-    private String token;// 第三方登陆的标示
+    private String qqToken;// 第三方登陆的标示
 
     //注意此项不用与上传Bmob, 仅作为RecycleView中使用
     private int distance;// 与当前用户的距离
@@ -163,13 +163,12 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
         this.money = money;
     }
 
-
-    public String getToken() {
-        return token;
+    public String getQqToken() {
+        return qqToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setQqToken(String qqToken) {
+        this.qqToken = qqToken;
     }
 
     @Override
