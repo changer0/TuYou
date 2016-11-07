@@ -7,6 +7,32 @@ import cn.bmob.v3.BmobObject;
  */
 
 public class TuYouChat extends BmobObject {
-    // TODO: 2016/10/31 待定
+    private String ChatContent;
+    private String time;
+    private TuYouUser user;
+
+    public String getChatContent() {
+        return ChatContent;
+    }
+
+    public void setChatContent(String chatContent) {
+        ChatContent = chatContent;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public TuYouUser getUser() {
+        return user;
+    }
+
+    public void setUser(TuYouUser user) {
+        this.user = user;
+    }
 
 }
