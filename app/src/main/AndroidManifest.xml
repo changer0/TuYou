@@ -98,10 +98,9 @@
             android:value="06d4383a65fab5254403e874922b0138">
             //开发者申请的key
         </meta-data>
-
         <meta-data
             android:name="EASEMOB_APPKEY"
-            android:value="1194161025115525#testtuyou" />
+            android:value="1194161025115525#testtuyou"/>
         <!-- 声明SDK所需的service SDK核心功能 -->
         <service
             android:name="com.hyphenate.chat.EMChatService"
@@ -121,6 +120,14 @@
         </receiver>
 
         <activity android:name=".activity.ChatActivity"/>
+        <activity android:name=".activity.MineUserActivity">
+        </activity>
+        <activity android:name=".activity.MineAttentionActivity">
+        </activity>
+        <activity android:name=".activity.MineAboutActivity">
+        </activity>
+        <activity android:name=".activity.MineSettingActivity">
+        </activity>
     </application>
 
 </manifest>
