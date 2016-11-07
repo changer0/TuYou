@@ -178,7 +178,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/user_cv_age"
         android:foreground="?attr/selectableItemBackground"
-        android:id="@+id/user_cv_sign"
+        android:id="@+id/user_cv_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -187,15 +187,21 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/user_tv_sign"
-                android:text="个性签名"
+                android:id="@+id/user_tv_city"
+                android:text="目前所在地区"
                 android:padding="10dp"
                 android:textSize="20dp"
                 android:layout_toRightOf="@+id/mine_iv_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/user_tv_setCity"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@+id/user_iv_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
             <ImageView
-                android:id="@+id/user_iv_sign"
+                android:id="@+id/user_iv_city"
                 android:src="@mipmap/ic_arrow"
                 android:layout_centerInParent="true"
                 android:layout_alignParentRight="true"

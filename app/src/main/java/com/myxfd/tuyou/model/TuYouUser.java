@@ -33,6 +33,7 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     private String type;//账号类型
     private String qqToken;// 第三方登陆的标示
     private String backupPwd; //备份的密码
+    private String city;
 
     //注意此项不用与上传Bmob, 仅作为RecycleView中使用
     private int distance;// 与当前用户的距离
@@ -174,6 +175,14 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
 
     public void setQqToken(String qqToken) {
         this.qqToken = qqToken;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public void setPassword(String password) {
