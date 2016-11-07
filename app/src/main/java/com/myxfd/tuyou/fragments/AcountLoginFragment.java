@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.LoginActivity;
 import com.myxfd.tuyou.activity.MainActivity;
@@ -107,39 +109,55 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
         String name = mName.getText().toString();
         String pwd = mPassword.getText().toString();
         final View tempView = v;
-        TuYouUser user = new TuYouUser();
+        final TuYouUser user = new TuYouUser();
         user.setUsername(name);
         user.setPassword(pwd);
-        user.login(new SaveListener<TuYouUser>() {
+        EMClient.getInstance().login(name, pwd, new EMCallBack() {
             @Override
-            public void done(TuYouUser tuYouUser, BmobException e) {
-                if (e == null) {
-                    Log.d(TAG, "done: 登录验证通过");
-                    Intent intent = new Intent(mContext, TuYouActivity.class);
-                    startActivity(intent);
-                    if (mContext instanceof LoginActivity) {
-                        ((LoginActivity) mContext).finish();
-                    }
-                } else {
-//
-                    // 9016: 没有联网
-                    // 101: 密码错误
-                    // 9018: 用户名为空
-                    if (e.getErrorCode() == 9016) {
-                        Snackbar.make(tempView, "亲, 请检查网络 ヾ(≧O≦)〃嗷~", Snackbar.LENGTH_SHORT).show();
+            public void onSuccess() {
+                EMClient.getInstance().chatManager().loadAllConversations();
+                EMClient.getInstance().groupManager().loadAllGroups();
+                user.login(new SaveListener<TuYouUser>() {
+                    @Override
+                    public void done(TuYouUser tuYouUser, BmobException e) {
+                        if (e == null) {
+                            Log.d(TAG, "done: 登录验证通过");
+                            Intent intent = new Intent(mContext, TuYouActivity.class);
+                            startActivity(intent);
+                            if (mContext instanceof LoginActivity) {
+                                ((LoginActivity) mContext).finish();
+                            }
+                        } else {
+                            // 9016: 没有联网
+                            // 101: 密码错误
+                            // 9018: 用户名为空
+                            if (e.getErrorCode() == 9016) {
+                                Snackbar.make(tempView, "亲, 请检查网络 ヾ(≧O≦)〃嗷~", Snackbar.LENGTH_SHORT).show();
 //                        Toast.makeText(mContext, "亲, 请检查网络 ヾ(≧O≦)〃嗷~", Toast.LENGTH_SHORT).show();
-                    } else if (e.getErrorCode() == 101) {
-                        Snackbar.make(tempView, "亲, 用户名或密码错误!", Snackbar.LENGTH_SHORT).show();
+                            } else if (e.getErrorCode() == 101) {
+                                Snackbar.make(tempView, "亲, 用户名或密码错误!", Snackbar.LENGTH_SHORT).show();
 //                        Toast.makeText(mContext, "亲, 用户名密码错误!", Toast.LENGTH_SHORT).show();
-                    } else if (e.getErrorCode() == 9018) {
-                        Snackbar.make(tempView, "亲, 请输入用户名或密码", Snackbar.LENGTH_SHORT).show();
+                            } else if (e.getErrorCode() == 9018) {
+                                Snackbar.make(tempView, "亲, 请输入用户名或密码", Snackbar.LENGTH_SHORT).show();
 //                        Toast.makeText(mContext, "亲, 请输入用户名", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Snackbar.make(tempView, "未知错误", Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                Snackbar.make(tempView, "未知错误", Snackbar.LENGTH_SHORT).show();
 //                        Toast.makeText(mContext, "未知错误", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "done: 登录错误信息: " + e.getMessage() + " 错误码: " + e.getErrorCode());
+                                Log.d(TAG, "done: 登录错误信息: " + e.getMessage() + " 错误码: " + e.getErrorCode());
+                            }
+                        }
                     }
-                }
+                });
+            }
+
+            @Override
+            public void onError(int i, String s) {
+
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+
             }
         });
     }

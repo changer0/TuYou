@@ -30,7 +30,7 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/item_content"
+        android:id="@+id/item_message_tv_content"
         android:layout_toRightOf="@+id/item_message_iv_icon"
         android:layout_below="@+id/item_linear"
         android:layout_marginTop="5dp"
