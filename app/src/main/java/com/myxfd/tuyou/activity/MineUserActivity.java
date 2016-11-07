@@ -1,22 +1,24 @@
 package com.myxfd.tuyou.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.adapters.CircleTransform;
 import com.myxfd.tuyou.model.TuYouUser;
+import com.squareup.picasso.Picasso;
 
-import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
@@ -31,6 +33,9 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private TextView mSetAge;
     private TuYouUser mTuYouUser;
     private TextView mSetCity;
+    private ImageView mSetIcon;
+    private Context context;
+    private TextView mSetName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,8 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         mSetSex = (TextView) findViewById(R.id.user_tv_setSex);
         mSetAge = (TextView) findViewById(R.id.user_tv_setAge);
         mSetCity = (TextView) findViewById(R.id.user_tv_city);
+        mSetIcon = (ImageView) findViewById(R.id.user_iv_icon);
+        mSetName = (TextView) findViewById(R.id.user_tv_setName);
 
 
         mCurrentUser = BmobUser.getCurrentUser();
@@ -57,6 +64,8 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                     mSetSex.setText(tuYouUser.getSex());
                     mSetAge.setText(String.valueOf(tuYouUser.getAge()));
                     mSetCity.setText(tuYouUser.getCity());
+                    Picasso.with(context).load(tuYouUser.getIcon()).config(Bitmap.Config.ARGB_8888)
+                            .transform(new CircleTransform()).into(mSetIcon);
                 } else {
                     Log.d(TAG, "done: e:" + e.getMessage());
                 }
@@ -97,7 +106,6 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         });
         builder.create().show();
     }
-
     // 用于更新性别
     private void updateSex(final String sex) {
         TuYouUser tuYouUser = new TuYouUser();
@@ -160,9 +168,36 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         builder.create().show();
     }
 
-    private void upDateCity(){
-
-
+    private void dialogNmae(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText newName = new EditText(context);
+        builder.setTitle("修改图友名").setView(newName);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final String name = newName.getText().toString().trim();
+                if (name != null){
+                    TuYouUser tuYouUser = new TuYouUser();
+                    tuYouUser.update(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                mSetName.setText(name);
+                                Snackbar.make(getWindow().getDecorView(), "修改成功", Snackbar.LENGTH_SHORT).show();
+                            }else {
+                                Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
     }
 
     @Override
@@ -175,7 +210,8 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
             case R.id.user_cv_age:
                 dialogAge();
                 break;
-            case R.id.user_cv_city:
+            case R.id.user_cv_username:
+                dialogNmae();
                 break;
 
         }
