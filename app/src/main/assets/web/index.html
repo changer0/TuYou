@@ -43,18 +43,17 @@
 						"</div>" +
 						"</div>");
 
-
 					for(var j = 0; j < commentitems.length; j++) {
 						var commentitem = commentitems[j];
-						if(commentitem.trackId==itemid){
-							$("#item").before(
-							"<p id='commentName'>" + commentitem.fromUserId + "</p>" +
-							"<p id='commentText'>" + commentitem.text + "</p>"+
-							"<br/>"
+						if(commentitem.trackId == itemid) {
+							$("#item").after(
+								"<div id='comment'>"+
+								"<p id='commentName'>" + commentitem.fromUserId + "</p> : " +
+								"<p id='commentText'>" + commentitem.text + "</p>" +
+								"</div>"
 							);
 						}
 					}
-
 
 					$("#dianzan").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
@@ -64,9 +63,7 @@
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickComment(strid);
 					});
-
 				}
-
 			});
 		</script>
 
@@ -82,7 +79,8 @@
 			}
 
 			#item {
-				margin: 15px 0px;
+				margin: 15px 0px 0px,0px;
+
 			}
 
 			#time {
@@ -139,14 +137,20 @@
 			#itemid {
 				visibility: hidden;
 			}
-			#commentName{
+
+			#commentName {
 				color: blue;
 				display: inline;
 				margin-right: 15px;
 			}
-			#commentText{
-				color: gray;
+
+			#commentText {
+				color: black;
 				display: inline;
+			}
+			#comment{
+				background: #eee;
+				margin: 0px 30px;
 			}
 		</style>
 

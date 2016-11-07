@@ -52,8 +52,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             WelcomePagerAdapter adapter = new WelcomePagerAdapter(this, list, this);
             pager.setAdapter(adapter);
         }
-
     }
+
 
     @Override
     public void onClick(View v) {

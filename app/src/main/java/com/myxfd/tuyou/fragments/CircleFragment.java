@@ -40,6 +40,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -60,6 +62,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
     private EditText mPingLunEdit;
     private LinearLayout mLinearLayout;
     private TuYouComment mTuYouComment;
+    private JsSupport mJsSupport;
 
     public CircleFragment() {
         // Required empty public constructor
@@ -87,10 +90,14 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         mTuYouComment = new TuYouComment();
         mTuYouComment.setTrackId(id);
         mLinearLayout.setVisibility(View.VISIBLE);
-
+        mPingLunEdit.setFocusable(true);
         InputMethodManager imm = (InputMethodManager) mPingLunEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
+        mPingLunEdit.setFocusable(true);
+
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,7 +128,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         settings.setLoadWithOverviewMode(true);
 
-        final JsSupport jsSupport = new JsSupport(getContext());
+        mJsSupport = new JsSupport(getContext());
         BmobQuery<TuYouTrack> query = new BmobQuery<>();
         query.findObjects(new FindListener<TuYouTrack>() {
             @Override
@@ -129,7 +136,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 Gson gson = new Gson();
                 String json = gson.toJson(list);
                 Log.d(TAG, "done: " + json);
-                jsSupport.setJson(json);
+                mJsSupport.setJson(json);
 
                 BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
                 bmobQuery.findObjects(new FindListener<TuYouComment>() {
@@ -138,8 +145,8 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                         Gson gson = new Gson();
                         String commmentjson = gson.toJson(list);
                         Log.d(TAG, "done: "+commmentjson);
-                        jsSupport.setMcommentJson(commmentjson);
-                        mWebView.addJavascriptInterface(jsSupport, "tuyou");
+                        mJsSupport.setMcommentJson(commmentjson);
+                        mWebView.addJavascriptInterface(mJsSupport, "tuyou");
                         String path = "file:///android_asset/web/index.html";
                         mWebView.loadUrl(path);
                     }
@@ -188,7 +195,9 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                     public void done(String s, BmobException e) {
                         if (e==null) {
                             Toast.makeText(getContext(), "评论成功", Toast.LENGTH_SHORT).show();
-                            mLinearLayout.setVisibility(View.INVISIBLE);
+                            mLinearLayout.setVisibility(View.GONE);
+                            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
+                                    .hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                         }
                     }
                 });
@@ -199,7 +208,28 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void onRefresh() {
-        mWebView.reload();
+        BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
+        bmobQuery.findObjects(new FindListener<TuYouComment>() {
+            @Override
+            public void done(List<TuYouComment> list, BmobException e) {
+                Gson gson = new Gson();
+                String json = gson.toJson(list);
+                mJsSupport.setMcommentJson(json);
+                mWebView.reload();
+            }
+        });
+        BmobQuery<TuYouTrack> trackBmobQuery = new BmobQuery<>();
+        trackBmobQuery.findObjects(new FindListener<TuYouTrack>() {
+            @Override
+            public void done(List<TuYouTrack> list, BmobException e) {
+                Gson gson = new Gson();
+                String s = gson.toJson(list);
+                mJsSupport.setJson(s);
+                mWebView.reload();
+            }
+        });
+
+
     }
 
     @Override

@@ -9,13 +9,14 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1d1e1e">
+        android:background="@color/colorApp3">
 
         <Button
             android:id="@+id/circle_sendShuoShuo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:background="@color/colorApp3"
             android:text="发说说"/>
     </FrameLayout>
 
@@ -26,48 +27,39 @@
         android:layout_height="2dp"
         />
 
+    <LinearLayout
+        android:id="@+id/circle_comment_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/circle_comment_layout_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/circle_comment_layout_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="评论"/>
+
+    </LinearLayout>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/circle_swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-            <WebView
+        <WebView
                 android:id="@+id/circle_webView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
                 android:scrollbars="vertical"/>
 
-            <LinearLayout
-                android:id="@+id/circle_comment_linearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:visibility="invisible">
 
-                <EditText
-                    android:id="@+id/circle_comment_layout_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"/>
-
-                <Button
-                    android:id="@+id/circle_comment_layout_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="评论"/>
-
-            </LinearLayout>
-
-
-
-        </FrameLayout>
 
 
     </android.support.v4.widget.SwipeRefreshLayout>
