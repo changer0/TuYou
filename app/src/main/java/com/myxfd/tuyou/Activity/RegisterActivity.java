@@ -10,6 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.model.TuYouUser;
 
@@ -43,8 +45,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.reg_btn_register:
-                String userName = name.getText().toString().trim();
-                String userPassword = password.getText().toString().trim();
+                final String userName = name.getText().toString().trim();
+                final String userPassword = password.getText().toString().trim();
                 String userPassword2 = password2.getText().toString().trim();
                 if (userPassword.equals(userPassword2)) {
                     TuYouUser user = new TuYouUser();
@@ -85,6 +87,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 } else {
                     Snackbar.make(getWindow().getDecorView(), "密码不一致,请重新输入", Snackbar.LENGTH_SHORT).show();
                 }
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            EMClient.getInstance().createAccount(userName, userPassword);
+                        } catch (HyphenateException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
                 break;
         }
     }
