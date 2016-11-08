@@ -283,11 +283,17 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                                             .title(user.getUsername());
                                     Marker marker = aMap.addMarker(options);
                                     otherMarkers.add(marker);
-
-
+                                    //添加用户
                                     user.setDistance(distance);
-                                    otherUsers.add(user);
-                                    Collections.sort(otherUsers);
+
+                                    synchronized (this) {
+                                        //不能重复添加相同用户
+                                        if (!otherUsers.contains(user)) {
+                                            otherUsers.add(user);
+                                            Collections.sort(otherUsers);
+                                        }
+                                    }
+
                                     mAdapter.notifyDataSetChanged();
                                 }
                             } else {
@@ -354,7 +360,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
             //在地图上添加其他的用户的点
             addOtherUser(new LatLonPoint(latLng.latitude, latLng.longitude));
 
-            Toast.makeText(getContext(), "定位成功", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "定位成功", Toast.LENGTH_SHORT).show();
 
         } else {
             //定位异常
@@ -422,6 +428,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         mapView.onSaveInstanceState(outState);
     }
 
+    // 加关注回调事件
     @Override
     public void onItemClick(final View view) {
         Object tag = view.getTag();
@@ -451,7 +458,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                                             }
                                         }
                                     });
-                                }else{
+                                } else {
                                     Snackbar.make(view, "不能重复关注", Snackbar.LENGTH_LONG).show();
                                 }
                             }
@@ -462,6 +469,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         }
     }
 
+    //打招呼回调
     @Override
     public void onItemMsgClick(View view) {
         Object tag = view.getTag();
