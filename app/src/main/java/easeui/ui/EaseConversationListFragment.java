@@ -3,6 +3,7 @@ package easeui.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
@@ -49,18 +50,32 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     protected FrameLayout errorItemContainer;
 
     protected boolean isConflict;
-    
+
+    public boolean isRun = true;
     protected EMConversationListener convListener = new EMConversationListener(){
 
 		@Override
 		public void onCoversationUpdate() {
 			refresh();
 		}
-    	
+
     };
-    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        new Thread(){
+            @Override
+            public void run() {
+                while (isRun){
+                    handler.sendEmptyMessage(MSG_REFRESH);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
         return inflater.inflate(R.layout.ease_fragment_conversation_list, container, false);
     }
 
@@ -96,7 +111,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
                 }
             });
         }
-        
+
         EMClient.getInstance().addConnectionListener(connectionListener);
         
         query.addTextChangedListener(new TextWatcher() {
@@ -281,6 +296,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     
     @Override
     public void onDestroy() {
+        isRun = false;
         super.onDestroy();
         EMClient.getInstance().removeConnectionListener(connectionListener);
     }

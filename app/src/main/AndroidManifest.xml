@@ -120,13 +120,13 @@
         </receiver>
 
         <activity android:name=".activity.ChatActivity"/>
-        <activity android:name=".activity.MineUserActivity">
+        <activity android:name=".activity.MineUserActivity" android:parentActivityName=".activity.TuYouActivity">
         </activity>
         <activity android:name=".activity.MineAttentionActivity">
         </activity>
         <activity android:name=".activity.MineAboutActivity">
         </activity>
-        <activity android:name=".activity.MineSettingActivity">
+        <activity android:name=".activity.MineSettingActivity" android:parentActivityName=".activity.TuYouActivity">
         </activity>
     </application>
 
