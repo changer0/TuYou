@@ -228,8 +228,6 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 mWebView.reload();
             }
         });
-
-
     }
 
     @Override

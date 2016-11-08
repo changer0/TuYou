@@ -58,10 +58,13 @@
 					$("#dianzan").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickZan(strid);
+						$(this).attr('src',"images/zanheart.png");
+
 					});
 					$("#pinglun").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickComment(strid);
+
 					});
 				}
 			});

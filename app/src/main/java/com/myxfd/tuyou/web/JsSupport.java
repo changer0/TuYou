@@ -78,7 +78,6 @@ public class JsSupport {
     }
     @JavascriptInterface
     public void onClickZan(String id){
-        Toast.makeText(mContext, "jinru", Toast.LENGTH_SHORT).show();
         BmobUser currentUser = BmobUser.getCurrentUser();
         String objectId = currentUser.getObjectId();
         TuYouPraise praise = new TuYouPraise();
