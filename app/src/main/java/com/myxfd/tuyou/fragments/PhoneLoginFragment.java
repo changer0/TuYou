@@ -103,7 +103,7 @@ public class PhoneLoginFragment extends BaseFragment implements View.OnClickList
                             Log.d(TAG, "done: 发送失败 e-> " + e.getMessage() + " code: " + e.getErrorCode());
                             Snackbar.make(tempView, "发送失败, 请重试...", Snackbar.LENGTH_SHORT).show();
                         } else {
-                            // TODO: 2016/11/1 发送成功
+                            //  发送成功
                             Log.d(TAG, "done: " + integer);
                             mBtnGetMsg.setClickable(false);
                             mBtnGetMsg.setBackgroundColor(Color.GRAY);
@@ -133,7 +133,7 @@ public class PhoneLoginFragment extends BaseFragment implements View.OnClickList
                     @Override
                     public void done(BmobException e) {
                         if (e == null) {
-                            // TODO: 2016/11/6 登陆成功后需要上传用户名和密码
+                            //  登陆成功后需要上传用户名和密码
                             Intent intent = new Intent(mContext, MainActivity.class);
                             startActivity(intent);
                             Context context = getContext();

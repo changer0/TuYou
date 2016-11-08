@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -52,7 +53,7 @@ import cn.bmob.v3.listener.SaveListener;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CircleFragment extends BaseFragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, BrowserInterface {
+public class CircleFragment extends BaseFragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, BrowserInterface, View.OnTouchListener {
 
 
     private static final String TAG = "CircleFragment";
@@ -81,7 +82,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void onDestroy() {
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -98,7 +99,6 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,12 +112,13 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         pinglun.setOnClickListener(this);
         mPingLunEdit = (EditText) view.findViewById(R.id.circle_comment_layout_edit);
 
-
         mRefreshLayout.setOnRefreshListener(this);
         button.setOnClickListener(this);
         mWebView = (WebView) view.findViewById(R.id.circle_webView);
+        mWebView.setOnClickListener(this);
         mWebView.setWebViewClient(new MyWebViewClient(this));
         mWebView.setWebChromeClient(new MyWebChromeClient(this));
+        mWebView.setOnTouchListener(this);
         //开启js支持
         WebSettings settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true); //允许使用js调用java
@@ -203,6 +204,8 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 });
 
                 break;
+
+
         }
     }
 
@@ -244,6 +247,12 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        mLinearLayout.setVisibility(View.GONE);
+        return false;
     }
 
 }

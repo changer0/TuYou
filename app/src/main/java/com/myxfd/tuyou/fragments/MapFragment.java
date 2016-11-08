@@ -1,8 +1,10 @@
 package com.myxfd.tuyou.fragments;
 
 
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,9 +35,13 @@ import com.amap.api.services.nearby.NearbySearch;
 import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.activity.ChatActivity;
 import com.myxfd.tuyou.adapters.DividerItemDecoration;
 import com.myxfd.tuyou.adapters.MapFriendsAdapter;
+import com.myxfd.tuyou.model.TuYouRelation;
 import com.myxfd.tuyou.model.TuYouUser;
 
 import java.util.ArrayList;
@@ -47,15 +53,18 @@ import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import easeui.EaseConstant;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener, AMapLocationListener, View.OnTouchListener {
+public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickListener, NearbySearch.NearbyListener, AMapLocationListener, View.OnTouchListener, MapFriendsAdapter.OnItemClick {
 
     private static final String TAG = "MapFragment";
     private MapView mapView;
@@ -112,6 +121,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         // TODO: 2016/11/3 添加实体类
         if (otherUsers != null) {
             mAdapter = new MapFriendsAdapter(getContext(), otherUsers);
+            mAdapter.setOnItemClick(this);
             recyclerView.setAdapter(mAdapter);
         }
 
@@ -239,12 +249,12 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                 Log.d(TAG, "onNearbyInfoSearched: 附近用户的的个数" + list.size());
 
 
-                for (NearbyInfo info : list) {
+                for (final NearbyInfo info : list) {
                     final int distance = info.getDistance();
                     Log.d(TAG, "done: 用户的距离: " + distance);
 
                     //如果得到的附近的人是本人, 忽略
-                    String userId = info.getUserID();
+                    final String userId = info.getUserID();
                     Log.d(TAG, "onNearbyInfoSearched: 当前用户ID: " + info.getUserID());
                     BmobUser bmobUser = BmobUser.getCurrentUser();
                     if (bmobUser != null) {
@@ -253,19 +263,10 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                         }
                     }
 
-                    LatLonPoint point = info.getPoint();
-                    MarkerOptions options = new MarkerOptions();
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
-                            .position(new LatLng(point.getLatitude(), point.getLongitude()))
-                            .draggable(false)
-                            .title(userId);
 
                     Log.d(TAG, "onNearbyInfoSearched: 查询到的位置" + info.getPoint());
                     Log.d(TAG, "onNearbyInfoSearched: 查询的的用户ID: " + info.getUserID());
 
-
-                    Marker marker = aMap.addMarker(options);
-                    otherMarkers.add(marker);
 
                     BmobQuery<TuYouUser> query = new BmobQuery<>();
                     query.getObject(userId, new QueryListener<TuYouUser>() {
@@ -273,9 +274,26 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                         public void done(TuYouUser user, BmobException e) {
                             if (e == null) {
                                 if (user != null) {
+
+                                    LatLonPoint point = info.getPoint();
+                                    MarkerOptions options = new MarkerOptions();
+                                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
+                                            .position(new LatLng(point.getLatitude(), point.getLongitude()))
+                                            .draggable(false)
+                                            .title(user.getUsername());
+                                    Marker marker = aMap.addMarker(options);
+                                    otherMarkers.add(marker);
+                                    //添加用户
                                     user.setDistance(distance);
-                                    otherUsers.add(user);
-                                    Collections.sort(otherUsers);
+
+                                    synchronized (this) {
+                                        //不能重复添加相同用户
+                                        if (!otherUsers.contains(user)) {
+                                            otherUsers.add(user);
+                                            Collections.sort(otherUsers);
+                                        }
+                                    }
+
                                     mAdapter.notifyDataSetChanged();
                                 }
                             } else {
@@ -342,7 +360,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
             //在地图上添加其他的用户的点
             addOtherUser(new LatLonPoint(latLng.latitude, latLng.longitude));
 
-            Toast.makeText(getContext(), "定位成功", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "定位成功", Toast.LENGTH_SHORT).show();
 
         } else {
             //定位异常
@@ -408,5 +426,61 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         super.onSaveInstanceState(outState);
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，实现地图生命周期管理
         mapView.onSaveInstanceState(outState);
+    }
+
+    // 加关注回调事件
+    @Override
+    public void onItemClick(final View view) {
+        Object tag = view.getTag();
+        if (tag instanceof TuYouUser) {
+            final TuYouUser tuYouUser = (TuYouUser) tag;
+            final BmobUser currentUser = BmobUser.getCurrentUser();
+            BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
+            tuYouUserBmobQuery.getObject(currentUser.getObjectId(), new QueryListener<TuYouUser>() {
+                @Override
+                public void done(final TuYouUser user, BmobException e) {
+                    if (e == null) {
+                        BmobQuery<TuYouRelation> tuYouRelationBmobQuery = new BmobQuery<>();
+                        tuYouRelationBmobQuery.addWhereEqualTo("fromUser", user.getObjectId());
+                        tuYouRelationBmobQuery.addWhereEqualTo("toUser", tuYouUser.getObjectId());
+                        tuYouRelationBmobQuery.findObjects(new FindListener<TuYouRelation>() {
+                            @Override
+                            public void done(List<TuYouRelation> list, BmobException e) {
+                                if (list == null || list.size() == 0) {
+                                    TuYouRelation tuYouRelation = new TuYouRelation();
+                                    tuYouRelation.setFromUser(user);
+                                    tuYouRelation.setToUser(tuYouUser);
+                                    tuYouRelation.save(new SaveListener<String>() {
+                                        @Override
+                                        public void done(String s, BmobException e) {
+                                            if (e == null) {
+                                                Snackbar.make(view, "关注成功", Snackbar.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Snackbar.make(view, "不能重复关注", Snackbar.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    //打招呼回调
+    @Override
+    public void onItemMsgClick(View view) {
+        Object tag = view.getTag();
+        if (tag instanceof TuYouUser) {
+            TuYouUser tuYouUser = (TuYouUser) tag;
+            EMMessage txtSendMessage = EMMessage.createTxtSendMessage("hi", tuYouUser.getUsername());
+            EMClient.getInstance().chatManager().sendMessage(txtSendMessage);
+            Intent intent = new Intent(getContext(), ChatActivity.class);
+            intent.putExtra(EaseConstant.EXTRA_USER_ID, tuYouUser.getUsername());
+            startActivity(intent);
+
+        }
     }
 }

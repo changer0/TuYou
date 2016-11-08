@@ -70,9 +70,6 @@ public class MessageFragment extends BaseFragment {
 //        adapter = new MessageAdapter(getContext(), list);
 //        listView.setAdapter(adapter);
 //        this.registerForContextMenu(listView);
-        EMMessage message = EMMessage.createTxtSendMessage("aaa", "qqq");
-//发送消息
-        EMClient.getInstance().chatManager().sendMessage(message);
 
         FragmentManager supportFragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = supportFragmentManager.beginTransaction();

@@ -1,12 +1,16 @@
 package com.myxfd.tuyou.model;
 
-import android.icu.text.SimpleDateFormat;
-import android.os.SystemClock;
+import android.util.Base64;
 import android.util.Log;
-import android.widget.CompoundButton;
 
+import com.myxfd.tuyou.ndk.NativeHelper;
+import com.myxfd.tuyou.utils.TuYouCryptUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import cn.bmob.v3.BmobUser;
 
@@ -27,6 +31,9 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     private String sinaId;//新浪
     private String weiChatId;//微信
     private String type;//账号类型
+    private String qqToken;// 第三方登陆的标示
+    private String backupPwd; //备份的密码
+    private String city;
 
     //注意此项不用与上传Bmob, 仅作为RecycleView中使用
     private int distance;// 与当前用户的距离
@@ -162,10 +169,61 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
         this.money = money;
     }
 
+    public String getQqToken() {
+        return qqToken;
+    }
+
+    public void setQqToken(String qqToken) {
+        this.qqToken = qqToken;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setPassword(String password) {
+        super.setPassword(password);
+        // TODO: 2016/11/7 加密操作
+        byte[] bytes = TuYouCryptUtils.aesEncryptSimple(password.getBytes(), getKey());
+        if (bytes != null && bytes.length > 0) {
+            backupPwd = Base64.encodeToString(bytes, Base64.NO_WRAP);
+        }
+    }
+
+    public String getPassword() {
+        String ret = "";
+        if (backupPwd != null) {
+            // TODO: 2016/11/7 解密操作
+            byte[] data = Base64.decode(backupPwd, Base64.NO_WRAP);
+            byte[] bytes = TuYouCryptUtils.aesDecryptSimple(data, getKey());
+            try {
+                ret = new String(bytes, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return ret;
+    }
+
+
     @Override
     public int compareTo(TuYouUser o) {
-
         return distance - o.distance;
+    }
+
+    private byte[] getKey() {
+        byte[] ret = null;
+        String keyStr = NativeHelper.getPasswrodKey();
+        byte[] bytes = keyStr.getBytes();
+        if (bytes.length >= 16) {
+            ret = Arrays.copyOf(bytes, 16);
+        }
+        return ret;
+
     }
 
 

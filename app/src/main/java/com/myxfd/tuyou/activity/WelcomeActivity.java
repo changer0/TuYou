@@ -25,7 +25,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         public void dispatchMessage(Message msg) {
             int what = msg.what;
             if (what==998) {
-                Intent intent = new Intent(mContext, TuYouActivity.class);
+                Intent intent = new Intent(mContext, LoginActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -61,7 +61,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         SharedPreferences.Editor edit = app.edit();
         edit.putInt("first", 1);
         edit.apply();
-        Intent intent = new Intent(this, TuYouActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

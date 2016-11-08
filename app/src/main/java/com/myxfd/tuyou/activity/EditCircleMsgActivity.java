@@ -1,6 +1,5 @@
 package com.myxfd.tuyou.activity;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,7 +33,7 @@ public class EditCircleMsgActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.circle_option_menu,menu);
+        getMenuInflater().inflate(R.menu.setting_icon_menu,menu);
         return true;
     }
 

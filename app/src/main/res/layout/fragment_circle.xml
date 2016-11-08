@@ -9,14 +9,14 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorApp3">
+        android:background="@color/colorApp1">
 
         <Button
             android:id="@+id/circle_sendShuoShuo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:background="@color/colorApp3"
+            android:background="@color/colorApp1"
             android:text="发说说"/>
     </FrameLayout>
 
@@ -26,6 +26,20 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/circle_swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <WebView
+                android:id="@+id/circle_webView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/circle_comment_linearLayout"
@@ -47,22 +61,6 @@
             android:text="评论"/>
 
     </LinearLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/circle_swipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <WebView
-                android:id="@+id/circle_webView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"/>
-
-
-
-
-    </android.support.v4.widget.SwipeRefreshLayout>
 
 
 </LinearLayout>
