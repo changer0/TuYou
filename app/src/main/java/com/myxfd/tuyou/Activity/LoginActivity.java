@@ -218,6 +218,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                 });
                             } catch (HyphenateException e1) {
                                 e1.printStackTrace();
+
                             }
                         }
                     }.start();
