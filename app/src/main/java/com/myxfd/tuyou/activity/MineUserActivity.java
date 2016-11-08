@@ -85,7 +85,6 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         cardViewAge.setOnClickListener(this);
         cardViewSign.setOnClickListener(this);
     }
-
     private void dialogSex() {
         final String[] items = {"男", "女"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
