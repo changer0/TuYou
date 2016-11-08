@@ -48,6 +48,7 @@
                     android:text="用户名: "/>
 
                 <EditText
+                    android:maxLines="1"
                     android:id="@+id/reg_et_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

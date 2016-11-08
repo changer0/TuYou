@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="10dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="修改头像"
+        android:textColor="#000"
+        android:textSize="20sp"
+        />
+
+    <TextView
+        android:id="@+id/btnPickByTake"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
+
+        android:onClick="onClick"
+        android:padding="10dp"
+        android:text="拍照"/>
+
+    <TextView
+        android:id="@+id/btnPickBySelect"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
+
+        android:onClick="onClick"
+        android:padding="10dp"
+        android:text="选择照片"/>
+
+
+</LinearLayout>

@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                                     @Override
                                     public void onError(int i, String s) {
-
+                                        Snackbar.make(getWindow().getDecorView(), s+" : " + i, Snackbar.LENGTH_SHORT).show();
                                     }
 
                                     @Override
@@ -117,7 +117,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     }
                                 });
                             } catch (HyphenateException e) {
+                                Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
                                 e.printStackTrace();
+
                             }
                         }
                     }.start();
