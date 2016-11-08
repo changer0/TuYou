@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -36,11 +38,20 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private ImageView mSetIcon;
     private Context context;
     private TextView mSetName;
+    private Toolbar toolBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mine_user);
+
+        toolBar = (Toolbar) findViewById(R.id.user_tl_bar);
+        toolBar.setTitle("个人资料");
+        setSupportActionBar(toolBar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         initView();//
 

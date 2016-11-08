@@ -17,7 +17,7 @@ public class MineSettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mine_setting);
 
         toolbar = (Toolbar) findViewById(R.id.setting_tl_bar);
-
+        toolbar.setTitle("设置");
         setSupportActionBar(toolbar);
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
