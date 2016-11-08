@@ -72,7 +72,7 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         adapter = new CommonFragmentPagerAdapter(manager, fragments);
         pager.setAdapter(adapter);
         pager.addOnPageChangeListener(this);
-//        pager.setOffscreenPageLimit(3);
+        pager.setOffscreenPageLimit(3);
         mRadioGroup = (RadioGroup) findViewById(R.id.main_rg);
 
         mRadioGroup.setOnCheckedChangeListener(this);
