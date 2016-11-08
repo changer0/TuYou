@@ -20,12 +20,11 @@
 
 
     <RadioGroup
-        android:background="#fff"
         android:id="@+id/main_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
+        android:background="#fff"
         android:orientation="horizontal">
 
         <RadioButton
@@ -44,7 +43,7 @@
         <RadioButton
             android:id="@+id/main_rb_circle"
             style="@style/RadioGroupStyle"
-            android:drawableTop="@mipmap/ic_map"
+            android:drawableTop="@mipmap/ic_circle"
             android:text="图友圈"/>
 
         <RadioButton
