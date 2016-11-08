@@ -44,7 +44,7 @@
         <RadioButton
             android:id="@+id/main_rb_circle"
             style="@style/RadioGroupStyle"
-            android:drawableTop="@mipmap/ic_map"
+            android:drawableTop="@mipmap/ic_circle"
             android:text="图友圈"/>
 
         <RadioButton

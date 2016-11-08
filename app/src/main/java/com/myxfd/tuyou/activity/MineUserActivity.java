@@ -49,7 +49,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         mSetSex = (TextView) findViewById(R.id.user_tv_setSex);
         mSetAge = (TextView) findViewById(R.id.user_tv_setAge);
-        mSetCity = (TextView) findViewById(R.id.user_tv_city);
+        mSetCity = (TextView) findViewById(R.id.user_tv_setCity);
         mSetIcon = (ImageView) findViewById(R.id.user_iv_icon);
         mSetName = (TextView) findViewById(R.id.user_tv_setName);
 
@@ -168,9 +168,9 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         builder.create().show();
     }
 
-    private void dialogNmae(){
+    private void dialogName(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText newName = new EditText(context);
+        final EditText newName = new EditText(this);
         builder.setTitle("修改图友名").setView(newName);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -178,7 +178,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 final String name = newName.getText().toString().trim();
                 if (name != null){
                     TuYouUser tuYouUser = new TuYouUser();
-                    tuYouUser.update(new UpdateListener() {
+                    tuYouUser.update(mCurrentUser.getObjectId(), new UpdateListener() {
                         @Override
                         public void done(BmobException e) {
                             if (e == null) {
@@ -198,6 +198,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 dialog.cancel();
             }
         });
+        builder.create().show();
     }
 
     @Override
@@ -211,7 +212,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 dialogAge();
                 break;
             case R.id.user_cv_username:
-                dialogNmae();
+                dialogName();
                 break;
 
         }
