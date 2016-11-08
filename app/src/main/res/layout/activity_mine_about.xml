@@ -31,7 +31,7 @@
         android:layout_below="@+id/about_rl_bar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_app"/>
 
     <TextView
         android:id="@+id/about_tv_name"

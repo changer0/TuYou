@@ -37,6 +37,8 @@ public class OtherLogin extends AppCompatActivity implements View.OnClickListene
         weiChatBtn.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
 
+
+
     }
 
     @Override

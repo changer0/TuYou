@@ -20,7 +20,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@mipmap/ic_app"/>
 
         <android.support.v7.widget.CardView
             android:id="@+id/reg_cv_username"

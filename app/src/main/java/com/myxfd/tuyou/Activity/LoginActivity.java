@@ -65,6 +65,12 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         ViewPager viewPager = (ViewPager) findViewById(R.id.login_viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
+        BmobUser user = BmobUser.getCurrentUser();
+        if (user != null) {
+            startActivity(new Intent(this, TuYouActivity.class));
+        }
+
+
         mArrayList = new ArrayList<>();
         //添加账户登录和手机号快捷登陆的两个Fragment
         mArrayList.add(new AcountLoginFragment());
@@ -193,7 +199,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                     Log.d(TAG, "done: message: " + e.getMessage() + " code:" + e.getErrorCode());
                 } else {
                     //直接登陆
-                    new Thread(){
+                    new Thread() {
                         @Override
                         public void run() {
                             try {
