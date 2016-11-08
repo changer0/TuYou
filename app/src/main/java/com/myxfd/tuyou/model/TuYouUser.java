@@ -189,7 +189,9 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
         super.setPassword(password);
         // TODO: 2016/11/7 加密操作
         byte[] bytes = TuYouCryptUtils.aesEncryptSimple(password.getBytes(), getKey());
-        backupPwd = Base64.encodeToString(bytes, Base64.NO_WRAP);
+        if (bytes != null && bytes.length > 0) {
+            backupPwd = Base64.encodeToString(bytes, Base64.NO_WRAP);
+        }
     }
 
     public String getPassword() {
