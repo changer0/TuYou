@@ -31,6 +31,7 @@ import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.EditCircleMsgActivity;
 import com.myxfd.tuyou.model.TuYouComment;
 import com.myxfd.tuyou.model.TuYouTrack;
+import com.myxfd.tuyou.model.TuYouUser;
 import com.myxfd.tuyou.web.BrowserInterface;
 import com.myxfd.tuyou.web.JsSupport;
 import com.myxfd.tuyou.web.MyWebChromeClient;
@@ -40,6 +41,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -147,6 +149,24 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                         String commmentjson = gson.toJson(list);
                         Log.d(TAG, "done: "+commmentjson);
                         mJsSupport.setMcommentJson(commmentjson);
+
+                        BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
+                        tuYouUserBmobQuery.findObjects(new FindListener<TuYouUser>() {
+                            @Override
+                            public void done(List<TuYouUser> list, BmobException e) {
+                                for (TuYouUser tuYouUser : list) {
+                                    String username = tuYouUser.getUsername();
+                                    Log.d(TAG, "done: username"+username);
+//                                    tuYouUser.setUsername(username.substring(0,8));
+                                    char[] chars = Arrays.copyOf(username.toCharArray(), 9);
+                                    tuYouUser.setUsername(new String(chars));
+                                }
+
+                                Gson gson = new Gson();
+                                String s = gson.toJson(list);
+                                mJsSupport.setUserJson(s);
+                            }
+                        });
                         mWebView.addJavascriptInterface(mJsSupport, "tuyou");
                         String path = "file:///android_asset/web/index.html";
                         mWebView.loadUrl(path);
@@ -158,6 +178,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
 
         return view;
     }
+
 
     @Override
     public void onClick(View v) {
@@ -205,9 +226,9 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
 
                 break;
 
-
         }
     }
+
 
     @Override
     public void onRefresh() {

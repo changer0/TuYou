@@ -18,11 +18,14 @@
 
 				var json = window.tuyou.getJson();
 				var commentjson = window.tuyou.getCommentJson();
-				var commentitems = eval(commentjson);
+				var userjson=window.tuyou.getUserJson();
 
+				var commentitems = eval(commentjson);
+				var useritems=eval(userjson);
 				var items = eval(json);
 				for(var i = 0; i < items.length - 1; i++) {
 					item = items[i];
+
 					var itemid = item.objectId;
 					var userName = item.user;
 					var text = item.text;
@@ -55,6 +58,17 @@
 						}
 					}
 
+					for (var k = 0; k < useritems.length; k++) {
+						var useritem=useritems[k];
+						if(userName==useritem.objectId){
+							var icon=useritem.icon;
+							var uname=useritem.username;
+							$("#userIcon").attr('src',icon);
+							$("#username").text(uname);
+						}
+					}
+
+
 					$("#dianzan").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickZan(strid);
@@ -67,6 +81,7 @@
 
 					});
 				}
+
 			});
 		</script>
 

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.myxfd.tuyou.model.TuYouComment;
 import com.myxfd.tuyou.model.TuYouPraise;
+import com.myxfd.tuyou.model.TuYouUser;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -31,6 +32,7 @@ public class JsSupport {
     private Context mContext;
     private String mJson;
     private String mcommentJson;
+    private String mUserJson;
 
     private static final String TAG = "JsSupport";
 
@@ -55,6 +57,10 @@ public class JsSupport {
         mJson = json;
     }
 
+    public void setUserJson(String userJson) {
+        mUserJson = userJson;
+    }
+
 
     @JavascriptInterface
     public String getJson() {
@@ -66,6 +72,11 @@ public class JsSupport {
         return mcommentJson;
     }
 
+    @JavascriptInterface
+    public String getUserJson(){
+
+        return mUserJson;
+    }
 
     @JavascriptInterface
     public void showToast(String str){
@@ -76,6 +87,8 @@ public class JsSupport {
     public void onClickComment(String id){
         EventBus.getDefault().post(id);
     }
+
+
     @JavascriptInterface
     public void onClickZan(String id){
         BmobUser currentUser = BmobUser.getCurrentUser();
