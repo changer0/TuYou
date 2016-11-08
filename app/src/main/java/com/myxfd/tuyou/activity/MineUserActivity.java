@@ -2,12 +2,15 @@ package com.myxfd.tuyou.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -34,13 +37,21 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private TuYouUser mTuYouUser;
     private TextView mSetCity;
     private ImageView mSetIcon;
-    private Context context;
     private TextView mSetName;
+    private Toolbar toolBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mine_user);
+
+        toolBar = (Toolbar) findViewById(R.id.user_tl_bar);
+        toolBar.setTitle("个人资料");
+        setSupportActionBar(toolBar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         initView();//
 
@@ -49,7 +60,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private void initView() {
         mSetSex = (TextView) findViewById(R.id.user_tv_setSex);
         mSetAge = (TextView) findViewById(R.id.user_tv_setAge);
-        mSetCity = (TextView) findViewById(R.id.user_tv_city);
+        mSetCity = (TextView) findViewById(R.id.user_tv_setCity);
         mSetIcon = (ImageView) findViewById(R.id.user_iv_icon);
         mSetName = (TextView) findViewById(R.id.user_tv_setName);
 
@@ -64,7 +75,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                     mSetSex.setText(tuYouUser.getSex());
                     mSetAge.setText(String.valueOf(tuYouUser.getAge()));
                     mSetCity.setText(tuYouUser.getCity());
-                    Picasso.with(context).load(tuYouUser.getIcon()).config(Bitmap.Config.ARGB_8888)
+                    Picasso.with(MineUserActivity.this).load(tuYouUser.getIcon()).config(Bitmap.Config.ARGB_8888)
                             .transform(new CircleTransform()).into(mSetIcon);
                 } else {
                     Log.d(TAG, "done: e:" + e.getMessage());
@@ -85,6 +96,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         cardViewAge.setOnClickListener(this);
         cardViewSign.setOnClickListener(this);
     }
+
     private void dialogSex() {
         final String[] items = {"男", "女"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -105,6 +117,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         });
         builder.create().show();
     }
+
     // 用于更新性别
     private void updateSex(final String sex) {
         TuYouUser tuYouUser = new TuYouUser();
@@ -167,23 +180,23 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         builder.create().show();
     }
 
-    private void dialogNmae(){
+    private void dialogName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText newName = new EditText(context);
+        final EditText newName = new EditText(this);
         builder.setTitle("修改图友名").setView(newName);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final String name = newName.getText().toString().trim();
-                if (name != null){
+                if (name != null) {
                     TuYouUser tuYouUser = new TuYouUser();
-                    tuYouUser.update(new UpdateListener() {
+                    tuYouUser.update(mCurrentUser.getObjectId(), new UpdateListener() {
                         @Override
                         public void done(BmobException e) {
                             if (e == null) {
                                 mSetName.setText(name);
                                 Snackbar.make(getWindow().getDecorView(), "修改成功", Snackbar.LENGTH_SHORT).show();
-                            }else {
+                            } else {
                                 Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
                             }
                         }
@@ -197,6 +210,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 dialog.cancel();
             }
         });
+        builder.create().show();
     }
 
     @Override
@@ -210,7 +224,12 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 dialogAge();
                 break;
             case R.id.user_cv_username:
-                dialogNmae();
+                dialogName();
+                break;
+
+            case R.id.user_cv_icon:
+                // TODO: 2016/11/8 跳转到修改头像
+                startActivity(new Intent(this, SelectPhotoActivity.class));
                 break;
 
         }

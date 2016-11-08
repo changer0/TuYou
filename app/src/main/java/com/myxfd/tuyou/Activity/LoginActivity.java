@@ -65,6 +65,12 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         ViewPager viewPager = (ViewPager) findViewById(R.id.login_viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
+        BmobUser user = BmobUser.getCurrentUser();
+        if (user != null) {
+            startActivity(new Intent(this, TuYouActivity.class));
+        }
+
+
         mArrayList = new ArrayList<>();
         //添加账户登录和手机号快捷登陆的两个Fragment
         mArrayList.add(new AcountLoginFragment());
@@ -195,6 +201,82 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                 } else {
                     //直接登陆
                     new Thread(){
+                        @Override
+                        public void run() {
+                            try {
+                                EMClient.getInstance().logout(true);
+                                EMClient.getInstance().createAccount(tuYouUser.getUsername(), tuYouUser.getPassword());
+                                EMClient.getInstance().login(tuYouUser.getUsername(), tuYouUser.getPassword(), new EMCallBack() {
+                                    @Override
+                                    public void onSuccess() {
+                                        EMClient.getInstance().chatManager().loadAllConversations();
+                                        EMClient.getInstance().groupManager().loadAllGroups();
+                                    }
+
+                                    @Override
+                                    public void onError(int i, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onProgress(int i, String s) {
+
+                                    }
+                                });
+                            } catch (HyphenateException e1) {
+                                e1.printStackTrace();
+
+                            }
+                        }
+                    }.start();
+                    user.login(new SaveListener<TuYouUser>() {
+                        @Override
+                        public void done(TuYouUser user, BmobException e) {
+                            if (e != null) {
+                                Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent = new Intent(mContext, TuYouActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    // qq登陆中用于新用户绑定登陆
+    private void newUserBindQQ(String token, HashMap<String, Object> map, final TuYouUser user) {
+        //新用户登陆, 绑定
+        final String tuYouPwd = "mustChange";
+        String username = "TuYou" + token;//登陆用户名默认为TuYou+token
+        String sex = (String) map.get("gender");
+        String icon = (String) map.get("figureurl_qq_1");
+        user.setUsername(username);
+        user.setPassword(tuYouPwd);
+        user.setSex(sex);
+        user.setIcon(icon);
+        user.setType(currentPlatName);
+        //注册
+        user.signUp(new SaveListener<TuYouUser>() {
+            @Override
+            public void done(final TuYouUser tuYouUser, BmobException e) {
+                if (e != null) {
+                    // 网络异常: 9016
+                    if (e.getErrorCode() == 9016) {
+                        Snackbar.make(getWindow().getDecorView(), "亲, 请连接网络 ヾ(≧O≦)〃嗷~", Snackbar.LENGTH_SHORT).show();
+                    } else if (e.getErrorCode() == 304) {
+                        Snackbar.make(getWindow().getDecorView(), "亲, 用户名密码不能为空....", Snackbar.LENGTH_SHORT).show();
+                    } else if (e.getErrorCode() == 202) {
+                        Snackbar.make(getWindow().getDecorView(), "该用户名已经注册, 请重试..", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(getWindow().getDecorView(), "未知错误", Snackbar.LENGTH_SHORT).show();
+                    }
+                    Log.d(TAG, "done: message: " + e.getMessage() + " code:" + e.getErrorCode());
+                } else {
+                    //直接登陆
+                    new Thread() {
                         @Override
                         public void run() {
                             try {

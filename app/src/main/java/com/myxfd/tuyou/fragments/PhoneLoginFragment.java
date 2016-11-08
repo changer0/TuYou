@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.LoginActivity;
-import com.myxfd.tuyou.activity.TuYouActivity;
+import com.myxfd.tuyou.activity.MainActivity;
 
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.exception.BmobException;
@@ -134,7 +134,7 @@ public class PhoneLoginFragment extends BaseFragment implements View.OnClickList
                     public void done(BmobException e) {
                         if (e == null) {
                             //  登陆成功后需要上传用户名和密码
-                            Intent intent = new Intent(mContext, TuYouActivity.class);
+                            Intent intent = new Intent(mContext, MainActivity.class);
                             startActivity(intent);
                             Context context = getContext();
                             if (context instanceof LoginActivity) {
