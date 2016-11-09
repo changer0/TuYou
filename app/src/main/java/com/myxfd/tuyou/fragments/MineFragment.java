@@ -1,6 +1,7 @@
 package com.myxfd.tuyou.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.myxfd.tuyou.activity.MineAboutActivity;
 import com.myxfd.tuyou.activity.MineAttentionActivity;
 import com.myxfd.tuyou.activity.MineSettingActivity;
 import com.myxfd.tuyou.activity.MineUserActivity;
+import com.myxfd.tuyou.activity.TuYouActivity;
 import com.myxfd.tuyou.adapters.CircleTransform;
 import com.myxfd.tuyou.model.TuYouUser;
 import com.squareup.picasso.Picasso;
@@ -144,6 +146,11 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                         //bmob取消登陆
                         BmobUser.logOut();
                         startActivity(new Intent(getContext(), LoginActivity.class));
+                        Context context = getContext();
+                        if (context instanceof TuYouActivity) {
+                            TuYouActivity activity = (TuYouActivity) context;
+                            activity.finish();
+                        }
 
                     }
                 });
