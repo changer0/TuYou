@@ -10,4 +10,6 @@
     <color name="colorApp2">#51DACF</color>
     <color name="colorApp3">#9EF5CF</color>
     <color name="colorApp4">#E8FFC1</color>
+
+    <color name="multiple_image_select_primaryDark">#0278AE</color>
 </resources>

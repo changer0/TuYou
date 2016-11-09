@@ -68,7 +68,7 @@
         <activity android:name=".activity.EditCircleMsgActivity">
         </activity>
 
-        <activity android:name=".activity.SelectPhotoActivity">
+        <activity android:name=".activity.SelectPhotoActivity" android:theme="@style/Theme.AppCompat.Light.Dialog">
 
         </activity>
 

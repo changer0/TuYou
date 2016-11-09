@@ -153,7 +153,7 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
 
                 @Override
                 public void onError(int i, String s) {
-
+                    Snackbar.make(tempView, s + ": " + i, Snackbar.LENGTH_SHORT).show();
                 }
 
                 @Override

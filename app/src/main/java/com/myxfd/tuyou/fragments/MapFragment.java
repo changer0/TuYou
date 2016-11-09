@@ -4,11 +4,14 @@ package com.myxfd.tuyou.fragments;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.text.TextUtilsCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -78,6 +81,9 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     private boolean isDrag;//是否是拖拽状态
     private RecyclerView recyclerView; //显示附近人的列表
     private MapFriendsAdapter mAdapter;
+    private String currentCity;
+    private String oldCiy;//存储上一次的城市, 主要为了减少更新用户的次数
+    private BmobUser mBmobUser;
 
     public MapFragment() {
     }
@@ -85,6 +91,12 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     @Override
     public String getFragmentTitle() {
         return "地图";
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBmobUser = BmobUser.getCurrentUser();
     }
 
     @Override
@@ -169,11 +181,10 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         uploadInfo.setCoordType(NearbySearch.AMAP);
         uploadInfo.setPoint(point);
         //得到当前的用户信息, 并上传
-        BmobUser bmobUser = BmobUser.getCurrentUser();
-        if (bmobUser != null) {
+        if (mBmobUser != null) {
             uploadInfo.setPoint(point);
             //上传到高德, 用户id信息
-            uploadInfo.setUserID(bmobUser.getObjectId());
+            uploadInfo.setUserID(mBmobUser.getObjectId());
             nearbySearch.uploadNearbyInfoAsyn(uploadInfo);
             Log.d(TAG, "updateCurrentUserLocation: 上传高德用户信息");
 
@@ -181,7 +192,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
             TuYouUser user = new TuYouUser();
             user.setLat(point.getLatitude());
             user.setLgt(point.getLongitude());
-            user.update(bmobUser.getObjectId(), new UpdateListener() {
+            user.update(mBmobUser.getObjectId(), new UpdateListener() {
                 @Override
                 public void done(BmobException e) {
                     if (e == null) {
@@ -208,7 +219,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         //设置搜索的坐标体系
         query.setCoordType(NearbySearch.AMAP);
         //设置搜索半径
-        query.setRadius(1000);
+        query.setRadius(100000);
         //设置查询的时间
         query.setTimeRange(5000);
         //设置查询的方式驾车还是距离
@@ -240,8 +251,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
 
                 //清空Marker
                 for (int i = 0; i < otherMarkers.size(); i++) {
-                    otherMarkers.get(i).remove();
-                    otherMarkers.remove(i);
+                    otherMarkers.get(i).remove();//删除大图钉
+                    otherMarkers.remove(i);//清除集合
                 }
 
                 //清空RecycleView中的数据
@@ -256,9 +267,9 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                     //如果得到的附近的人是本人, 忽略
                     final String userId = info.getUserID();
                     Log.d(TAG, "onNearbyInfoSearched: 当前用户ID: " + info.getUserID());
-                    BmobUser bmobUser = BmobUser.getCurrentUser();
-                    if (bmobUser != null) {
-                        if (userId.equals(bmobUser.getObjectId())) {
+
+                    if (mBmobUser != null) {
+                        if (userId.equals(mBmobUser.getObjectId())) {
                             continue;
                         }
                     }
@@ -292,9 +303,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                                             otherUsers.add(user);
                                             Collections.sort(otherUsers);
                                         }
+                                        mAdapter.notifyDataSetChanged();
                                     }
-
-                                    mAdapter.notifyDataSetChanged();
                                 }
                             } else {
                                 Log.d(TAG, "done: e ==> " + e.getMessage());
@@ -332,13 +342,39 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
             //得到定位的位置
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             //设置标记物
+            String city = location.getCity();
             markerOptions.position(latLng)
-                    .title(location.getCity())
+                    .title(city)
                     .snippet(location.getAddress())
                     .draggable(false)//是否拖拽
                     .icon(BitmapDescriptorFactory.fromBitmap(
                             BitmapFactory.decodeResource(getResources(), R.mipmap.poi_marker_pressed)
                     ));
+
+            currentCity = city;
+            //TODO: 每次定位成功后更新用户的城市信息
+            if (!currentCity.equals(oldCiy)) {
+                synchronized (this) {
+                    BmobQuery<TuYouUser> query = new BmobQuery<>();
+                    query.getObject(mBmobUser.getObjectId(), new QueryListener<TuYouUser>() {
+                        @Override
+                        public void done(TuYouUser user, BmobException e) {
+                            //更新用户城市地区
+                            user.setCity(currentCity);
+                            oldCiy = currentCity;
+                            user.update(new UpdateListener() {
+                                @Override
+                                public void done(BmobException e) {
+                                    if (e != null) {
+                                        Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+
 
             //添加到地图上
             if (myMarker != null) {
@@ -434,9 +470,9 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
         Object tag = view.getTag();
         if (tag instanceof TuYouUser) {
             final TuYouUser tuYouUser = (TuYouUser) tag;
-            final BmobUser currentUser = BmobUser.getCurrentUser();
+
             BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
-            tuYouUserBmobQuery.getObject(currentUser.getObjectId(), new QueryListener<TuYouUser>() {
+            tuYouUserBmobQuery.getObject(mBmobUser.getObjectId(), new QueryListener<TuYouUser>() {
                 @Override
                 public void done(final TuYouUser user, BmobException e) {
                     if (e == null) {
@@ -455,6 +491,8 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                                         public void done(String s, BmobException e) {
                                             if (e == null) {
                                                 Snackbar.make(view, "关注成功", Snackbar.LENGTH_LONG).show();
+                                            } else {
+                                                Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG).show();
                                             }
                                         }
                                     });
@@ -480,7 +518,6 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
             Intent intent = new Intent(getContext(), ChatActivity.class);
             intent.putExtra(EaseConstant.EXTRA_USER_ID, tuYouUser.getUsername());
             startActivity(intent);
-
         }
     }
 }

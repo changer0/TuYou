@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -11,22 +13,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jph.takephoto.app.TakePhoto;
+import com.jph.takephoto.compress.CompressConfig;
+import com.jph.takephoto.model.CropOptions;
+import com.jph.takephoto.model.LubanOptions;
+import com.jph.takephoto.model.TakePhotoOptions;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.adapters.CircleTransform;
 import com.myxfd.tuyou.model.TuYouUser;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
+import me.shaohui.advancedluban.Luban;
 
 public class MineUserActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -65,25 +76,6 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         mSetName = (TextView) findViewById(R.id.user_tv_setName);
 
 
-        mCurrentUser = BmobUser.getCurrentUser();
-        BmobQuery<TuYouUser> query = new BmobQuery<>();
-        query.getObject(mCurrentUser.getObjectId(), new QueryListener<TuYouUser>() {
-            @Override
-            public void done(TuYouUser tuYouUser, BmobException e) {
-                if (e == null) {
-                    mTuYouUser = tuYouUser;
-                    mSetSex.setText(tuYouUser.getSex());
-                    mSetAge.setText(String.valueOf(tuYouUser.getAge()));
-                    mSetCity.setText(tuYouUser.getCity());
-                    Picasso.with(MineUserActivity.this).load(tuYouUser.getIcon()).config(Bitmap.Config.ARGB_8888)
-                            .transform(new CircleTransform()).into(mSetIcon);
-                } else {
-                    Log.d(TAG, "done: e:" + e.getMessage());
-                }
-            }
-        });
-
-
         CardView cardViewIcon = (CardView) findViewById(R.id.user_cv_icon);
         CardView cardViewUsername = (CardView) findViewById(R.id.user_cv_username);
         CardView cardViewSex = (CardView) findViewById(R.id.user_cv_sex);
@@ -97,6 +89,30 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         cardViewSign.setOnClickListener(this);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mCurrentUser = BmobUser.getCurrentUser();
+        BmobQuery<TuYouUser> query = new BmobQuery<>();
+        query.getObject(mCurrentUser.getObjectId(), new QueryListener<TuYouUser>() {
+            @Override
+            public void done(TuYouUser tuYouUser, BmobException e) {
+                if (e == null) {
+                    mTuYouUser = tuYouUser;
+                    mSetSex.setText(tuYouUser.getSex());
+                    mSetAge.setText(String.valueOf(tuYouUser.getAge()));
+                    mSetCity.setText(tuYouUser.getCity());
+                    mSetName.setText(tuYouUser.getUsername());
+                    Picasso.with(MineUserActivity.this).load(tuYouUser.getIcon()).config(Bitmap.Config.ARGB_8888)
+                            .transform(new CircleTransform()).into(mSetIcon);
+                } else {
+                    Log.d(TAG, "done: e:" + e.getMessage());
+                }
+            }
+        });
+
+    }
+
     private void dialogSex() {
         final String[] items = {"男", "女"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -105,14 +121,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                switch (which) {
-                    case 0:
-                        updateSex(items[0]);
-                        break;
-                    case 1:
-                        updateSex(items[1]);
-                        break;
-                }
+                updateSex(items[which]);
             }
         });
         builder.create().show();
@@ -183,6 +192,10 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private void dialogName() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText newName = new EditText(this);
+        if (mTuYouUser != null) {
+            String username = mTuYouUser.getUsername();
+            newName.setText(username);
+        }
         builder.setTitle("修改图友名").setView(newName);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -190,6 +203,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 final String name = newName.getText().toString().trim();
                 if (name != null) {
                     TuYouUser tuYouUser = new TuYouUser();
+                    tuYouUser.setUsername(name);
                     tuYouUser.update(mCurrentUser.getObjectId(), new UpdateListener() {
                         @Override
                         public void done(BmobException e) {
@@ -213,6 +227,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         builder.create().show();
     }
 
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -229,11 +244,25 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.user_cv_icon:
                 // TODO: 2016/11/8 跳转到修改头像
-                startActivity(new Intent(this, SelectPhotoActivity.class));
+//                startActivity(new Intent(this, SelectPhotoActivity.class));
+//                dialogIcon();
+                Intent intent = new Intent(MineUserActivity.this, SelectPhotoActivity.class);
+                startActivityForResult(intent, 0);
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (data != null) {
+                String extra = data.getStringExtra(SelectPhotoActivity.UPDATE_STATE);
+                if (!TextUtils.isEmpty(extra)) {
+                    Snackbar.make(getWindow().getDecorView(), extra, Snackbar.LENGTH_SHORT).show();
+                }
+            }
 
         }
-
-
     }
 }

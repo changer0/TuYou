@@ -68,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         BmobUser user = BmobUser.getCurrentUser();
         if (user != null) {
             startActivity(new Intent(this, TuYouActivity.class));
+            finish();
         }
 
 
@@ -126,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
 
                                                 @Override
                                                 public void onError(int i, String s) {
-
+                                                    Snackbar.make(getWindow().getDecorView(), s, Snackbar.LENGTH_SHORT).show();
                                                 }
 
                                                 @Override
