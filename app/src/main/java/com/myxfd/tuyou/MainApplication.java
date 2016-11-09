@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.RemoteException;
+import android.support.multidex.MultiDex;
 
 import com.amap.api.maps2d.MapsInitializer;
 import com.amap.api.services.nearby.NearbySearch;
@@ -30,6 +31,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MultiDex.install(this);
         Bmob.initialize(this, "45df1c53ec3984c40da6b54e686ed0cc");
         EventBusBuilder builder = EventBus.builder();
         builder.installDefaultEventBus();

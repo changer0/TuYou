@@ -23,7 +23,7 @@
 				var commentitems = eval(commentjson);
 				var useritems=eval(userjson);
 				var items = eval(json);
-				for(var i = 0; i < items.length - 1; i++) {
+				for(var i = 0; i < items.length ; i++) {
 					item = items[i];
 
 					var itemid = item.objectId;
@@ -72,7 +72,7 @@
 					$("#dianzan").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickZan(strid);
-						$(this).attr('src',"images/zanheart.png");
+						$(this).attr('src','images/zanheart.png');
 
 					});
 					$("#pinglun").click(function() {
