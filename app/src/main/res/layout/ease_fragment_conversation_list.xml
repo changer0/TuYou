@@ -15,23 +15,23 @@
 	    />
     
     <include layout="@layout/ease_search_bar" />
-    
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fl_error_item"
-        >
-    </FrameLayout>
 
-
-    <easeui.widget.EaseConversationList
+	<easeui.widget.EaseConversationList
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
         android:cacheColorHint="#00000000"
+		android:background="#eee"
         android:divider="@null"
         hyphenate:cvsListPrimaryTextSize="16sp"
          />
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/fl_error_item"
+		>
+    </FrameLayout>
+
 
 </LinearLayout>

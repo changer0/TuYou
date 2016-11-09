@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,8 +25,10 @@ import android.widget.ImageButton;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMConversationListener;
 import com.hyphenate.EMError;
+import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
 import com.myxfd.tuyou.R;
 
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ import easeui.widget.EaseConversationList;
  * conversation list fragment
  *
  */
-public class EaseConversationListFragment extends EaseBaseFragment {
+public class EaseConversationListFragment extends EaseBaseFragment implements EMMessageListener {
 	private final static int MSG_REFRESH = 2;
     protected EditText query;
     protected ImageButton clearSearch;
@@ -56,25 +59,28 @@ public class EaseConversationListFragment extends EaseBaseFragment {
 
 		@Override
 		public void onCoversationUpdate() {
-			refresh();
+            Log.d("AAAA", "onCoversationUpdate: ");
+            refresh();
 		}
 
     };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        EMClient.getInstance().chatManager().addMessageListener(this);
+        EMClient.getInstance().chatManager().addConversationListener(convListener);
+    }
+
+    @Override
+    public void onDetach() {
+        EMClient.getInstance().chatManager().removeConversationListener(convListener);
+        super.onDetach();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        new Thread(){
-            @Override
-            public void run() {
-                while (isRun){
-                    handler.sendEmptyMessage(MSG_REFRESH);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }.start();
+
 
         return inflater.inflate(R.layout.ease_fragment_conversation_list, container, false);
     }
@@ -308,7 +314,32 @@ public class EaseConversationListFragment extends EaseBaseFragment {
             outState.putBoolean("isConflict", true);
         }
     }
-    
+
+    @Override
+    public void onMessageReceived(List<EMMessage> list) {
+        refresh();
+    }
+
+    @Override
+    public void onCmdMessageReceived(List<EMMessage> list) {
+
+    }
+
+    @Override
+    public void onMessageReadAckReceived(List<EMMessage> list) {
+
+    }
+
+    @Override
+    public void onMessageDeliveryAckReceived(List<EMMessage> list) {
+
+    }
+
+    @Override
+    public void onMessageChanged(EMMessage emMessage, Object o) {
+
+    }
+
     public interface EaseConversationListItemClickListener {
         /**
          * click event for conversation list

@@ -38,6 +38,11 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     //注意此项不用与上传Bmob, 仅作为RecycleView中使用
     private int distance;// 与当前用户的距离
 
+    public TuYouUser() {
+        sex = "男";
+        icon = "http://q.qlogo.cn/qqapp/100371282/D4280B8B06B1D1C9221284CC80DD2443/40";
+    }
+
     //用于获取年龄
     public int getAge() {
         int ret = 0;

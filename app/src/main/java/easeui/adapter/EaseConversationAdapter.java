@@ -2,6 +2,7 @@ package easeui.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +22,16 @@ import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.util.DateUtils;
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.model.TuYouUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import easeui.domain.EaseUser;
 import easeui.model.EaseAtMessageHelper;
 import easeui.utils.EaseCommonUtils;
@@ -111,18 +117,19 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
             }
             // group message, show group avatar
             holder.avatar.setImageResource(R.drawable.ease_group_icon);
+
             EMGroup group = EMClient.getInstance().groupManager().getGroup(username);
             String text = group != null ? group.getGroupName() : username;
-            if (text.startsWith("tuyou")) {
-                text = text.substring(0, 8);
+            if (text.length() > 8) {
+                text.substring(0, 8);
             }
             holder.name.setText(text);
         } else if(conversation.getType() == EMConversationType.ChatRoom){
             holder.avatar.setImageResource(R.drawable.ease_group_icon);
             EMChatRoom room = EMClient.getInstance().chatroomManager().getChatRoom(username);
             String text = room != null && !TextUtils.isEmpty(room.getName()) ? room.getName() : username;
-            if (text.startsWith("tuyou")) {
-                text = text.substring(0, 8);
+            if (text.length() > 8) {
+                text.substring(0, 8);
             }
             holder.name.setText(text);
             holder.motioned.setVisibility(View.GONE);
@@ -130,6 +137,21 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
             EaseUserUtils.setUserAvatar(getContext(), username, holder.avatar);
             EaseUserUtils.setUserNick(username, holder.name);
             holder.motioned.setVisibility(View.GONE);
+            final Context context = holder.avatar.getContext();
+            String uName = conversation.getUserName();
+            BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
+            tuYouUserBmobQuery.addWhereEqualTo("username", uName.trim());
+            final ViewHolder finalHolder = holder;
+            tuYouUserBmobQuery.findObjects(new FindListener<TuYouUser>() {
+                @Override
+                public void done(List<TuYouUser> list, BmobException e) {
+                    if (e == null) {
+                        if (list != null && list.size() != 0) {
+                            Picasso.with(context).load(list.get(0).getIcon()).into(finalHolder.avatar);
+                        }
+                    }
+                }
+            });
         }
 
         if (conversation.getUnreadMsgCount() > 0) {
