@@ -9,35 +9,59 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1d1e1e">
+        android:background="@color/colorApp1">
+
         <Button
             android:id="@+id/circle_sendShuoShuo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:background="@color/colorApp1"
+            android:textColor="#fff"
             android:text="发说说"/>
     </FrameLayout>
 
     <ProgressBar
         android:id="@+id/circle_progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        style="?android:attr/progressBarStyleHorizontal"
         />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/circle_swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <WebView
-            android:id="@+id/circle_webView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical"/>
+                android:id="@+id/circle_webView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/circle_comment_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/circle_comment_layout_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/circle_comment_layout_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="评论"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>

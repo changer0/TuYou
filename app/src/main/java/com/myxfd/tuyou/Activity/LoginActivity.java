@@ -168,6 +168,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
             Object value = entry.getValue();
             Log.d(TAG, "onComplete: key=>" + key + " : " + "value : " + value);
         }
+
     }
 
     // qq登陆中用于新用户绑定登陆

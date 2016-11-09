@@ -29,7 +29,6 @@ public class EditCircleMsgActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar bar = getSupportActionBar();
         bar.setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override

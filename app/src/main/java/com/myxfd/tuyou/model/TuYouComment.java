@@ -14,7 +14,24 @@ public class TuYouComment extends BmobObject {
     private String commentId;//评论id
     private TuYouUser user;//用户
     private String text;//评论内容
-    private TuYouTrack track;//说说
+    private String trackId;//说说
+    private String fromUserId;
+
+    public String getFromUserId() {
+        return fromUserId;
+    }
+
+    public void setFromUserId(String fromUserId) {
+        this.fromUserId = fromUserId;
+    }
+
+    public String getTrackId() {
+        return trackId;
+    }
+
+    public void setTrackId(String trackId) {
+        this.trackId = trackId;
+    }
 
     public String getCommentId() {
         return commentId;
@@ -40,11 +57,5 @@ public class TuYouComment extends BmobObject {
         this.text = text;
     }
 
-    public TuYouTrack getTrack() {
-        return track;
-    }
 
-    public void setTrack(TuYouTrack track) {
-        this.track = track;
-    }
 }

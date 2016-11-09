@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>图友圈</title>
     <script type="text/javascript" src="jquery.js"></script>
 
@@ -17,10 +17,16 @@
 				});
 
 				var json = window.tuyou.getJson();
+				var commentjson = window.tuyou.getCommentJson();
+				var userjson=window.tuyou.getUserJson();
+
+				var commentitems = eval(commentjson);
+				var useritems=eval(userjson);
 				var items = eval(json);
-				for(var i = 0; i < items.length - 1; i++) {
+				for(var i = 0; i < items.length ; i++) {
 					item = items[i];
-					var itemid=item.objectId;
+
+					var itemid = item.objectId;
 					var userName = item.user;
 					var text = item.text;
 					var time = item.updatedAt;
@@ -29,29 +35,55 @@
 					var image = "images/background.jpg";
 					$("#my_icon").after(
 						"<div id='item'>" +
-						"<p id='itemid'>"+itemid+"</p>"+
+						"<p id='itemid'>" + itemid + "</p>" +
 						"<img id = 'userIcon' src = " + image + " />" +
 						"<p id = 'username' > " + userName + "</p>" +
 						"<p id = 'content' > " + text + "</p> " +
-						"<div>" +
+						"<div id = '" + itemid + "'>" +
 						"<p id = 'time' > " + time + "</p> " +
 						"<img src = " + srcHeart + " id ='dianzan' />" +
 						"<img src = " + srcPinglun + " id ='pinglun' />" +
 						"</div>" +
 						"</div>");
 
+					for(var j = 0; j < commentitems.length; j++) {
+						var commentitem = commentitems[j];
+						if(commentitem.trackId == itemid) {
+							$("#item").after(
+								"<div id='comment'>"+
+								"<p id='commentName'>" + commentitem.fromUserId + "</p> : " +
+								"<p id='commentText'>" + commentitem.text + "</p>" +
+								"</div>"
+							);
+						}
+					}
+
+					for (var k = 0; k < useritems.length; k++) {
+						var useritem=useritems[k];
+						if(userName==useritem.objectId){
+							var icon=useritem.icon;
+							var uname=useritem.username;
+							$("#userIcon").attr('src',icon);
+							$("#username").text(uname);
+						}
+					}
+
+
 					$("#dianzan").click(function() {
-						var strid=$(this).parent().siblings("#itemid").text();
-					    window.tuyou.onClickZan(strid);
+						var strid = $(this).parent().siblings("#itemid").text();
+						window.tuyou.onClickZan(strid);
+						$(this).attr('src','images/zanheart.png');
+
 					});
 					$("#pinglun").click(function() {
-						window.tuyou.showToast("评论");
+						var strid = $(this).parent().siblings("#itemid").text();
+						window.tuyou.onClickComment(strid);
+
 					});
 				}
 
 			});
-
-    </script>
+		</script>
 
     <style type="text/css">
 			* {
@@ -65,7 +97,8 @@
 			}
 
 			#item {
-				margin: 15px 0px;
+				margin: 15px 0px 0px,0px;
+
 			}
 
 			#time {
@@ -104,41 +137,56 @@
 				display: inline;
 				width: 20px;
 				height: 20px;
-
 			}
 
 			#foot {
 				display: block;
 				clear: both;
 			}
-			#my_icon{
+
+			#my_icon {
 				width: 70px;
 				height: 70px;
 				right: -75%;
 				top: -40px;
 				position: relative;
 			}
-			#itemid{
+
+			#itemid {
 				visibility: hidden;
 			}
 
-    </style>
+			#commentName {
+				color: blue;
+				display: inline;
+				margin-right: 15px;
+			}
+
+			#commentText {
+				color: black;
+				display: inline;
+			}
+			#comment{
+				background: #eee;
+				margin: 0px 30px;
+			}
+		</style>
 
 </head>
 
 <body>
 <img src="images/background.jpg" id="head_background">
-<img src="images/icon.jpg" id="my_icon"/>
+<img src="images/icon.jpg" id="my_icon" />
 <!--<div id='item'>-->
-    <!--<p id='itemid'></p>-->
-    <!--<img id='userIcon' src="+image+"/>-->
-    <!--<p id='username'>用户名</p>-->
-    <!--<p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>-->
-    <!--<div id="foot">-->
-        <!--<p id='time'>2016 03 03</p>-->
-        <!--<img src="images/heart.png" id='dianzan'/>-->
-        <!--<img src="images/pinglun.png" id='pinglun'/>-->
-    <!--</div>-->
+<!--<p id='itemid'></p>-->
+<!--<img id='userIcon' src="+image+"/>-->
+<!--<p id='username'>用户名</p>-->
+<!--<p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>-->
+<!--<div id="foot">-->
+<!--<p id='time'>2016 03 03</p>-->
+<!--<img src="images/heart.png" id='dianzan'/>-->
+<!--<img src="images/pinglun.png" id='pinglun'/>-->
+<!--</div>-->
 <!--</div>-->
 
 </body>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/item_map_friends_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
+        android:src="@mipmap/ic_launcher"/>
+
+    <TextView
+        android:id="@+id/item_map_friends_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/item_map_friends_icon"
+        android:maxLength="15"
+        android:text="用户名"/>
+
+
+    <ImageView
+        android:id="@+id/item_map_friends_sex"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_alignBottom="@+id/item_map_friends_icon"
+        android:layout_marginRight="10dp"
+        android:layout_toRightOf="@+id/item_map_friends_icon"
+        android:src="@mipmap/sex_girl"/>
+
+    <TextView
+        android:id="@+id/item_map_friends_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/item_map_friends_icon"
+        android:layout_toRightOf="@+id/item_map_friends_sex"
+        android:text="18"/>
+
+    <TextView
+        android:id="@+id/item_map_friends_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="100米"/>
+</RelativeLayout>

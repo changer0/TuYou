@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.adapters.AttentionAdapter;
 import com.myxfd.tuyou.model.TuYouRelation;
 import com.myxfd.tuyou.model.TuYouUser;
 
@@ -29,7 +30,7 @@ import easeui.EaseConstant;
 
 public class MineAttentionActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    private ArrayList<String> strings;
+    private ArrayList<TuYouUser> users;
     private List<TuYouRelation> addAll;
     private Handler handler = new Handler(){
         @Override
@@ -51,16 +52,16 @@ public class MineAttentionActivity extends AppCompatActivity implements AdapterV
             }
         }
     };
-    private ArrayAdapter<String> adapter;
+    private AttentionAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mine_attention);
         ListView listView = (ListView) findViewById(R.id.activity_mine_attention);
-        strings = new ArrayList<>();
+        users = new ArrayList<>();
         addAll = new ArrayList<>();
-        adapter = new ArrayAdapter<>(MineAttentionActivity.this, android.R.layout.simple_expandable_list_item_1, strings);
+        adapter = new AttentionAdapter(this, users);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         BmobUser currentUser = BmobUser.getCurrentUser();
@@ -75,7 +76,7 @@ public class MineAttentionActivity extends AppCompatActivity implements AdapterV
                     Log.d("AAA", "done: " + list.size());
                     addAll.clear();
                     addAll.addAll(list);
-                    strings.clear();
+                    users.clear();
                     for (TuYouRelation tuYouRelation : addAll) {
                         TuYouUser toUser = tuYouRelation.getToUser();
                         BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
@@ -85,7 +86,7 @@ public class MineAttentionActivity extends AppCompatActivity implements AdapterV
                             @Override
                             public void done(TuYouUser user, BmobException e) {
                                 if (e == null) {
-                                    strings.add(user.getUsername());
+                                    users.add(user);
                                     handler.sendEmptyMessage(10086);
                                 }else {
                                     Message message = handler.obtainMessage(10010);
@@ -118,5 +119,9 @@ public class MineAttentionActivity extends AppCompatActivity implements AdapterV
             }
         });
 
+    }
+
+    public void btnBack(View view) {
+        finish();
     }
 }

@@ -28,6 +28,8 @@ import com.myxfd.tuyou.model.TuYouUser;
 import com.myxfd.tuyou.widgets.ViewPagerCompat;
 
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +82,10 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     // -------------------------------------
     // Viewpager的监听回调
@@ -123,7 +129,6 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
                 break;
         }
         pager.setCurrentItem(currentPosition);
-
 
     }
 }

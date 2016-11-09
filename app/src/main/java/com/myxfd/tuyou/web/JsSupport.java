@@ -9,12 +9,20 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.myxfd.tuyou.model.TuYouComment;
 import com.myxfd.tuyou.model.TuYouPraise;
+import com.myxfd.tuyou.model.TuYouUser;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.security.PrivateKey;
+import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -23,7 +31,15 @@ import cn.bmob.v3.listener.SaveListener;
 public class JsSupport {
     private Context mContext;
     private String mJson;
+    private String mcommentJson;
+    private String mUserJson;
+
     private static final String TAG = "JsSupport";
+
+
+    public void setMcommentJson(String mcommentJson) {
+        this.mcommentJson = mcommentJson;
+    }
 
     public JsSupport(Context context) {
         mContext = context;
@@ -41,11 +57,25 @@ public class JsSupport {
         mJson = json;
     }
 
+    public void setUserJson(String userJson) {
+        mUserJson = userJson;
+    }
+
 
     @JavascriptInterface
     public String getJson() {
         Log.d("1111111111111111", "getJson: "+mJson);
         return mJson;
+    }
+    @JavascriptInterface
+    public String getCommentJson(){
+        return mcommentJson;
+    }
+
+    @JavascriptInterface
+    public String getUserJson(){
+
+        return mUserJson;
     }
 
     @JavascriptInterface
@@ -54,8 +84,13 @@ public class JsSupport {
     }
 
     @JavascriptInterface
+    public void onClickComment(String id){
+        EventBus.getDefault().post(id);
+    }
+
+
+    @JavascriptInterface
     public void onClickZan(String id){
-        Toast.makeText(mContext, "jinru", Toast.LENGTH_SHORT).show();
         BmobUser currentUser = BmobUser.getCurrentUser();
         String objectId = currentUser.getObjectId();
         TuYouPraise praise = new TuYouPraise();
@@ -72,6 +107,8 @@ public class JsSupport {
             }
         });
     }
+
+
 
 
 }
