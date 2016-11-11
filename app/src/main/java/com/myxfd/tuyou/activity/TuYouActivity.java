@@ -52,14 +52,15 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_tu_you);
 
-        BmobUser user = BmobUser.getCurrentUser();
-        BmobQuery<TuYouUser> query = new BmobQuery<>();
-        query.getObject(user.getObjectId(), new QueryListener<TuYouUser>() {
-            @Override
-            public void done(TuYouUser user, BmobException e) {
-                user.getPassword();
-            }
-        });
+//        BmobUser user = BmobUser.getCurrentUser();
+//        BmobQuery<TuYouUser> query = new BmobQuery<>();
+//        query.getObject(user.getObjectId(), new QueryListener<TuYouUser>() {
+//            @Override
+//            public void done(TuYouUser user, BmobException e) {
+//
+//                user.getPassword();
+//            }
+//        });
 
         pager = (ViewPagerCompat) findViewById(R.id.main_container);
 

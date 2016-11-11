@@ -30,13 +30,15 @@ import easeui.EaseConstant;
 
 public class MineAttentionActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
+
+
     private ArrayList<TuYouUser> users;
     private List<TuYouRelation> addAll;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case 10086:
+                case  10086:
                     if (adapter != null) {
                         adapter.notifyDataSetChanged();
                     }

@@ -1,11 +1,8 @@
 package com.myxfd.tuyou.activity;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -20,11 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jph.takephoto.app.TakePhoto;
-import com.jph.takephoto.compress.CompressConfig;
-import com.jph.takephoto.model.CropOptions;
-import com.jph.takephoto.model.LubanOptions;
-import com.jph.takephoto.model.TakePhotoOptions;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.adapters.CircleTransform;
 import com.myxfd.tuyou.model.TuYouUser;
@@ -34,10 +26,11 @@ import java.io.File;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
-import me.shaohui.advancedluban.Luban;
+import cn.bmob.v3.listener.UploadFileListener;
 
 public class MineUserActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -50,6 +43,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private ImageView mSetIcon;
     private TextView mSetName;
     private Toolbar toolBar;
+    private TextView mSetNickName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,16 +68,19 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         mSetCity = (TextView) findViewById(R.id.user_tv_setCity);
         mSetIcon = (ImageView) findViewById(R.id.user_iv_icon);
         mSetName = (TextView) findViewById(R.id.user_tv_setName);
+        mSetNickName = (TextView) findViewById(R.id.nick_tv_setName);
 
 
         CardView cardViewIcon = (CardView) findViewById(R.id.user_cv_icon);
         CardView cardViewUsername = (CardView) findViewById(R.id.user_cv_username);
+        CardView cardViewNickName = (CardView) findViewById(R.id.nick_cv_username);
         CardView cardViewSex = (CardView) findViewById(R.id.user_cv_sex);
         CardView cardViewAge = (CardView) findViewById(R.id.user_cv_age);
         CardView cardViewSign = (CardView) findViewById(R.id.user_cv_city);
 
         cardViewIcon.setOnClickListener(this);
         cardViewUsername.setOnClickListener(this);
+        cardViewNickName.setOnClickListener(this);
         cardViewSex.setOnClickListener(this);
         cardViewAge.setOnClickListener(this);
         cardViewSign.setOnClickListener(this);
@@ -102,7 +99,8 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                     mSetSex.setText(tuYouUser.getSex());
                     mSetAge.setText(String.valueOf(tuYouUser.getAge()));
                     mSetCity.setText(tuYouUser.getCity());
-                    mSetName.setText(tuYouUser.getNickName());
+                    mSetName.setText(tuYouUser.getUsername());
+                    mSetNickName.setText(tuYouUser.getNickName());
                     Picasso.with(MineUserActivity.this).load(tuYouUser.getIcon()).config(Bitmap.Config.ARGB_8888)
                             .transform(new CircleTransform()).into(mSetIcon);
                 } else {
@@ -189,12 +187,12 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         builder.create().show();
     }
 
-    private void dialogName() {
+    private void dialogNickname() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText newName = new EditText(this);
         if (mTuYouUser != null) {
-            String username = mTuYouUser.getNickName();
-            newName.setText(username);
+            String nickName = mTuYouUser.getNickName();
+            newName.setText(nickName);
         }
         builder.setTitle("修改图友名").setView(newName);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -208,7 +206,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void done(BmobException e) {
                             if (e == null) {
-                                mSetName.setText(name);
+                                mSetNickName.setText(name);
                                 Snackbar.make(getWindow().getDecorView(), "修改成功", Snackbar.LENGTH_SHORT).show();
                             } else {
                                 Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
@@ -238,8 +236,8 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
             case R.id.user_cv_age:
                 dialogAge();
                 break;
-            case R.id.user_cv_username:
-                dialogName();
+            case R.id.nick_cv_username:
+                dialogNickname();
                 break;
 
             case R.id.user_cv_icon:
@@ -257,9 +255,47 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0) {
             if (data != null) {
-                String extra = data.getStringExtra(SelectPhotoActivity.UPDATE_STATE);
-                if (!TextUtils.isEmpty(extra)) {
-                    Snackbar.make(getWindow().getDecorView(), extra, Snackbar.LENGTH_SHORT).show();
+                String path = data.getStringExtra(SelectPhotoActivity.FROM_SOURCE);
+                if (!TextUtils.isEmpty(path)) {
+                    final BmobFile file = new BmobFile(new File(path));
+                    file.upload(new UploadFileListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                BmobUser bmobUser = BmobUser.getCurrentUser();
+                                BmobQuery<TuYouUser> query = new BmobQuery<>();
+                                query.getObject(bmobUser.getObjectId(), new QueryListener<TuYouUser>() {
+                                    @Override
+                                    public void done(TuYouUser user, BmobException e) {
+                                        if (e == null) {
+                                            user.setIcon(file.getFileUrl());
+                                            user.update(new UpdateListener() {
+                                                @Override
+                                                public void done(BmobException e) {
+                                                    if (e == null) {
+                                                        Picasso.with(MineUserActivity.this).load(file.getFileUrl()).config(Bitmap.Config.ARGB_8888)
+                                                                .transform(new CircleTransform()).into(mSetIcon);
+                                                        Snackbar.make(getWindow().getDecorView(), "上传成功", Snackbar.LENGTH_SHORT).show();
+                                                    } else {
+                                                        Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+
+
+                                        } else {
+                                            Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
+                            } else {
+                                Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+
+                    });
+//                    Snackbar.make(getWindow().getDecorView(), path, Snackbar.LENGTH_SHORT).show();
                 }
             }
 

@@ -41,9 +41,7 @@ public class SelectPhotoActivity extends TakePhotoActivity {
     public static final int FROM_CAMERA = 0x1;
     public static final int FROM_PHOTO = 0x2;
     public static final String FROM_SOURCE = "source";
-    public static final String UPDATE_STATE = "state";
     private Intent intent;
-    private String mPath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,11 +51,6 @@ public class SelectPhotoActivity extends TakePhotoActivity {
         intent = new Intent();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Intent intent = new Intent();
-        intent.putExtra("path",mPath);
-    }
 
     @Override
     public void takeCancel() {
@@ -74,9 +67,16 @@ public class SelectPhotoActivity extends TakePhotoActivity {
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
 
-        TImage image = result.getImage();
-        mPath = image.getPath();
 
+        TImage image = result.getImage();
+        if (image != null) {
+            String path = image.getPath();
+            if (!TextUtils.isEmpty(path)) {
+                intent.putExtra(FROM_SOURCE, path);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }
+        }
 
     }
 
