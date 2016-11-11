@@ -102,7 +102,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                     mSetSex.setText(tuYouUser.getSex());
                     mSetAge.setText(String.valueOf(tuYouUser.getAge()));
                     mSetCity.setText(tuYouUser.getCity());
-                    mSetName.setText(tuYouUser.getUsername());
+                    mSetName.setText(tuYouUser.getNickName());
                     Picasso.with(MineUserActivity.this).load(tuYouUser.getIcon()).config(Bitmap.Config.ARGB_8888)
                             .transform(new CircleTransform()).into(mSetIcon);
                 } else {
@@ -193,7 +193,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText newName = new EditText(this);
         if (mTuYouUser != null) {
-            String username = mTuYouUser.getUsername();
+            String username = mTuYouUser.getNickName();
             newName.setText(username);
         }
         builder.setTitle("修改图友名").setView(newName);
@@ -203,7 +203,7 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
                 final String name = newName.getText().toString().trim();
                 if (name != null) {
                     TuYouUser tuYouUser = new TuYouUser();
-                    tuYouUser.setUsername(name);
+                    tuYouUser.setNickName(name);
                     tuYouUser.update(mCurrentUser.getObjectId(), new UpdateListener() {
                         @Override
                         public void done(BmobException e) {

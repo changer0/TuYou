@@ -92,7 +92,6 @@
         android:id="@+id/fragment_mine_quit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorApp1"
         android:layout_marginBottom="30dp"
         android:background="@color/colorApp3"
         android:text="退出登录"
@@ -118,21 +117,15 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"/>
             <TextView
+                android:layout_marginLeft="10dp"
                 android:id="@+id/mine_iv_username"
                 android:text="用户名"
                 android:layout_marginTop="20dp"
                 android:textSize="20dp"
+                android:maxLength="10"
                 android:layout_toRightOf="@+id/mine_iv_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-            <ImageView
-                android:id="@+id/mine_iv_qrcode"
-                android:src="@mipmap/ic_qrcode"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_width="30dp"
-                android:layout_height="30dp"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

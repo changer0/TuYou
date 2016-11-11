@@ -81,7 +81,7 @@ public class MapFriendsAdapter extends RecyclerView.Adapter {
             mAdapter = adapter;
             mTvAge.setText(String.valueOf(user.getAge()));
             mTvDistance.setText(String.valueOf(user.getDistance()) + " 米");
-            mName.setText(user.getUsername());
+            mName.setText(user.getNickName());
             Picasso.with(mImgIcon.getContext()).load(user.getIcon()).config(Bitmap.Config.ARGB_8888).transform(new CircleTransform()).into(mImgIcon);
             String sex = user.getSex();
             if ("男".equals(sex)) {

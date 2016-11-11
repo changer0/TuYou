@@ -91,7 +91,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             @Override
             public void done(TuYouUser user, BmobException e) {
                 if (e == null) {
-                    mTvUserName.setText(user.getUsername());
+                    mTvUserName.setText(user.getNickName());
                     Picasso.with(getContext()).load(user.getIcon()).config(Bitmap.Config.ARGB_8888)
                             .into(mImgIcon);
                 } else {
