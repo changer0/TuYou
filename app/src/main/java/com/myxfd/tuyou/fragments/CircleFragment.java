@@ -2,21 +2,18 @@ package com.myxfd.tuyou.fragments;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -25,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.amap.api.col.bu;
 import com.google.gson.Gson;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.EditCircleMsgActivity;
@@ -43,8 +39,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -89,7 +83,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onReceiveCommentId(String id){
+    public void onReceiveCommentId(String id) {
         mTuYouComment = new TuYouComment();
         mTuYouComment.setTrackId(id);
         mLinearLayout.setVisibility(View.VISIBLE);
@@ -131,6 +125,10 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         settings.setLoadWithOverviewMode(true);
 
+        BmobUser currentUser = BmobUser.getCurrentUser();
+        String id = currentUser.getObjectId();
+
+
         mJsSupport = new JsSupport(getContext());
         BmobQuery<TuYouTrack> query = new BmobQuery<>();
         query.findObjects(new FindListener<TuYouTrack>() {
@@ -139,7 +137,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 Gson gson = new Gson();
                 String json = gson.toJson(list);
                 Log.d(TAG, "done: " + json);
-                mJsSupport.setJson(json);
+                mJsSupport.setTrackJson(json);
 
                 BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
                 bmobQuery.findObjects(new FindListener<TuYouComment>() {
@@ -147,7 +145,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                     public void done(List<TuYouComment> list, BmobException e) {
                         Gson gson = new Gson();
                         String commmentjson = gson.toJson(list);
-                        Log.d(TAG, "done: "+commmentjson);
+                        Log.d(TAG, "done: " + commmentjson);
                         mJsSupport.setMcommentJson(commmentjson);
 
                         BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
@@ -158,7 +156,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                                 if (e == null) {
                                     for (TuYouUser tuYouUser : list) {
                                         String username = tuYouUser.getUsername();
-                                        Log.d(TAG, "done: username"+username);
+                                        Log.d(TAG, "done: username" + username);
 //                                    tuYouUser.setUsername(username.substring(0,8));
                                         char[] chars = Arrays.copyOf(username.toCharArray(), 9);
                                         tuYouUser.setUsername(new String(chars));
@@ -187,28 +185,32 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case R.id.circle_sendShuoShuo:
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("选择说说类型");
-                builder.setItems(new String[]{"文本说说", "图片说说", "视频说说"}, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                Intent intent = new Intent(getContext(), EditCircleMsgActivity.class);
-                                startActivity(intent);
-                                break;
-                            case 1:
-                                Toast.makeText(getContext(), "图片说说", Toast.LENGTH_SHORT).show();
-                                break;
-                            case 2:
-                                Toast.makeText(getContext(), "视频说说", Toast.LENGTH_SHORT).show();
-                                break;
-                        }
-                    }
-                });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+
+                Intent intent = new Intent(getContext(), EditCircleMsgActivity.class);
+                startActivity(intent);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                builder.setTitle("选择说说类型");
+//                builder.setItems(new String[]{"文本说说", "图片说说", "视频说说"}, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        switch (which) {
+//                            case 0:
+//                                Intent intent = new Intent(getContext(), EditCircleMsgActivity.class);
+//                                startActivity(intent);
+//                                break;
+//                            case 1:
+//                                Toast.makeText(getContext(), "图片说说", Toast.LENGTH_SHORT).show();
+//                                break;
+//                            case 2:
+//                                Toast.makeText(getContext(), "视频说说", Toast.LENGTH_SHORT).show();
+//                                break;
+//                        }
+//                    }
+//                });
+//                AlertDialog alertDialog = builder.create();
+//                alertDialog.show();
                 break;
 
             case R.id.circle_comment_layout_btn:
@@ -219,23 +221,31 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 mTuYouComment.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
-                        if (e==null) {
+                        if (e == null) {
                             Toast.makeText(getContext(), "评论成功", Toast.LENGTH_SHORT).show();
                             mLinearLayout.setVisibility(View.GONE);
                             ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
-                                    .hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                                    .hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                         }
                     }
                 });
-
                 break;
-
         }
     }
 
 
     @Override
     public void onRefresh() {
+        doRefreshData();
+    }
+
+    @Override
+    public void onResume() {
+        doRefreshData();
+        super.onResume();
+    }
+
+    private void doRefreshData() {
         BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
         bmobQuery.findObjects(new FindListener<TuYouComment>() {
             @Override
@@ -252,7 +262,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
             public void done(List<TuYouTrack> list, BmobException e) {
                 Gson gson = new Gson();
                 String s = gson.toJson(list);
-                mJsSupport.setJson(s);
+                mJsSupport.setTrackJson(s);
                 mWebView.reload();
             }
         });
@@ -279,5 +289,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         mLinearLayout.setVisibility(View.GONE);
         return false;
     }
+
+
 
 }

@@ -86,7 +86,7 @@
 				}
 			}
 			
-			function moveSin(obj, json, callback) {
+			function moveSin(obj, trackJson, callback) {
 			var deg = 0;
 			clearInterval(obj.t);
 			obj.t = setInterval(function(){
@@ -95,8 +95,8 @@
 					callback ? callback() : "";
 					return;
 				}
-				for(var attr in json) {
-					var speed = (json[attr] - parseInt(getStyle(obj,attr)))*Math.sin(deg*Math.PI/180); 
+				for(var attr in trackJson) {
+					var speed = (trackJson[attr] - parseInt(getStyle(obj,attr)))*Math.sin(deg*Math.PI/180);
 					obj.style[attr] =  parseInt(getStyle(obj,attr)) + speed + "px";
 				}
 				deg++;

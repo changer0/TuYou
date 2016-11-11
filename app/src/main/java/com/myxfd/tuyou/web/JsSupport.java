@@ -9,28 +9,21 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.myxfd.tuyou.model.TuYouComment;
 import com.myxfd.tuyou.model.TuYouPraise;
-import com.myxfd.tuyou.model.TuYouUser;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.security.PrivateKey;
-import java.util.List;
-
-import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
  * 用于js调用java ,传递进webView
  */
 public class JsSupport {
+
     private Context mContext;
-    private String mJson;
+    private String mTrackJson;
     private String mcommentJson;
     private String mUserJson;
 
@@ -53,8 +46,8 @@ public class JsSupport {
         mContext = context;
     }
 
-    public void setJson(String json) {
-        mJson = json;
+    public void setTrackJson(String trackJson) {
+        mTrackJson = trackJson;
     }
 
     public void setUserJson(String userJson) {
@@ -63,9 +56,9 @@ public class JsSupport {
 
 
     @JavascriptInterface
-    public String getJson() {
-        Log.d("1111111111111111", "getJson: "+mJson);
-        return mJson;
+    public String getTrackJson() {
+        Log.d("1111111111111111", "getTrackJson: "+ mTrackJson);
+        return mTrackJson;
     }
     @JavascriptInterface
     public String getCommentJson(){
@@ -74,13 +67,15 @@ public class JsSupport {
 
     @JavascriptInterface
     public String getUserJson(){
-
+        Log.d(TAG, "getUserJson: "+mUserJson);
         return mUserJson;
+
     }
 
     @JavascriptInterface
     public void showToast(String str){
-        Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "showToast: aaaaaaaaaaaaaaaa"+str);
     }
 
     @JavascriptInterface
