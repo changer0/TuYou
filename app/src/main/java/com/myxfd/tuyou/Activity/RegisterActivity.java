@@ -1,5 +1,6 @@
 package com.myxfd.tuyou.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -62,6 +63,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.reg_btn_register:
+
+                final ProgressDialog progressDialog = new ProgressDialog(this);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setTitle("注册中");
+                progressDialog.setMessage("请稍等...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+
                 final String userName = name.getText().toString().trim();
                 final String userPassword = password.getText().toString().trim();
                 String userPassword2 = password2.getText().toString().trim();
@@ -132,7 +141,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                                             @Override
                                             public void onError(Throwable te) {
-
+                                                progressDialog.cancel();
                                                 // TODO: 2016/11/11 注册出现问题, 一定删除bmob内部的用户
 
                                                 if (te instanceof HyphenateException) {
@@ -166,12 +175,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                                             @Override
                                             public void onNext(TuYouUser tuYouUser) {
+                                                progressDialog.cancel();
                                                 Intent intent = new Intent(RegisterActivity.this, TuYouActivity.class);
                                                 startActivity(intent);
                                             }
                                         });
 
                             } else {
+                                progressDialog.cancel();
                                 // 网络异常: 9016
                                 if (e.getErrorCode() == 9016) {
                                     Snackbar.make(getWindow().getDecorView(), "亲, 请连接网络 ヾ(≧O≦)〃嗷~", Snackbar.LENGTH_SHORT).show();
@@ -189,6 +200,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
                 } else {
+                    progressDialog.cancel();
                     Snackbar.make(getWindow().getDecorView(), "密码不一致,请重新输入", Snackbar.LENGTH_SHORT).show();
                 }
 

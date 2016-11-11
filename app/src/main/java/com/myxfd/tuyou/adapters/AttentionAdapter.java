@@ -78,11 +78,7 @@ public class AttentionAdapter extends BaseAdapter {
         }
         void bindView(TuYouUser user){
             picasso.load(user.getIcon()).into(icon);
-            String username = user.getUsername();
-            if (username.length() > 8) {
-                username = username.substring(0, 8);
-            }
-            name.setText(username);
+            name.setText(user.getNickName());
             if ("男".equals(user.getSex())) {
                 sex.setImageResource(R.mipmap.sex_boy);
             }else{
