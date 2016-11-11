@@ -69,7 +69,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
                                 @Override
                                 public void onError(int i, String s) {
-                                    Intent intent = new Intent(WelcomeActivity.this, RegisterActivity.class);
+                                    Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
                                     intent.putExtra(LOGIN_STATE, s);
                                     startActivity(intent);
                                     finish();
@@ -84,7 +84,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
                         } else {
                             // TODO: 2016/11/11 Toast当前网络无响应
-                            Intent intent = new Intent(WelcomeActivity.this, RegisterActivity.class);
+                            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
                             intent.putExtra(LOGIN_STATE, e.getMessage());
                             startActivity(intent);
                             finish();
@@ -92,7 +92,10 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
 
-
+            } else {
+                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
 
 
