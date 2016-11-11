@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -467,9 +468,11 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
     // 加关注回调事件
     @Override
     public void onItemClick(final View view) {
-        Object tag = view.getTag();
-        if (tag instanceof TuYouUser) {
-            final TuYouUser tuYouUser = (TuYouUser) tag;
+        Object userTag = view.getTag(R.id.tag_user);
+        Object addTag = view.getTag(R.id.tag_add_img);
+        if (userTag instanceof TuYouUser && addTag instanceof ImageView) {
+            final TuYouUser tuYouUser = (TuYouUser) userTag;
+            final ImageView imageView = (ImageView) addTag;
 
             BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
             tuYouUserBmobQuery.getObject(mBmobUser.getObjectId(), new QueryListener<TuYouUser>() {
@@ -482,23 +485,41 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                         tuYouRelationBmobQuery.findObjects(new FindListener<TuYouRelation>() {
                             @Override
                             public void done(List<TuYouRelation> list, BmobException e) {
-                                if (list == null || list.size() == 0) {
-                                    TuYouRelation tuYouRelation = new TuYouRelation();
-                                    tuYouRelation.setFromUser(user);
-                                    tuYouRelation.setToUser(tuYouUser);
-                                    tuYouRelation.save(new SaveListener<String>() {
-                                        @Override
-                                        public void done(String s, BmobException e) {
-                                            if (e == null) {
-                                                Snackbar.make(view, "关注成功", Snackbar.LENGTH_LONG).show();
-                                            } else {
-                                                Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG).show();
+                                if (e == null) {
+                                    if (list == null || list.size() == 0) {
+                                        TuYouRelation tuYouRelation = new TuYouRelation();
+                                        tuYouRelation.setFromUser(user);
+                                        tuYouRelation.setToUser(tuYouUser);
+                                        tuYouRelation.save(new SaveListener<String>() {
+                                            @Override
+                                            public void done(String s, BmobException e) {
+                                                if (e == null) {
+                                                    Snackbar.make(view, "关注成功", Snackbar.LENGTH_SHORT).show();
+                                                    imageView.setImageResource(R.mipmap.ic_attention);
+                                                } else {
+                                                    Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
+                                    } else {
+                                        TuYouRelation relation = list.get(0);
+                                        relation.delete(new UpdateListener() {
+                                            @Override
+                                            public void done(BmobException e) {
+                                                if (e == null) {
+                                                    Snackbar.make(view, "取消关注", Snackbar.LENGTH_SHORT).show();
+                                                    imageView.setImageResource(R.mipmap.ic_no_attention);
+                                                } else {
+                                                    Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
+                                    }
                                 } else {
-                                    Snackbar.make(view, "不能重复关注", Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_SHORT).show();
                                 }
+
                             }
                         });
                     }

@@ -1,11 +1,13 @@
 package com.myxfd.tuyou.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -48,13 +50,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         emclient = EMClient.getInstance();
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            String s = intent.getStringExtra(WelcomeActivity.LOGIN_STATE);
-            Snackbar.make(getWindow().getDecorView(), s, Snackbar.LENGTH_SHORT).show();
-        }
-
+        //初始化
         init();
     }
 
@@ -153,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                                 if (te instanceof HyphenateException) {
                                                     HyphenateException he = (HyphenateException) te;
 
-                                                    String message = te.getMessage();
+                                                    String message = he.getMessage();
                                                     JSONObject jsonObject = null;
                                                     try {
                                                         jsonObject = new JSONObject(message);
@@ -183,8 +179,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                             public void onNext(TuYouUser tuYouUser) {
                                                 progressDialog.cancel();
                                                 Intent intent = new Intent(RegisterActivity.this, TuYouActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                                                 startActivity(intent);
-                                                finish();
+                                                // TODO: 2016/11/11 finish掉上一个Activity
+
                                             }
                                         });
 

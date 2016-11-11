@@ -28,7 +28,7 @@
         <RadioButton
             android:id="@+id/main_rb_msg"
             style="@style/RadioGroupStyle"
-            android:drawableTop="@mipmap/ic_msg"
+            android:drawableTop="@mipmap/ic_chat"
             android:text="消息"
             />
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
@@ -12,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RadioButton;
@@ -52,15 +54,13 @@ public class TuYouActivity extends AppCompatActivity implements ViewPager.OnPage
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_tu_you);
 
-//        BmobUser user = BmobUser.getCurrentUser();
-//        BmobQuery<TuYouUser> query = new BmobQuery<>();
-//        query.getObject(user.getObjectId(), new QueryListener<TuYouUser>() {
-//            @Override
-//            public void done(TuYouUser user, BmobException e) {
-//
-//                user.getPassword();
-//            }
-//        });
+        Intent intent = getIntent();
+        if (intent != null) {
+            String s = intent.getStringExtra(WelcomeActivity.LOGIN_STATE);
+            if (!TextUtils.isEmpty(s)) {
+                Snackbar.make(getWindow().getDecorView(), s, Snackbar.LENGTH_SHORT).show();
+            }
+        }
 
         pager = (ViewPagerCompat) findViewById(R.id.main_container);
 

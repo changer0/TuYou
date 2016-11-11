@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -65,6 +66,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         ViewPager viewPager = (ViewPager) findViewById(R.id.login_viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
+        Intent intent = getIntent();
+        if (intent != null) {
+            String loginState = intent.getStringExtra(WelcomeActivity.LOGIN_STATE);
+            if (!TextUtils.isEmpty(loginState)) {
+                Snackbar.make(getWindow().getDecorView(), loginState, Snackbar.LENGTH_SHORT).show();
+            }
+        }
 
 
         mArrayList = new ArrayList<>();
