@@ -154,17 +154,21 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                         tuYouUserBmobQuery.findObjects(new FindListener<TuYouUser>() {
                             @Override
                             public void done(List<TuYouUser> list, BmobException e) {
-                                for (TuYouUser tuYouUser : list) {
-                                    String username = tuYouUser.getUsername();
-                                    Log.d(TAG, "done: username"+username);
+
+                                if (e == null) {
+                                    for (TuYouUser tuYouUser : list) {
+                                        String username = tuYouUser.getUsername();
+                                        Log.d(TAG, "done: username"+username);
 //                                    tuYouUser.setUsername(username.substring(0,8));
-                                    char[] chars = Arrays.copyOf(username.toCharArray(), 9);
-                                    tuYouUser.setUsername(new String(chars));
+                                        char[] chars = Arrays.copyOf(username.toCharArray(), 9);
+                                        tuYouUser.setUsername(new String(chars));
+                                    }
+
+                                    Gson gson = new Gson();
+                                    String s = gson.toJson(list);
+                                    mJsSupport.setUserJson(s);
                                 }
 
-                                Gson gson = new Gson();
-                                String s = gson.toJson(list);
-                                mJsSupport.setUserJson(s);
                             }
                         });
                         mWebView.addJavascriptInterface(mJsSupport, "tuyou");

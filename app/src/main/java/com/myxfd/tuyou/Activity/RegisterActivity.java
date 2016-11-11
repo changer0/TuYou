@@ -87,7 +87,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                     @Override
                                     public void call(final Subscriber<? super TuYouUser> subscriber) {
                                         try {
-                                            //此时是在主线程中运行!!!!!!
                                             //环信注册
                                             emclient.createAccount(userName, userPassword);
                                             emclient.logout(true);
@@ -178,6 +177,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                                 progressDialog.cancel();
                                                 Intent intent = new Intent(RegisterActivity.this, TuYouActivity.class);
                                                 startActivity(intent);
+                                                finish();
                                             }
                                         });
 

@@ -51,13 +51,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     private static final String TAG = "LoginActivity";
     private ArrayList<BaseFragment> mArrayList;
     private String currentPlatName;
-    private Context mContext;
+    private EMClient emClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mContext = this;
+        emClient = EMClient.getInstance();
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
 
@@ -65,11 +65,6 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         ViewPager viewPager = (ViewPager) findViewById(R.id.login_viewPager);
         tabLayout.setupWithViewPager(viewPager);
 
-        BmobUser user = BmobUser.getCurrentUser();
-        if (user != null) {
-            startActivity(new Intent(this, TuYouActivity.class));
-            finish();
-        }
 
 
         mArrayList = new ArrayList<>();
@@ -135,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
 
                                                 }
                                             });
-                                            Intent intent = new Intent(mContext, TuYouActivity.class);
+                                            Intent intent = new Intent(LoginActivity.this, TuYouActivity.class);
                                             startActivity(intent);
                                             finish();
                                         }
@@ -208,13 +203,14 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                         @Override
                         public void run() {
                             try {
-                                EMClient.getInstance().logout(true);
-                                EMClient.getInstance().createAccount(tuYouUser.getUsername(), tuYouUser.getPassword());
-                                EMClient.getInstance().login(tuYouUser.getUsername(), tuYouUser.getPassword(), new EMCallBack() {
+
+                                emClient.logout(true);
+                                emClient.createAccount(tuYouUser.getUsername(), tuYouUser.getPassword());
+                                emClient.login(tuYouUser.getUsername(), tuYouUser.getPassword(), new EMCallBack() {
                                     @Override
                                     public void onSuccess() {
-                                        EMClient.getInstance().chatManager().loadAllConversations();
-                                        EMClient.getInstance().groupManager().loadAllGroups();
+                                        emClient.chatManager().loadAllConversations();
+                                        emClient.groupManager().loadAllGroups();
                                     }
 
                                     @Override
@@ -239,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                             if (e != null) {
                                 Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                             } else {
-                                Intent intent = new Intent(mContext, TuYouActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, TuYouActivity.class);
                                 startActivity(intent);
                                 finish();
                             }

@@ -75,14 +75,6 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/user_tv_nickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="昵称"
-                android:textSize="20dp"/>
-
-            <TextView
                 android:id="@+id/user_tv_setName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,18 +89,58 @@
                 android:layout_centerInParent="true"
                 android:layout_marginRight="10dp"
                 android:src="@mipmap/ic_arrow"/>
+
+            <TextView
+                android:id="@+id/user_tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="账户"
+                android:textSize="20dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 
+
     <android.support.v7.widget.CardView
-        android:id="@+id/user_cv_nickname"
+        android:layout_below="@+id/user_cv_username"
+        android:id="@+id/nick_cv_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/user_cv_username"
         android:layout_marginTop="10dp"
-        android:foreground="?attr/selectableItemBackground" >
+        android:foreground="?attr/selectableItemBackground">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/nick_tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="昵称"
+                android:textSize="20dp"/>
+
+            <TextView
+                android:id="@+id/nick_tv_setName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@+id/nick_iv"/>
+
+            <ImageView
+                android:id="@+id/nick_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="10dp"
+                android:src="@mipmap/ic_arrow"/>
+        </RelativeLayout>
 
     </android.support.v7.widget.CardView>
 
@@ -116,7 +148,7 @@
         android:id="@+id/user_cv_sex"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/user_cv_username"
+        android:layout_below="@+id/nick_cv_username"
         android:layout_marginTop="10dp"
         android:foreground="?attr/selectableItemBackground">
 

@@ -41,7 +41,6 @@ public class SelectPhotoActivity extends TakePhotoActivity {
     public static final int FROM_CAMERA = 0x1;
     public static final int FROM_PHOTO = 0x2;
     public static final String FROM_SOURCE = "source";
-    public static final String UPDATE_STATE = "state";
     private Intent intent;
 
     @Override
@@ -73,49 +72,9 @@ public class SelectPhotoActivity extends TakePhotoActivity {
         if (image != null) {
             String path = image.getPath();
             if (!TextUtils.isEmpty(path)) {
-                final BmobFile file = new BmobFile(new File(path));
-                file.upload(new UploadFileListener() {
-                    @Override
-                    public void done(BmobException e) {
-                        if (e == null) {
-                            BmobUser bmobUser = BmobUser.getCurrentUser();
-                            BmobQuery<TuYouUser> query = new BmobQuery<>();
-                            query.getObject(bmobUser.getObjectId(), new QueryListener<TuYouUser>() {
-                                @Override
-                                public void done(TuYouUser user, BmobException e) {
-                                    if (e == null) {
-                                        user.setIcon(file.getFileUrl());
-                                        user.update(new UpdateListener() {
-                                            @Override
-                                            public void done(BmobException e) {
-                                                if (e == null) {
-                                                    intent.putExtra(UPDATE_STATE, "上传成功");
-                                                    setResult(Activity.RESULT_OK, intent);
-                                                    finish();
-                                                }  else {
-                                                    intent.putExtra(UPDATE_STATE, e.getMessage());
-                                                    setResult(Activity.RESULT_OK, intent);
-                                                }
-                                            }
-                                        });
-
-
-                                    } else {
-                                        intent.putExtra(UPDATE_STATE, e.getMessage());
-                                        setResult(Activity.RESULT_OK, intent);
-                                    }
-                                }
-                            });
-
-                        } else {
-                            intent.putExtra(UPDATE_STATE, e.getMessage());
-                            setResult(Activity.RESULT_OK, intent);
-                        }
-                    }
-
-                });
-
-
+                intent.putExtra(FROM_SOURCE, path);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         }
 

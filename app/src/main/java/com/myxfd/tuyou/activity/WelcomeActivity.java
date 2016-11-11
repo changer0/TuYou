@@ -11,12 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.adapters.WelcomePagerAdapter;
+import com.myxfd.tuyou.model.TuYouUser;
 
 import java.util.ArrayList;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 import okhttp3.internal.framed.Variant;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -51,7 +57,28 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
         if (first != 0) {
             setContentView(R.layout.activity_welcome2);
-            mHandler.sendEmptyMessageDelayed(998,2000);
+
+            BmobUser user = BmobUser.getCurrentUser();
+            if (user != null) {
+                BmobQuery<TuYouUser> query = new BmobQuery<>();
+                query.getObject(user.getObjectId(), new QueryListener<TuYouUser>() {
+                    @Override
+                    public void done(TuYouUser tuYouUser, BmobException e) {
+                        if (e == null) {
+                            //登陆环信
+                            startActivity(new Intent(WelcomeActivity.this, TuYouActivity.class));
+                            finish();
+                        } else {
+                            // TODO: 2016/11/11 Toast当前网络无响应
+
+                        }
+                    }
+                });
+
+
+            }
+
+
         } else {
             setContentView(R.layout.activity_welcome);
             ViewPager pager = (ViewPager) findViewById(R.id.welcome_pager);
