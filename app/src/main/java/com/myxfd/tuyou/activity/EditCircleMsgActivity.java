@@ -3,6 +3,7 @@ package com.myxfd.tuyou.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -22,14 +23,17 @@ import android.widget.Toast;
 
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.model.TuYouTrack;
+import com.myxfd.tuyou.utils.DensityUtil;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
 
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UploadFileListener;
 
 public class EditCircleMsgActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -40,6 +44,7 @@ public class EditCircleMsgActivity extends AppCompatActivity implements View.OnC
     private static final int PHOTO_PIC_CODE = 2;
     private String mPath;
     private static final String TAG = "EditCircleMsgActivity";
+    private BmobFile mBmobFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +81,9 @@ public class EditCircleMsgActivity extends AppCompatActivity implements View.OnC
                 TuYouTrack tuYouTrack = new TuYouTrack();
                 tuYouTrack.setUser(objId);
                 tuYouTrack.setText(content);
+                if (mBmobFile != null) {
+                    tuYouTrack.setImage(mBmobFile.getFileUrl());
+                }
                 tuYouTrack.save(new SaveListener<String>() {
                     @Override
                     public void done(String s, BmobException e) {
@@ -95,7 +103,6 @@ public class EditCircleMsgActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.edit_circle_msg_choice_pic:
-
                 Intent intent = new Intent(this, SelectPhotoActivity.class);
                 startActivityForResult(intent, PHOTO_RESULT_CODE);
                 break;
@@ -107,8 +114,18 @@ public class EditCircleMsgActivity extends AppCompatActivity implements View.OnC
         if (resultCode == Activity.RESULT_OK) {
             mPath = data.getStringExtra(SelectPhotoActivity.FROM_SOURCE);
             Log.d(TAG, "onActivityResult: path    "+ mPath);
-            Uri uri = Uri.fromFile(new File(mPath));
-            Picasso.with(this).load(uri).resize(200,200).into(mImageView);
+            File file = new File(mPath);
+            final Uri uri = Uri.fromFile(file);
+            mBmobFile = new BmobFile(file);
+            mBmobFile.upload(new UploadFileListener() {
+                @Override
+                public void done(BmobException e) {
+                    if (e==null) {
+                        int px = DensityUtil.dp2px(getApplication(), 120);
+                        Picasso.with(EditCircleMsgActivity.this).load(uri).resize(px,px).into(mImageView);
+                    }
+                }
+            });
         }
     }
 

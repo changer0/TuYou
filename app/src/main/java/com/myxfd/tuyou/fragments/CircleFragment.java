@@ -2,21 +2,18 @@ package com.myxfd.tuyou.fragments;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -25,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.amap.api.col.bu;
 import com.google.gson.Gson;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.activity.EditCircleMsgActivity;
@@ -43,8 +39,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -131,6 +125,10 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         settings.setLoadWithOverviewMode(true);
 
+        BmobUser currentUser = BmobUser.getCurrentUser();
+        String id = currentUser.getObjectId();
+
+
         mJsSupport = new JsSupport(getContext());
         BmobQuery<TuYouTrack> query = new BmobQuery<>();
         query.findObjects(new FindListener<TuYouTrack>() {
@@ -139,7 +137,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 Gson gson = new Gson();
                 String json = gson.toJson(list);
                 Log.d(TAG, "done: " + json);
-                mJsSupport.setJson(json);
+                mJsSupport.setTrackJson(json);
 
                 BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
                 bmobQuery.findObjects(new FindListener<TuYouComment>() {
@@ -231,39 +229,23 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                         }
                     }
                 });
-
                 break;
-
         }
     }
 
 
     @Override
     public void onRefresh() {
-        BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
-        bmobQuery.findObjects(new FindListener<TuYouComment>() {
-            @Override
-            public void done(List<TuYouComment> list, BmobException e) {
-                Gson gson = new Gson();
-                String json = gson.toJson(list);
-                mJsSupport.setMcommentJson(json);
-                mWebView.reload();
-            }
-        });
-        BmobQuery<TuYouTrack> trackBmobQuery = new BmobQuery<>();
-        trackBmobQuery.findObjects(new FindListener<TuYouTrack>() {
-            @Override
-            public void done(List<TuYouTrack> list, BmobException e) {
-                Gson gson = new Gson();
-                String s = gson.toJson(list);
-                mJsSupport.setJson(s);
-                mWebView.reload();
-            }
-        });
+        doRefreshData();
     }
 
     @Override
     public void onResume() {
+        doRefreshData();
+        super.onResume();
+    }
+
+    private void doRefreshData() {
         BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
         bmobQuery.findObjects(new FindListener<TuYouComment>() {
             @Override
@@ -280,11 +262,10 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
             public void done(List<TuYouTrack> list, BmobException e) {
                 Gson gson = new Gson();
                 String s = gson.toJson(list);
-                mJsSupport.setJson(s);
+                mJsSupport.setTrackJson(s);
                 mWebView.reload();
             }
         });
-        super.onResume();
     }
 
     @Override
@@ -308,5 +289,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         mLinearLayout.setVisibility(View.GONE);
         return false;
     }
+
+
 
 }

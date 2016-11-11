@@ -12,20 +12,20 @@
 				$("#head_background").click(function() {
 					// $(this).hide();
 					// window.tuyou.showToast("fushuang");
-					var json = window.tuyou.getJson();
-					var items = eval(json);
+					var trackJson = window.tuyou.getJson();
+					var items = eval(trackJson);
 				});
 
-				var json = window.tuyou.getJson();
+				var trackJson = window.tuyou.getJson();
 				var commentjson = window.tuyou.getCommentJson();
 				var userjson=window.tuyou.getUserJson();
 
 				var commentitems = eval(commentjson);
 				var useritems=eval(userjson);
-				var items = eval(json);
+				var items = eval(trackJson);
 				for(var i = 0; i < items.length ; i++) {
 					item = items[i];
-
+					item.image
 					var itemid = item.objectId;
 					var userName = item.user;
 					var text = item.text;
@@ -33,12 +33,15 @@
 					var srcHeart = "images/heart.png";
 					var srcPinglun = "images/pinglun.png";
 					var image = "images/background.jpg";
+					var picture =item.image;
+
 					$("#my_icon").after(
 						"<div id='item'>" +
 						"<p id='itemid'>" + itemid + "</p>" +
 						"<img id = 'userIcon' src = " + image + " />" +
 						"<p id = 'username' > " + userName + "</p>" +
 						"<p id = 'content' > " + text + "</p> " +
+						"<div><img id='picture' /></div>"+
 						"<div id = '" + itemid + "'>" +
 						"<p id = 'time' > " + time + "</p> " +
 						"<img src = " + srcHeart + " id ='dianzan' />" +
@@ -46,6 +49,9 @@
 						"</div>" +
 						"</div>");
 
+					if(picture!=""){
+						$("#picture").attr('src',picture);
+					}
 					for(var j = 0; j < commentitems.length; j++) {
 						var commentitem = commentitems[j];
 						if(commentitem.trackId == itemid) {
@@ -69,7 +75,6 @@
 							$("#username").text(uname);
 						}
 					}
-
 
 					$("#dianzan").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
@@ -171,6 +176,10 @@
 				background: #eee;
 				margin: 0px 30px;
 			}
+			#picture{
+				width: 150px;
+				margin: 5px 0px 0px 60px;
+			}
 		</style>
 
 </head>
@@ -178,17 +187,6 @@
 <body>
 <img src="images/background.jpg" id="head_background">
 <img src="images/icon.jpg" id="my_icon" />
-<!--<div id='item'>-->
-<!--<p id='itemid'></p>-->
-<!--<img id='userIcon' src="+image+"/>-->
-<!--<p id='username'>用户名</p>-->
-<!--<p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>-->
-<!--<div id="foot">-->
-<!--<p id='time'>2016 03 03</p>-->
-<!--<img src="images/heart.png" id='dianzan'/>-->
-<!--<img src="images/pinglun.png" id='pinglun'/>-->
-<!--</div>-->
-<!--</div>-->
 
 </body>
 
