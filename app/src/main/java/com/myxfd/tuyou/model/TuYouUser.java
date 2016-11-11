@@ -1,5 +1,6 @@
 package com.myxfd.tuyou.model;
 
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -34,14 +35,11 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     private String qqToken;// 第三方登陆的标示
     private String backupPwd; //备份的密码
     private String city;
+    private String nickName;//昵称
 
     //注意此项不用与上传Bmob, 仅作为RecycleView中使用
     private int distance;// 与当前用户的距离
 
-    public TuYouUser() {
-        sex = "男";
-        icon = "http://q.qlogo.cn/qqapp/100371282/D4280B8B06B1D1C9221284CC80DD2443/40";
-    }
 
     //用于获取年龄
     public int getAge() {
@@ -135,6 +133,10 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     }
 
     public String getIcon() {
+        if (TextUtils.isEmpty(icon)) {
+            return "http://q.qlogo.cn/qqapp/100371282/D4280B8B06B1D1C9221284CC80DD2443/40";
+        }
+
         return icon;
     }
 
@@ -143,6 +145,9 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     }
 
     public String getSex() {
+        if (TextUtils.isEmpty(sex)) {
+            return "男";
+        }
         return sex;
     }
 
@@ -229,6 +234,13 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
         }
         return ret;
 
+    }
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
 
