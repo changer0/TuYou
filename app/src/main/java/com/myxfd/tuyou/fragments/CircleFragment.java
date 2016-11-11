@@ -157,6 +157,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                                 for (TuYouUser tuYouUser : list) {
                                     String username = tuYouUser.getUsername();
                                     Log.d(TAG, "done: username"+username);
+                                    Log.d(TAG, "done: icon"+tuYouUser.getIcon());
 //                                    tuYouUser.setUsername(username.substring(0,8));
                                     char[] chars = Arrays.copyOf(username.toCharArray(), 9);
                                     tuYouUser.setUsername(new String(chars));
@@ -252,6 +253,31 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 mWebView.reload();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
+        bmobQuery.findObjects(new FindListener<TuYouComment>() {
+            @Override
+            public void done(List<TuYouComment> list, BmobException e) {
+                Gson gson = new Gson();
+                String json = gson.toJson(list);
+                mJsSupport.setMcommentJson(json);
+                mWebView.reload();
+            }
+        });
+        BmobQuery<TuYouTrack> trackBmobQuery = new BmobQuery<>();
+        trackBmobQuery.findObjects(new FindListener<TuYouTrack>() {
+            @Override
+            public void done(List<TuYouTrack> list, BmobException e) {
+                Gson gson = new Gson();
+                String s = gson.toJson(list);
+                mJsSupport.setJson(s);
+                mWebView.reload();
+            }
+        });
+        super.onResume();
     }
 
     @Override

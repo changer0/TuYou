@@ -63,6 +63,8 @@
 						if(userName==useritem.objectId){
 							var icon=useritem.icon;
 							var uname=useritem.username;
+                            window.tuyou.showToast(icon);
+                            window.tuyou.showToast(uname);
 							$("#userIcon").attr('src',icon);
 							$("#username").text(uname);
 						}
@@ -78,7 +80,6 @@
 					$("#pinglun").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickComment(strid);
-
 					});
 				}
 

@@ -43,6 +43,7 @@ public class SelectPhotoActivity extends TakePhotoActivity {
     public static final String FROM_SOURCE = "source";
     public static final String UPDATE_STATE = "state";
     private Intent intent;
+    private String mPath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,11 @@ public class SelectPhotoActivity extends TakePhotoActivity {
         intent = new Intent();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Intent intent = new Intent();
+        intent.putExtra("path",mPath);
+    }
 
     @Override
     public void takeCancel() {
@@ -68,56 +74,9 @@ public class SelectPhotoActivity extends TakePhotoActivity {
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
 
-
         TImage image = result.getImage();
-        if (image != null) {
-            String path = image.getPath();
-            if (!TextUtils.isEmpty(path)) {
-                final BmobFile file = new BmobFile(new File(path));
-                file.upload(new UploadFileListener() {
-                    @Override
-                    public void done(BmobException e) {
-                        if (e == null) {
-                            BmobUser bmobUser = BmobUser.getCurrentUser();
-                            BmobQuery<TuYouUser> query = new BmobQuery<>();
-                            query.getObject(bmobUser.getObjectId(), new QueryListener<TuYouUser>() {
-                                @Override
-                                public void done(TuYouUser user, BmobException e) {
-                                    if (e == null) {
-                                        user.setIcon(file.getFileUrl());
-                                        user.update(new UpdateListener() {
-                                            @Override
-                                            public void done(BmobException e) {
-                                                if (e == null) {
-                                                    intent.putExtra(UPDATE_STATE, "上传成功");
-                                                    setResult(Activity.RESULT_OK, intent);
-                                                    finish();
-                                                }  else {
-                                                    intent.putExtra(UPDATE_STATE, e.getMessage());
-                                                    setResult(Activity.RESULT_OK, intent);
-                                                }
-                                            }
-                                        });
+        mPath = image.getPath();
 
-
-                                    } else {
-                                        intent.putExtra(UPDATE_STATE, e.getMessage());
-                                        setResult(Activity.RESULT_OK, intent);
-                                    }
-                                }
-                            });
-
-                        } else {
-                            intent.putExtra(UPDATE_STATE, e.getMessage());
-                            setResult(Activity.RESULT_OK, intent);
-                        }
-                    }
-
-                });
-
-
-            }
-        }
 
     }
 
