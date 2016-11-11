@@ -44,6 +44,7 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -94,7 +95,6 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -124,12 +124,24 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         // 设置WebView排版算法, 实现单列显示,不允许横向滚动
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         settings.setLoadWithOverviewMode(true);
-
-//        BmobUser currentUser = BmobUser.getCurrentUser();
-//        String id = currentUser.getObjectId();
-
-
         mJsSupport = new JsSupport(getContext());
+
+
+        BmobUser currentUser = BmobUser.getCurrentUser();
+        String id = currentUser.getObjectId();
+        BmobQuery<TuYouUser> userBmobQuery = new BmobQuery<>();
+        userBmobQuery.getObject(id, new QueryListener<TuYouUser>() {
+            @Override
+            public void done(TuYouUser tuYouUser, BmobException e) {
+                if (e == null) {
+                    String icon = tuYouUser.getIcon();
+                    mJsSupport.setIcon(icon);
+                }
+            }
+        });
+
+
+
         BmobQuery<TuYouTrack> query = new BmobQuery<>();
         query.findObjects(new FindListener<TuYouTrack>() {
             @Override
@@ -181,7 +193,6 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         return view;
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -232,7 +243,6 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 break;
         }
     }
-
 
     @Override
     public void onRefresh() {
@@ -289,7 +299,5 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         mLinearLayout.setVisibility(View.GONE);
         return false;
     }
-
-
 
 }

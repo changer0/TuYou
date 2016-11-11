@@ -14,7 +14,7 @@ public class MapUtil {
 //    public static LatLonPoint getCurrentUserLatLonPoint() {
 //        LatLonPoint ret = null;
 //        //得到当前的用户信息, 并上传
-//        BmobUser bmobUser = BmobUser.getCurrentUser();
+//        BmobUser bmobUser = BmobUser.getIcon();
 //        if (bmobUser != null) {
 //            if (bmobUser instanceof TuYouUser) {
 //                TuYouUser user = (TuYouUser) bmobUser;

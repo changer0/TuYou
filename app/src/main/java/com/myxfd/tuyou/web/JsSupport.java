@@ -26,6 +26,7 @@ public class JsSupport {
     private String mTrackJson;
     private String mcommentJson;
     private String mUserJson;
+    private String mIcon ="";
 
     private static final String TAG = "JsSupport";
 
@@ -37,6 +38,7 @@ public class JsSupport {
     public JsSupport(Context context) {
         mContext = context;
     }
+
 
     public Context getContext() {
         return mContext;
@@ -54,38 +56,48 @@ public class JsSupport {
         mUserJson = userJson;
     }
 
+    public void setIcon(String icon) {
+        mIcon = icon;
+    }
+
+    @JavascriptInterface
+    public String getIcon() {
+        Log.d(TAG, "getIcon: "+ mIcon);
+        return mIcon;
+    }
 
     @JavascriptInterface
     public String getTrackJson() {
-        Log.d("1111111111111111", "getTrackJson: "+ mTrackJson);
+        Log.d(TAG, "getTrackJson: " + mTrackJson);
         return mTrackJson;
     }
+
     @JavascriptInterface
-    public String getCommentJson(){
+    public String getCommentJson() {
         return mcommentJson;
     }
 
     @JavascriptInterface
-    public String getUserJson(){
-        Log.d(TAG, "getUserJson: "+mUserJson);
+    public String getUserJson() {
+        Log.d(TAG, "getUserJson: " + mUserJson);
         return mUserJson;
 
     }
 
     @JavascriptInterface
-    public void showToast(String str){
+    public void showToast(String str) {
 //        Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "showToast: aaaaaaaaaaaaaaaa"+str);
+        Log.d(TAG, "showToast: " + str);
     }
 
     @JavascriptInterface
-    public void onClickComment(String id){
+    public void onClickComment(String id) {
         EventBus.getDefault().post(id);
     }
 
 
     @JavascriptInterface
-    public void onClickZan(String id){
+    public void onClickZan(String id) {
         BmobUser currentUser = BmobUser.getCurrentUser();
         String objectId = currentUser.getObjectId();
         TuYouPraise praise = new TuYouPraise();
@@ -94,16 +106,14 @@ public class JsSupport {
         praise.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
-                if (e==null) {
+                if (e == null) {
                     Toast.makeText(mContext, "点赞成功", Toast.LENGTH_SHORT).show();
-                }else {
-                    Log.d(TAG, "done: "+e.getMessage());
+                } else {
+                    Log.d(TAG, "done: " + e.getMessage());
                 }
             }
         });
     }
-
-
 
 
 }

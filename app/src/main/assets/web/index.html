@@ -17,13 +17,20 @@
 				});
 
 				var json = window.tuyou.getTrackJson();
+				var myicon = window.tuyou.getIcon();
 				var commentjson = window.tuyou.getCommentJson();
-				var userjson=window.tuyou.getUserJson();
+				var userjson = window.tuyou.getUserJson();
 
-				var commentitems = eval(commentjson);
-				var useritems=eval(userjson);
 				var items = eval(json);
-				for(var i = 0; i < items.length ; i++) {
+				var commentitems = eval(commentjson);
+				var useritems = eval(userjson);
+
+				window.tuyou.showToast(myicon)
+				if(myicon != "") {
+					$("#my_icon").attr('src', myicon);
+				}
+
+				for(var i = 0; i < items.length; i++) {
 					item = items[i];
 					item.image
 					var itemid = item.objectId;
@@ -33,7 +40,7 @@
 					var srcHeart = "images/heart.png";
 					var srcPinglun = "images/pinglun.png";
 					var image = "images/background.jpg";
-					var picture =item.image;
+					var picture = item.image;
 
 					$("#my_icon").after(
 						"<div id='item'>" +
@@ -41,7 +48,7 @@
 						"<img id = 'userIcon' src = " + image + " />" +
 						"<p id = 'username' > " + userName + "</p>" +
 						"<p id = 'content' > " + text + "</p> " +
-						"<div><img id='picture' /></div>"+
+						"<div><img id='picture' /></div>" +
 						"<div id = '" + itemid + "'>" +
 						"<p id = 'time' > " + time + "</p> " +
 						"<img src = " + srcHeart + " id ='dianzan' />" +
@@ -49,14 +56,14 @@
 						"</div>" +
 						"</div>");
 
-					if(picture!=""){
-						$("#picture").attr('src',picture);
+					if(picture != "") {
+						$("#picture").attr('src', picture);
 					}
 					for(var j = 0; j < commentitems.length; j++) {
 						var commentitem = commentitems[j];
 						if(commentitem.trackId == itemid) {
 							$("#item").after(
-								"<div id='comment'>"+
+								"<div id='comment'>" +
 								"<p id='commentName'>" + commentitem.fromUserId + "</p> : " +
 								"<p id='commentText'>" + commentitem.text + "</p>" +
 								"</div>"
@@ -64,14 +71,14 @@
 						}
 					}
 
-					for (var k = 0; k < useritems.length; k++) {
-						var useritem=useritems[k];
-						if(userName==useritem.objectId){
-							var icon=useritem.icon;
-							var uname=useritem.username;
-                            window.tuyou.showToast(icon);
-                            window.tuyou.showToast(uname);
-							$("#userIcon").attr('src',icon);
+					for(var k = 0; k < useritems.length; k++) {
+						var useritem = useritems[k];
+						if(userName == useritem.objectId) {
+							var icon = useritem.icon;
+							var uname = useritem.username;
+							//                          window.tuyou.showToast(icon);
+							//                          window.tuyou.showToast(uname);
+							$("#userIcon").attr('src', icon);
 							$("#username").text(uname);
 						}
 					}
@@ -79,7 +86,7 @@
 					$("#dianzan").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickZan(strid);
-						$(this).attr('src','images/zanheart.png');
+						$(this).attr('src', 'images/zanheart.png');
 
 					});
 					$("#pinglun").click(function() {
@@ -103,8 +110,7 @@
 			}
 
 			#item {
-				margin: 15px 0px 0px,0px;
-
+				margin: 15px 0px 0px, 0px;
 			}
 
 			#time {
@@ -172,11 +178,13 @@
 				color: black;
 				display: inline;
 			}
-			#comment{
+
+			#comment {
 				background: #eee;
 				margin: 0px 30px;
 			}
-			#picture{
+
+			#picture {
 				width: 150px;
 				margin: 5px 0px 0px 60px;
 			}
@@ -193,7 +201,7 @@
 <p id='username'>用户名</p>
 <p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
 <div>
-	<img id='picture' src="images/background.jpg" />
+<img id='picture' src="images/background.jpg" />
 </div>
 <div id="foot">
 <p id='time'>2016 03 03</p>
