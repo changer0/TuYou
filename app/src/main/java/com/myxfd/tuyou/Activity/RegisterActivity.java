@@ -48,6 +48,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         emclient = EMClient.getInstance();
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String s = intent.getStringExtra(WelcomeActivity.LOGIN_STATE);
+            Snackbar.make(getWindow().getDecorView(), s, Snackbar.LENGTH_SHORT).show();
+        }
+
         init();
     }
 
