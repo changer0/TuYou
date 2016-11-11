@@ -12,17 +12,17 @@
 				$("#head_background").click(function() {
 					// $(this).hide();
 					// window.tuyou.showToast("fushuang");
-					var trackJson = window.tuyou.getJson();
-					var items = eval(trackJson);
+					var json = window.tuyou.getJson();
+					var items = eval(json);
 				});
 
-				var trackJson = window.tuyou.getJson();
+				var json = window.tuyou.getTrackJson();
 				var commentjson = window.tuyou.getCommentJson();
 				var userjson=window.tuyou.getUserJson();
 
 				var commentitems = eval(commentjson);
 				var useritems=eval(userjson);
-				var items = eval(trackJson);
+				var items = eval(json);
 				for(var i = 0; i < items.length ; i++) {
 					item = items[i];
 					item.image
@@ -187,6 +187,20 @@
 <body>
 <img src="images/background.jpg" id="head_background">
 <img src="images/icon.jpg" id="my_icon" />
+<!--<div id='item'>-->
+<!--<p id='itemid'></p>
+<img id='userIcon' src="+image+"/>
+<p id='username'>用户名</p>
+<p id='content'>测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本</p>
+<div>
+	<img id='picture' src="images/background.jpg" />
+</div>
+<div id="foot">
+<p id='time'>2016 03 03</p>
+<img src="images/heart.png" id='dianzan'/>
+<img src="images/pinglun.png" id='pinglun'/>
+</div>
+</div>-->
 
 </body>
 

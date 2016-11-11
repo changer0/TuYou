@@ -125,8 +125,8 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         settings.setLoadWithOverviewMode(true);
 
-        BmobUser currentUser = BmobUser.getCurrentUser();
-        String id = currentUser.getObjectId();
+//        BmobUser currentUser = BmobUser.getCurrentUser();
+//        String id = currentUser.getObjectId();
 
 
         mJsSupport = new JsSupport(getContext());
