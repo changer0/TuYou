@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
+import com.amap.api.maps2d.model.Text;
 import com.myxfd.tuyou.ndk.NativeHelper;
 import com.myxfd.tuyou.utils.TuYouCryptUtils;
 
@@ -236,6 +237,10 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
 
     }
     public String getNickName() {
+        if (TextUtils.isEmpty(nickName)) {
+            return getUsername();
+        }
+
         return nickName;
     }
 

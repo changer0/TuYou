@@ -178,10 +178,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         String username = "TuYou" + token;//登陆用户名默认为TuYou+token
         String sex = (String) map.get("gender");
         String icon = (String) map.get("figureurl_qq_1");
+        String nickname = (String) map.get("nickname");
         user.setUsername(username);
         user.setPassword(tuYouPwd);
         user.setSex(sex);
         user.setIcon(icon);
+        user.setNickName(nickname);
+
         user.setType(currentPlatName);
         //注册
         user.signUp(new SaveListener<TuYouUser>() {
