@@ -30,7 +30,7 @@
         android:hint="这一刻的想法.."
         android:id="@+id/edit_circle_msg_content"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:background="@null"/>
     <Button
         android:id="@+id/edit_circle_msg_choice_pic"
