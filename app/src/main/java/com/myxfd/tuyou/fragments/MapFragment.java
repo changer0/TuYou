@@ -291,7 +291,7 @@ public class MapFragment extends BaseFragment implements AMap.OnInfoWindowClickL
                                     options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.poi_marker_red))
                                             .position(new LatLng(point.getLatitude(), point.getLongitude()))
                                             .draggable(false)
-                                            .title(user.getUsername());
+                                            .title(user.getNickName());
                                     Marker marker = aMap.addMarker(options);
                                     otherMarkers.add(marker);
                                     //添加用户

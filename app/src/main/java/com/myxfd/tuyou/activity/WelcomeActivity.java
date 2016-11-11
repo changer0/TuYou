@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 import com.myxfd.tuyou.R;
 import com.myxfd.tuyou.adapters.WelcomePagerAdapter;
 import com.myxfd.tuyou.model.TuYouUser;
@@ -27,18 +30,9 @@ import okhttp3.internal.framed.Variant;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Context mContext;
-    private Handler mHandler= new Handler(){
-        @Override
-        public void dispatchMessage(Message msg) {
-            int what = msg.what;
-            if (what==998) {
-                Intent intent = new Intent(mContext, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
-    };
+
+    public static final String LOGIN_STATE = "state";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +45,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
 
-        mContext=this;
         SharedPreferences app = getSharedPreferences("app", MODE_PRIVATE);
         int first = app.getInt("first", 0);
 
@@ -66,16 +59,43 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                     public void done(TuYouUser tuYouUser, BmobException e) {
                         if (e == null) {
                             //登陆环信
-                            startActivity(new Intent(WelcomeActivity.this, TuYouActivity.class));
-                            finish();
+
+                            EMClient.getInstance().login(tuYouUser.getUsername(), tuYouUser.getPassword(), new EMCallBack() {
+                                @Override
+                                public void onSuccess() {
+                                    startActivity(new Intent(WelcomeActivity.this, TuYouActivity.class));
+                                    finish();
+                                }
+
+                                @Override
+                                public void onError(int i, String s) {
+                                    Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                                    intent.putExtra(LOGIN_STATE, s);
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onProgress(int i, String s) {
+
+                                }
+                            });
+
+
                         } else {
                             // TODO: 2016/11/11 Toast当前网络无响应
-
+                            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                            intent.putExtra(LOGIN_STATE, e.getMessage());
+                            startActivity(intent);
+                            finish();
                         }
                     }
                 });
 
-
+            } else {
+                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
             }
 
 
