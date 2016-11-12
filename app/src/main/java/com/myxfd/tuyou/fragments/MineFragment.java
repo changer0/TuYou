@@ -1,6 +1,7 @@
 package com.myxfd.tuyou.fragments;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -129,7 +130,11 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.fragment_mine_quit:
                 //退出登陆, 直接返回登陆页面
-
+                final ProgressDialog progressDialog = new ProgressDialog(getContext());
+                progressDialog.setTitle("退出登陆");
+                progressDialog.setMessage("请稍候...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
 
                 BmobQuery<TuYouUser> query = new BmobQuery<>();
                 query.getObject(mBmobUser.getObjectId(), new QueryListener<TuYouUser>() {
@@ -148,6 +153,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                         startActivity(new Intent(getContext(), LoginActivity.class));
                         Context context = getContext();
                         if (context instanceof TuYouActivity) {
+                            progressDialog.cancel();
                             TuYouActivity activity = (TuYouActivity) context;
                             activity.finish();
                         }
