@@ -54,18 +54,29 @@ import cn.sharesdk.tencent.qq.QQ;
 
 public class LoginActivity extends AppCompatActivity implements PlatformActionListener, View.OnClickListener {
 
+    public static final int LOGIN_STATE_CREATE = 0x0;
+    public static final int LOGIN_STATE_ERROR = 0x1;
+    public static final int LOGIN_STATE_CANCEL = 0x3;
+
+
     private static final String TAG = "LoginActivity";
     private ArrayList<BaseFragment> mArrayList;
     private String currentPlatName;
     private EMClient emClient;
     private Dialog dialog;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == 0) {
+            int what = msg.what;
+            if (what == LOGIN_STATE_CREATE) {
                 dialog = ProgressDialogUtil.createLoadingDialog(LoginActivity.this, "登录中");
                 dialog.show();
-            }else{
+            } else if (what == LOGIN_STATE_ERROR) {
+                Snackbar.make(getWindow().getDecorView(), "连接异常", Snackbar.LENGTH_SHORT).show();
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            } else if (what == LOGIN_STATE_CANCEL) {
                 if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
@@ -135,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                     @Override
                                     public void done(TuYouUser user, BmobException e) {
                                         if (e != null) {
-                                            handler.sendEmptyMessage(1);
+                                            handler.sendEmptyMessage(LOGIN_STATE_ERROR);
                                             Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                                         } else {
                                             EMClient.getInstance().logout(true);
@@ -144,13 +155,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                                 public void onSuccess() {
                                                     EMClient.getInstance().chatManager().loadAllConversations();
                                                     EMClient.getInstance().groupManager().loadAllGroups();
-                                                    handler.sendEmptyMessage(1);
+                                                    handler.sendEmptyMessage(LOGIN_STATE_CANCEL);
                                                 }
 
                                                 @Override
                                                 public void onError(int i, String s) {
                                                     Snackbar.make(getWindow().getDecorView(), s, Snackbar.LENGTH_SHORT).show();
-                                                    handler.sendEmptyMessage(1);
+                                                    handler.sendEmptyMessage(LOGIN_STATE_ERROR);
                                                 }
 
                                                 @Override
@@ -164,14 +175,12 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                         }
                                     }
                                 });
-                                handler.sendEmptyMessage(1);
                             } else {
                                 //新用戶注册并登录
                                 newUserBindQQ(token, map, user);
-                                handler.sendEmptyMessage(1);
                             }
                         } else {
-                            handler.sendEmptyMessage(1);
+                            handler.sendEmptyMessage(LOGIN_STATE_CANCEL);
                             Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
                         }
 
@@ -183,7 +192,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
 
             case "SinaWeibo":
                 Snackbar.make(getWindow().getDecorView(), "程序猿正在努力完成中......", Snackbar.LENGTH_SHORT).show();
-                handler.sendEmptyMessage(1);
+                handler.sendEmptyMessage(LOGIN_STATE_CANCEL);
                 break;
         }
         //遍历Map
@@ -218,6 +227,8 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
             @Override
             public void done(final TuYouUser tuYouUser, BmobException e) {
                 if (e != null) {
+
+                    handler.sendEmptyMessage(LOGIN_STATE_CANCEL);
                     // 网络异常: 9016
                     if (e.getErrorCode() == 9016) {
                         Snackbar.make(getWindow().getDecorView(), "亲, 请连接网络 ヾ(≧O≦)〃嗷~", Snackbar.LENGTH_SHORT).show();
@@ -235,6 +246,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                         @Override
                         public void run() {
                             try {
+
                                 emClient.logout(true);
                                 emClient.createAccount(tuYouUser.getUsername(), tuYouUser.getPassword());
                                 emClient.login(tuYouUser.getUsername(), tuYouUser.getPassword(), new EMCallBack() {
@@ -242,11 +254,24 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                     public void onSuccess() {
                                         emClient.chatManager().loadAllConversations();
                                         emClient.groupManager().loadAllGroups();
+                                        user.login(new SaveListener<TuYouUser>() {
+                                            @Override
+                                            public void done(TuYouUser user, BmobException e) {
+                                                handler.sendEmptyMessage(LOGIN_STATE_CANCEL);
+                                                if (e != null) {
+                                                    Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                                } else {
+                                                    Intent intent = new Intent(LoginActivity.this, TuYouActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            }
+                                        });
                                     }
 
                                     @Override
                                     public void onError(int i, String s) {
-
+                                        handler.sendEmptyMessage(LOGIN_STATE_ERROR);
                                     }
 
                                     @Override
@@ -255,23 +280,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                     }
                                 });
                             } catch (HyphenateException e1) {
+                                handler.sendEmptyMessage(LOGIN_STATE_ERROR);
                                 e1.printStackTrace();
 
                             }
                         }
                     }.start();
-                    user.login(new SaveListener<TuYouUser>() {
-                        @Override
-                        public void done(TuYouUser user, BmobException e) {
-                            if (e != null) {
-                                Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                            } else {
-                                Intent intent = new Intent(LoginActivity.this, TuYouActivity.class);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }
-                    });
+
                 }
             }
         });
@@ -279,12 +294,12 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
 
     @Override
     public void onError(Platform platform, int i, Throwable throwable) {
-
+        handler.sendEmptyMessage(LOGIN_STATE_ERROR);
     }
 
     @Override
     public void onCancel(Platform platform, int i) {
-
+        handler.sendEmptyMessage(LOGIN_STATE_CANCEL);
     }
 
     @Override
@@ -292,7 +307,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         int id = v.getId();
         Platform platform = null;
 
-        handler.sendEmptyMessage(0);
+        handler.sendEmptyMessage(LOGIN_STATE_CREATE);
 
         switch (id) {
             case R.id.other_login_btn_qq:
