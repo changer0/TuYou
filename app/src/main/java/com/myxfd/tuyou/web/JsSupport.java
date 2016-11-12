@@ -92,6 +92,7 @@ public class JsSupport {
 
     @JavascriptInterface
     public void onClickComment(String id) {
+        //点击评论, 发出当前点击的id
         EventBus.getDefault().post(id);
     }
 

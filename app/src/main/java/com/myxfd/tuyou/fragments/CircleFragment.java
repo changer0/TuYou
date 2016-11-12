@@ -89,9 +89,9 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         mTuYouComment.setTrackId(id);
         mLinearLayout.setVisibility(View.VISIBLE);
         mPingLunEdit.setFocusable(true);
+        mPingLunEdit.setFocusable(true);
         InputMethodManager imm = (InputMethodManager) mPingLunEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
-        mPingLunEdit.setFocusable(true);
 
     }
 
@@ -215,6 +215,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                     public void done(String s, BmobException e) {
                         if (e == null) {
                             Toast.makeText(getContext(), "评论成功", Toast.LENGTH_SHORT).show();
+                            doRefreshData();//刷新数据
                             mLinearLayout.setVisibility(View.GONE);
                             ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE))
                                     .hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
