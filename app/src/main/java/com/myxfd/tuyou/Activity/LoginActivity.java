@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import cn.bmob.v3.Bmob;
@@ -72,13 +73,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                 dialog = ProgressDialogUtil.createLoadingDialog(LoginActivity.this, "登录中");
                 dialog.show();
             } else if (what == LOGIN_STATE_ERROR) {
-                Snackbar.make(getWindow().getDecorView(), "连接异常", Snackbar.LENGTH_SHORT).show();
                 if (dialog.isShowing()) {
-                    dialog.dismiss();
+                    dialog.cancel();
+                    Snackbar.make(getWindow().getDecorView(), "连接异常", Snackbar.LENGTH_SHORT).show();
                 }
             } else if (what == LOGIN_STATE_CANCEL) {
                 if (dialog.isShowing()) {
-                    dialog.dismiss();
+                    dialog.cancel();
                 }
             }
         }
@@ -215,7 +216,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
         String sex = (String) map.get("gender");
         String icon = (String) map.get("figureurl_qq_1");
         String nickname = (String) map.get("nickname");
-        user.setUsername(username);
+        user.setUsername(username.toLowerCase(Locale.CHINA));
         user.setPassword(tuYouPwd);
         user.setSex(sex);
         user.setIcon(icon);

@@ -25,7 +25,6 @@ public class ProgressDialogUtil {
         loadingDialog.setTitle(msg);
         loadingDialog.setMessage("请稍等...");
         loadingDialog.setCancelable(false);
-        loadingDialog.show();
         return loadingDialog;
 
     }
