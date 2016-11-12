@@ -65,7 +65,7 @@
         <activity android:name=".activity.OtherLogin">
         </activity>
 
-        <activity android:name=".activity.EditCircleMsgActivity">
+        <activity android:name=".activity.EditCircleMsgActivity" android:parentActivityName=".activity.TuYouActivity">
         </activity>
 
         <activity android:name=".activity.SelectPhotoActivity" android:theme="@style/Theme.AppCompat.Light.Dialog">

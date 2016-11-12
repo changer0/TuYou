@@ -58,8 +58,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     public static final int LOGIN_STATE_CREATE = 0x0;
     public static final int LOGIN_STATE_ERROR = 0x1;
     public static final int LOGIN_STATE_CANCEL = 0x3;
-
-
+    private static final int LOGIN_STATE_OK = 0x4;
     private static final String TAG = "LoginActivity";
     private ArrayList<BaseFragment> mArrayList;
     private String currentPlatName;
@@ -80,6 +79,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
             } else if (what == LOGIN_STATE_CANCEL) {
                 if (dialog.isShowing()) {
                     dialog.cancel();
+                }
+            } else if (what == LOGIN_STATE_OK) {
+                if (dialog.isShowing()) {
+                    dialog.cancel();
+                    Intent intent = new Intent(LoginActivity.this, TuYouActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
             }
         }
@@ -156,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                                 public void onSuccess() {
                                                     EMClient.getInstance().chatManager().loadAllConversations();
                                                     EMClient.getInstance().groupManager().loadAllGroups();
-                                                    handler.sendEmptyMessage(LOGIN_STATE_CANCEL);
+                                                    handler.sendEmptyMessage(LOGIN_STATE_OK);
                                                 }
 
                                                 @Override
@@ -170,9 +176,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
 
                                                 }
                                             });
-                                            Intent intent = new Intent(LoginActivity.this, TuYouActivity.class);
-                                            startActivity(intent);
-                                            finish();
+
                                         }
                                     }
                                 });

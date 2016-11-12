@@ -9,13 +9,6 @@
     <script type="text/javascript">
 			$(document).ready(function() {
 
-				$("#head_background").click(function() {
-					// $(this).hide();
-					// window.tuyou.showToast("fushuang");
-					var json = window.tuyou.getJson();
-					var items = eval(json);
-				});
-
 				var json = window.tuyou.getTrackJson();
 				var myicon = window.tuyou.getIcon();
 				var commentjson = window.tuyou.getCommentJson();
@@ -25,16 +18,16 @@
 				var commentitems = eval(commentjson);
 				var useritems = eval(userjson);
 
-				window.tuyou.showToast(myicon)
+				//window.tuyou.showToast(myicon)
 				if(myicon != "") {
 					$("#my_icon").attr('src', myicon);
 				}
-
+				//添加说说
+	window.tuyou.showToast("总长度: " + items.length)
 				for(var i = 0; i < items.length; i++) {
 					item = items[i];
-					item.image
 					var itemid = item.objectId;
-					var userName = item.user;
+					var userId = item.user;
 					var text = item.text;
 					var time = item.updatedAt;
 					var srcHeart = "images/heart.png";
@@ -42,11 +35,20 @@
 					var image = "images/background.jpg";
 					var picture = item.image;
 
+					var currentNickname;
+
+					for(var k = 0; k < useritems.length; k++) {
+						if(useritems[k].objectId == userId) {
+							currentNickname = useritems[k].nickName;
+							break;
+						}
+					}
+
 					$("#my_icon").after(
 						"<div id='item'>" +
 						"<p id='itemid'>" + itemid + "</p>" +
 						"<img id = 'userIcon' src = " + image + " />" +
-						"<p id = 'username' > " + userName + "</p>" +
+						"<p id = 'username' > " + currentNickname + "</p>" +
 						"<p id = 'content' > " + text + "</p> " +
 						"<div><img id='picture' /></div>" +
 						"<div id = '" + itemid + "'>" +
@@ -59,13 +61,15 @@
 					if(picture != "") {
 						$("#picture").attr('src', picture);
 					}
+					//插入评论
 					for(var j = 0; j < commentitems.length; j++) {
 						var commentitem = commentitems[j];
 						var nickName;
-						for(var i = 0; i < useritems.length; i++) {
-						    if (useritems[i].objectId == commentitems[j].fromUserId) {
-						        nickName = useritems[i].nickName;
-						    }
+						for(var k = 0; k < useritems.length; k++) {
+							if(useritems[k].objectId == commentitems[j].fromUserId) {
+								nickName = useritems[k].nickName;
+								break;
+							}
 						}
 
 						if(commentitem.trackId == itemid) {
@@ -77,10 +81,10 @@
 							);
 						}
 					}
-
+	window.tuyou.showToast("测试!!1")
 					for(var k = 0; k < useritems.length; k++) {
 						var useritem = useritems[k];
-						if(userName == useritem.objectId) {
+						if(userId == useritem.objectId) {
 							var icon = useritem.icon;
 							var uname = useritem.nickName;
 							//                          window.tuyou.showToast(icon);
@@ -89,7 +93,7 @@
 							$("#username").text(uname);
 						}
 					}
-
+	window.tuyou.showToast("测试!!2")
 					$("#dianzan").click(function() {
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickZan(strid);
@@ -100,15 +104,20 @@
 						var strid = $(this).parent().siblings("#itemid").text();
 						window.tuyou.onClickComment(strid);
 					});
+
+	window.tuyou.showToast("测试!!3")
+				//--for插入说说---
 				}
+
 
 			});
 		</script>
 
     <style type="text/css">
-            body {
-                background : #eee;
-            }
+			body {
+				background: #eee;
+			}
+
 			* {
 				margin: 0;
 				padding: 0;

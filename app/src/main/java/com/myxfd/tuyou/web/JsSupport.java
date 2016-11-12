@@ -86,7 +86,7 @@ public class JsSupport {
 
     @JavascriptInterface
     public void showToast(String str) {
-//        Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show();
         Log.d(TAG, "showToast: " + str);
     }
 

@@ -57,7 +57,9 @@ public class EditCircleMsgActivity extends AppCompatActivity implements View.OnC
         button.setOnClickListener(this);
         setSupportActionBar(toolbar);
         ActionBar bar = getSupportActionBar();
-        bar.setDisplayHomeAsUpEnabled(true);
+        if (bar != null) {
+            bar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -71,9 +73,6 @@ public class EditCircleMsgActivity extends AppCompatActivity implements View.OnC
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case android.R.id.home:
-                finish();
-                break;
             case R.id.circle_option_menu_send:
                 BmobUser currentUser = BmobUser.getCurrentUser();
                 String objId = currentUser.getObjectId();

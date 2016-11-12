@@ -130,6 +130,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
         BmobUser currentUser = BmobUser.getCurrentUser();
         String id = currentUser.getObjectId();
         BmobQuery<TuYouUser> userBmobQuery = new BmobQuery<>();
+        //查找当前用户的头像
         userBmobQuery.getObject(id, new QueryListener<TuYouUser>() {
             @Override
             public void done(TuYouUser tuYouUser, BmobException e) {
@@ -149,6 +150,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                 Gson gson = new Gson();
                 String json = gson.toJson(list);
                 Log.d(TAG, "done: " + json);
+                //给html中的js传入"说说"json
                 mJsSupport.setTrackJson(json);
 
                 BmobQuery<TuYouComment> bmobQuery = new BmobQuery<>();
@@ -158,6 +160,7 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                         Gson gson = new Gson();
                         String commmentjson = gson.toJson(list);
                         Log.d(TAG, "done: " + commmentjson);
+                        //传入评论json
                         mJsSupport.setMcommentJson(commmentjson);
 
                         BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
@@ -166,24 +169,23 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
                             public void done(List<TuYouUser> list, BmobException e) {
 
                                 if (e == null) {
-                                    for (TuYouUser tuYouUser : list) {
-                                        String username = tuYouUser.getUsername();
-                                        Log.d(TAG, "done: username" + username);
-//                                    tuYouUser.setUsername(username.substring(0,8));
-                                        char[] chars = Arrays.copyOf(username.toCharArray(), 9);
-                                        tuYouUser.setUsername(new String(chars));
-                                    }
 
                                     Gson gson = new Gson();
                                     String s = gson.toJson(list);
+                                    //传入用户json
                                     mJsSupport.setUserJson(s);
+
+                                    //所有信息获取完毕, 传入
+                                    mWebView.addJavascriptInterface(mJsSupport, "tuyou");
+                                    String path = "file:///android_asset/web/index.html";
+                                    mWebView.loadUrl(path);
+                                } else {
+                                    Log.d(TAG, "done: js中获取TuYouList出现异常: " + e.getMessage());
                                 }
 
                             }
                         });
-                        mWebView.addJavascriptInterface(mJsSupport, "tuyou");
-                        String path = "file:///android_asset/web/index.html";
-                        mWebView.loadUrl(path);
+
                     }
                 });
 
@@ -201,27 +203,6 @@ public class CircleFragment extends BaseFragment implements View.OnClickListener
 
                 Intent intent = new Intent(getContext(), EditCircleMsgActivity.class);
                 startActivity(intent);
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                builder.setTitle("选择说说类型");
-//                builder.setItems(new String[]{"文本说说", "图片说说", "视频说说"}, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        switch (which) {
-//                            case 0:
-//                                Intent intent = new Intent(getContext(), EditCircleMsgActivity.class);
-//                                startActivity(intent);
-//                                break;
-//                            case 1:
-//                                Toast.makeText(getContext(), "图片说说", Toast.LENGTH_SHORT).show();
-//                                break;
-//                            case 2:
-//                                Toast.makeText(getContext(), "视频说说", Toast.LENGTH_SHORT).show();
-//                                break;
-//                        }
-//                    }
-//                });
-//                AlertDialog alertDialog = builder.create();
-//                alertDialog.show();
                 break;
 
             case R.id.circle_comment_layout_btn:
