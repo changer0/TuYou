@@ -100,6 +100,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
 
         } else {
+            //第一次
             setContentView(R.layout.activity_welcome);
             ViewPager pager = (ViewPager) findViewById(R.id.welcome_pager);
             ArrayList<Integer> list = new ArrayList<>();

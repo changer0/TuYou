@@ -61,10 +61,17 @@
 					}
 					for(var j = 0; j < commentitems.length; j++) {
 						var commentitem = commentitems[j];
+						var nickName;
+						for(var i = 0; i < useritems.length; i++) {
+						    if (useritems[i].objectId == commentitems[j].fromUserId) {
+						        nickName = useritems[i].nickName;
+						    }
+						}
+
 						if(commentitem.trackId == itemid) {
 							$("#item").after(
 								"<div id='comment'>" +
-								"<p id='commentName'>" + commentitem.fromUserId + "</p> : " +
+								"<p id='commentName'>" + nickName + "</p> : " +
 								"<p id='commentText'>" + commentitem.text + "</p>" +
 								"</div>"
 							);
@@ -99,6 +106,9 @@
 		</script>
 
     <style type="text/css">
+            body {
+                background : #eee;
+            }
 			* {
 				margin: 0;
 				padding: 0;
@@ -169,7 +179,7 @@
 			}
 
 			#commentName {
-				color: blue;
+				color: #0278AE;
 				display: inline;
 				margin-right: 15px;
 			}
@@ -180,7 +190,7 @@
 			}
 
 			#comment {
-				background: #eee;
+				background: #ddd;
 				margin: 0px 30px;
 			}
 
