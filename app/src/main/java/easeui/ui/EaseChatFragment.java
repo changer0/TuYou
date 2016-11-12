@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,10 +40,15 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.PathUtil;
 import com.myxfd.tuyou.R;
+import com.myxfd.tuyou.model.TuYouUser;
 
 import java.io.File;
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import easeui.EaseConstant;
 import easeui.controller.EaseUI;
 import easeui.domain.EaseEmojicon;
@@ -180,19 +186,32 @@ public class EaseChatFragment extends EaseBaseFragment implements EMMessageListe
     }
 
     protected void setUpView() {
-        String temp = toChatUsername;
-        if (temp.startsWith("TuYou") || temp.startsWith("tuyou")) {
-            temp = temp.substring(0, 8);
-        }
-        titleBar.setTitle(temp);
+        titleBar.setTitle(toChatUsername);
         if (chatType == EaseConstant.CHATTYPE_SINGLE) {
             // set title
-            if(EaseUserUtils.getUserInfo(toChatUsername) != null){
-                EaseUser user = EaseUserUtils.getUserInfo(toChatUsername);
-                if (user != null) {
-                    titleBar.setTitle(user.getNick());
+            BmobQuery<TuYouUser> tuYouUserBmobQuery = new BmobQuery<>();
+            Log.d("AAA", toChatUsername);
+            tuYouUserBmobQuery.addWhereEqualTo("username", toChatUsername);
+            tuYouUserBmobQuery.findObjects(new FindListener<TuYouUser>() {
+                @Override
+                public void done(List<TuYouUser> list, BmobException e) {
+                    Log.d("AAA", "aaa");
+                    if (list.size() == 0) {
+                        Log.d("AAA", "e null");
+                    }
+                    if (e == null && list.size() > 0) {
+                    Log.d("AAA", "aaa");
+                        titleBar.setTitle(list.get(0).getNickName());
+                    }
                 }
-            }
+            });
+//            if(EaseUserUtils.getUserInfo(toChatUsername) != null){
+//                EaseUser user = EaseUserUtils.getUserInfo(toChatUsername);
+//                if (user != null) {
+//                    titleBar.setTitle(user.getNick());
+//
+//                }
+//            }
             titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
         } else {
         	titleBar.setRightImageResource(R.drawable.ease_to_group_details_normal);

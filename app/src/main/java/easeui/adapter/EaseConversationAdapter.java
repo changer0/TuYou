@@ -147,7 +147,9 @@ public class EaseConversationAdapter extends ArrayAdapter<EMConversation> {
                 public void done(List<TuYouUser> list, BmobException e) {
                     if (e == null) {
                         if (list != null && list.size() != 0) {
-                            Picasso.with(context).load(list.get(0).getIcon()).into(finalHolder.avatar);
+                            TuYouUser tuYouUser = list.get(0);
+                            finalHolder.name.setText(tuYouUser.getNickName());
+                            Picasso.with(context).load(tuYouUser.getIcon()).into(finalHolder.avatar);
                         }
                     }
                 }

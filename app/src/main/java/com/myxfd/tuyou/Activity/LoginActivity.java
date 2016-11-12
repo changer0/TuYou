@@ -1,7 +1,10 @@
 package com.myxfd.tuyou.activity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -12,6 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
@@ -23,6 +27,7 @@ import com.myxfd.tuyou.fragments.BaseFragment;
 import com.myxfd.tuyou.fragments.PhoneLoginFragment;
 import com.myxfd.tuyou.model.TuYouUser;
 import com.myxfd.tuyou.ndk.NativeHelper;
+import com.myxfd.tuyou.utils.ProgressDialogUtil;
 
 import org.json.JSONObject;
 
@@ -53,19 +58,25 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     private ArrayList<BaseFragment> mArrayList;
     private String currentPlatName;
     private EMClient emClient;
+    private Dialog dialog;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                dialog = ProgressDialogUtil.createLoadingDialog(LoginActivity.this, "登录中");
+                dialog.show();
+            }else{
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        emClient = EMClient.getInstance();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
-        setSupportActionBar(toolbar);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.login_tabLayout);
-        ViewPager viewPager = (ViewPager) findViewById(R.id.login_viewPager);
-        tabLayout.setupWithViewPager(viewPager);
-
         Intent intent = getIntent();
         if (intent != null) {
             String loginState = intent.getStringExtra(WelcomeActivity.LOGIN_STATE);
@@ -73,7 +84,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                 Snackbar.make(getWindow().getDecorView(), loginState, Snackbar.LENGTH_SHORT).show();
             }
         }
+        emClient = EMClient.getInstance();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+        setSupportActionBar(toolbar);
 
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.login_tabLayout);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.login_viewPager);
+        tabLayout.setupWithViewPager(viewPager);
 
         mArrayList = new ArrayList<>();
         //添加账户登录和手机号快捷登陆的两个Fragment
@@ -118,6 +135,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                     @Override
                                     public void done(TuYouUser user, BmobException e) {
                                         if (e != null) {
+                                            handler.sendEmptyMessage(1);
                                             Snackbar.make(getWindow().getDecorView(), "登陆异常: " + e.getMessage(), Snackbar.LENGTH_SHORT).show();
                                         } else {
                                             EMClient.getInstance().logout(true);
@@ -126,11 +144,13 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                                 public void onSuccess() {
                                                     EMClient.getInstance().chatManager().loadAllConversations();
                                                     EMClient.getInstance().groupManager().loadAllGroups();
+                                                    handler.sendEmptyMessage(1);
                                                 }
 
                                                 @Override
                                                 public void onError(int i, String s) {
                                                     Snackbar.make(getWindow().getDecorView(), s, Snackbar.LENGTH_SHORT).show();
+                                                    handler.sendEmptyMessage(1);
                                                 }
 
                                                 @Override
@@ -144,11 +164,14 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                                         }
                                     }
                                 });
+                                handler.sendEmptyMessage(1);
                             } else {
                                 //新用戶注册并登录
                                 newUserBindQQ(token, map, user);
+                                handler.sendEmptyMessage(1);
                             }
                         } else {
+                            handler.sendEmptyMessage(1);
                             Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
                         }
 
@@ -160,6 +183,7 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
 
             case "SinaWeibo":
                 Snackbar.make(getWindow().getDecorView(), "程序猿正在努力完成中......", Snackbar.LENGTH_SHORT).show();
+                handler.sendEmptyMessage(1);
                 break;
         }
         //遍历Map
@@ -211,7 +235,6 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
                         @Override
                         public void run() {
                             try {
-
                                 emClient.logout(true);
                                 emClient.createAccount(tuYouUser.getUsername(), tuYouUser.getPassword());
                                 emClient.login(tuYouUser.getUsername(), tuYouUser.getPassword(), new EMCallBack() {
@@ -268,6 +291,8 @@ public class LoginActivity extends AppCompatActivity implements PlatformActionLi
     public void onClick(View v) {
         int id = v.getId();
         Platform platform = null;
+
+        handler.sendEmptyMessage(0);
 
         switch (id) {
             case R.id.other_login_btn_qq:

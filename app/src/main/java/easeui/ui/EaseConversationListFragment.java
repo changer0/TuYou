@@ -59,7 +59,6 @@ public class EaseConversationListFragment extends EaseBaseFragment implements EM
 
 		@Override
 		public void onCoversationUpdate() {
-            Log.d("AAAA", "onCoversationUpdate: ");
             refresh();
 		}
 
@@ -174,7 +173,7 @@ public class EaseConversationListFragment extends EaseBaseFragment implements EM
     private EaseConversationListItemClickListener listItemClickListener;
     
     protected Handler handler = new Handler(){
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             switch (msg.what) {
             case 0:
                 onConnectionDisconnected();

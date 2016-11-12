@@ -27,7 +27,9 @@ import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 
 import easeui.EaseConstant;
+import easeui.domain.EaseUser;
 import easeui.utils.EaseCommonUtils;
+import easeui.utils.EaseUserUtils;
 import easeui.widget.EaseChatMessageList;
 import easeui.widget.chatrow.EaseChatRow;
 import easeui.widget.chatrow.EaseChatRowBigExpression;
@@ -44,7 +46,6 @@ public class EaseMessageAdapter extends BaseAdapter{
 	private final static String TAG = "msg";
 
 	private Context context;
-	
 	private static final int HANDLER_MESSAGE_REFRESH_LIST = 0;
 	private static final int HANDLER_MESSAGE_SELECT_LAST = 1;
     private static final int HANDLER_MESSAGE_SEEK_TO = 2;

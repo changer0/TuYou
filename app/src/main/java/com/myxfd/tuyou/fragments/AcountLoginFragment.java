@@ -1,6 +1,7 @@
 package com.myxfd.tuyou.fragments;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.myxfd.tuyou.activity.LoginActivity;
 import com.myxfd.tuyou.activity.RegisterActivity;
 import com.myxfd.tuyou.activity.TuYouActivity;
 import com.myxfd.tuyou.model.TuYouUser;
+import com.myxfd.tuyou.utils.ProgressDialogUtil;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -112,6 +114,8 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
             final TuYouUser user = new TuYouUser();
             user.setUsername(name);
             user.setPassword(pwd);
+            final Dialog dialog = ProgressDialogUtil.createLoadingDialog(getContext(), "登录中");
+            dialog.show();
             EMClient.getInstance().logout(true);
             EMClient.getInstance().login(name, pwd, new EMCallBack() {
                 @Override
@@ -121,6 +125,7 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
                     user.login(new SaveListener<TuYouUser>() {
                         @Override
                         public void done(TuYouUser tuYouUser, BmobException e) {
+                            dialog.dismiss();
                             if (e == null) {
                                 Log.d(TAG, "done: 登录验证通过");
                                 Intent intent = new Intent(mContext, TuYouActivity.class);
@@ -153,6 +158,7 @@ public class AcountLoginFragment extends BaseFragment implements View.OnClickLis
 
                 @Override
                 public void onError(int i, String s) {
+                    dialog.dismiss();
                     Snackbar.make(tempView, s + ": " + i, Snackbar.LENGTH_SHORT).show();
                 }
 

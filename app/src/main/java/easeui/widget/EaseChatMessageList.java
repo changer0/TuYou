@@ -16,6 +16,7 @@ import com.myxfd.tuyou.R;
 
 import easeui.adapter.EaseMessageAdapter;
 import easeui.utils.EaseCommonUtils;
+import easeui.utils.EaseUserUtils;
 import easeui.widget.chatrow.EaseCustomChatRowProvider;
 
 public class EaseChatMessageList extends RelativeLayout{
