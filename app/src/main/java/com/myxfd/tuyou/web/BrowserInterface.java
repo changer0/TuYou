@@ -12,5 +12,5 @@ public interface BrowserInterface {
 
     void onProgressChanged(WebView view, int newProgress);
 
-   void onPageStarted(WebView view, String url, Bitmap favicon);
+    void onPageStarted(WebView view, String url, Bitmap favicon);
 }
